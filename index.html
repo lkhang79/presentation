@@ -35,6 +35,7 @@ button:disabled{cursor:not-allowed;opacity:0.45}
 .badge-live{background:rgba(239,68,68,0.15);color:#ef4444;animation:livePulse 2s ease-in-out infinite}
 .badge-success{background:rgba(16,185,129,0.12);color:#10b981}
 .badge-primary{background:rgba(99,91,255,0.12);color:#8b85ff}
+.badge-weight{background:rgba(245,158,11,0.12);color:#f59e0b;font-family:'JetBrains Mono',monospace}
 
 .btn{padding:11px 22px;border-radius:10px;font-weight:600;font-size:14px;transition:all .2s;letter-spacing:.01em;border:1px solid transparent}
 .btn-primary{background:#635bff;border-color:#4840cc;color:#fff}
@@ -47,10 +48,6 @@ button:disabled{cursor:not-allowed;opacity:0.45}
 .btn-block{width:100%}
 
 .mono{font-family:'JetBrains Mono',monospace}
-
-.star-row{display:flex;gap:2px;align-items:center}
-.star-btn{background:none;border:none;padding:3px 1px;font-size:20px;line-height:1;transition:all .12s;-webkit-tap-highlight-color:transparent}
-
 .input{width:100%;background:#12121c;border:1px solid #1e1e30;border-radius:8px;padding:9px 12px;color:#e4e4ee;font-size:14px}
 
 .screen{display:none}
@@ -58,19 +55,23 @@ button:disabled{cursor:not-allowed;opacity:0.45}
 
 .fullscreen-center{min-height:100dvh;display:flex;align-items:center;justify-content:center;padding:20px}
 .bg-grad{background:radial-gradient(ellipse at 50% 0%,#111128 0%,#07070d 60%)}
+
+.star-row{display:flex;gap:2px;align-items:center}
+.star-btn{background:none;border:none;padding:3px 1px;font-size:20px;line-height:1;transition:all .12s;-webkit-tap-highlight-color:transparent}
+
+.name-btn{width:100%;background:#12121c;border:1px solid #1e1e30;border-radius:10px;padding:11px 14px;color:#e4e4ee;font-size:14px;text-align:left;transition:all .15s;cursor:pointer;display:block;margin-bottom:6px}
+.name-btn:hover{border-color:#2a2a40;background:#181826}
+.name-btn.selected{background:rgba(99,91,255,0.12) !important;border-color:#635bff !important;color:#8b85ff !important;font-weight:600 !important}
 </style>
 </head>
 <body>
 
-<!-- ══════════════════════════════════════════════════ -->
-<!-- SCREEN: HOME                                      -->
-<!-- ══════════════════════════════════════════════════ -->
+<!-- HOME -->
 <div id="screen-home" class="screen active fullscreen-center bg-grad">
   <div style="text-align:center;max-width:400px;width:100%">
     <div class="scale-in" style="width:80px;height:80px;border-radius:24px;background:rgba(99,91,255,0.12);border:1px solid rgba(99,91,255,0.2);display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:36px">🎯</div>
     <h1 class="fade-in" style="font-size:32px;font-weight:900;letter-spacing:-0.02em;margin-bottom:8px">발표 채점</h1>
     <p class="fade-in" style="color:#5c5c7a;font-size:15px;margin-bottom:40px">조별 발표 실시간 채점 시스템</p>
-
     <div style="display:flex;flex-direction:column;gap:14px">
       <button onclick="showScreen('screen-setup')" class="slide-up" style="background:linear-gradient(135deg,#635bff,#4840cc);border:none;border-radius:16px;padding:22px 24px;color:#fff;font-size:17px;font-weight:700;text-align:left;display:flex;align-items:center;gap:16px;box-shadow:0 8px 32px rgba(99,91,255,0.3)">
         <span style="width:48px;height:48px;border-radius:14px;background:rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0">👑</span>
@@ -84,9 +85,7 @@ button:disabled{cursor:not-allowed;opacity:0.45}
   </div>
 </div>
 
-<!-- ══════════════════════════════════════════════════ -->
-<!-- SCREEN: ADMIN SETUP                               -->
-<!-- ══════════════════════════════════════════════════ -->
+<!-- ADMIN SETUP -->
 <div id="screen-setup" class="screen">
   <div class="container">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:28px">
@@ -96,15 +95,11 @@ button:disabled{cursor:not-allowed;opacity:0.45}
       </div>
       <button class="btn btn-ghost btn-sm" onclick="showScreen('screen-home')">← 홈</button>
     </div>
-
-    <!-- Step 1: Group count -->
     <div id="setup-step1" class="card slide-up">
       <h2 style="font-size:16px;font-weight:700;margin-bottom:20px">총 몇 개 조로 나누시겠어요?</h2>
       <div id="group-count-grid" style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:24px"></div>
       <button class="btn btn-primary btn-lg btn-block" onclick="goToStep2()">다음 → 조원 입력</button>
     </div>
-
-    <!-- Step 2: Member names -->
     <div id="setup-step2" style="display:none">
       <div class="fade-in" style="background:rgba(99,91,255,0.12);border:1px solid rgba(99,91,255,0.15);border-radius:12px;padding:10px 16px;margin-bottom:16px;display:flex;justify-content:space-between;align-items:center">
         <span id="setup-status" style="color:#8b85ff;font-size:13px;font-weight:600"></span>
@@ -116,9 +111,7 @@ button:disabled{cursor:not-allowed;opacity:0.45}
   </div>
 </div>
 
-<!-- ══════════════════════════════════════════════════ -->
-<!-- SCREEN: ADMIN CONTROL                             -->
-<!-- ══════════════════════════════════════════════════ -->
+<!-- ADMIN CONTROL -->
 <div id="screen-admin" class="screen">
   <div class="container">
     <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:28px">
@@ -131,8 +124,6 @@ button:disabled{cursor:not-allowed;opacity:0.45}
         <button class="btn btn-danger btn-sm" onclick="resetSession()">삭제</button>
       </div>
     </div>
-
-    <!-- Share bar -->
     <div id="share-bar" class="fade-in" style="background:rgba(99,91,255,0.12);border:1px solid rgba(99,91,255,0.15);border-radius:12px;padding:12px 16px;margin-bottom:20px">
       <div style="display:flex;justify-content:space-between;align-items:center;gap:10px">
         <div style="flex:1;min-width:0">
@@ -146,16 +137,13 @@ button:disabled{cursor:not-allowed;opacity:0.45}
         <span style="color:#9898b4;font-size:12px">세션 코드: <strong id="admin-code" class="mono" style="color:#e4e4ee;letter-spacing:2px"></strong></span>
       </div>
     </div>
-
     <div id="admin-groups-list"></div>
     <div id="admin-results" style="display:none"></div>
     <button class="btn btn-success btn-lg btn-block" style="margin-top:12px" id="btn-finish" onclick="finishAll()">🏆 전체 발표 종료 & 결과 확인</button>
   </div>
 </div>
 
-<!-- ══════════════════════════════════════════════════ -->
-<!-- SCREEN: SCORER JOIN                               -->
-<!-- ══════════════════════════════════════════════════ -->
+<!-- SCORER JOIN -->
 <div id="screen-join" class="screen fullscreen-center bg-grad">
   <div style="max-width:400px;width:100%">
     <div class="scale-in" style="text-align:center;margin-bottom:28px">
@@ -165,21 +153,19 @@ button:disabled{cursor:not-allowed;opacity:0.45}
     </div>
     <div class="card slide-up" style="padding:24px">
       <h2 style="font-size:15px;font-weight:700;margin-bottom:16px">이름을 선택해주세요</h2>
-      <div id="join-members-list" style="display:flex;flex-direction:column;gap:6px;margin-bottom:16px"></div>
-      <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+      <div id="join-members-list"></div>
+      <div style="display:flex;align-items:center;gap:10px;margin:14px 0">
         <div style="flex:1;height:1px;background:#1e1e30"></div>
         <span style="color:#3a3a52;font-size:11px">또는 직접 입력</span>
         <div style="flex:1;height:1px;background:#1e1e30"></div>
       </div>
       <input class="input" id="join-custom-name" placeholder="이름 입력" style="margin-bottom:14px">
-      <button class="btn btn-primary btn-lg btn-block" onclick="joinSession()" id="btn-join">입장하기 →</button>
+      <button class="btn btn-primary btn-lg btn-block" onclick="joinSession()" id="btn-join" disabled>입장하기 →</button>
     </div>
   </div>
 </div>
 
-<!-- ══════════════════════════════════════════════════ -->
-<!-- SCREEN: SCORER VOTE                               -->
-<!-- ══════════════════════════════════════════════════ -->
+<!-- SCORER VOTE -->
 <div id="screen-vote" class="screen">
   <div class="container">
     <div id="vote-banner"></div>
@@ -190,9 +176,7 @@ button:disabled{cursor:not-allowed;opacity:0.45}
   </div>
 </div>
 
-<!-- ══════════════════════════════════════════════════ -->
-<!-- SCREEN: RESULTS                                   -->
-<!-- ══════════════════════════════════════════════════ -->
+<!-- RESULTS -->
 <div id="screen-results" class="screen">
   <div style="max-width:860px;margin:0 auto;padding:40px 20px">
     <div class="scale-in" style="text-align:center;margin-bottom:40px">
@@ -207,19 +191,15 @@ button:disabled{cursor:not-allowed;opacity:0.45}
   </div>
 </div>
 
-<!-- ══════════════════════════════════════════════════ -->
-<!-- FIREBASE + APP LOGIC                              -->
-<!-- ══════════════════════════════════════════════════ -->
 <script type="module">
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js'
 import { getDatabase, ref, set, get, onValue, remove } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js'
 
 // ╔══════════════════════════════════════════════════════╗
 // ║  🔥 여기에 본인 Firebase 설정을 넣으세요!              ║
-// ║  https://console.firebase.google.com                 ║
 // ╚══════════════════════════════════════════════════════╝
 const firebaseConfig = {
-  apiKey: "AIzaSyCTOXhHZLGRbzdUnMc1grQi711uaXSLA6k",
+ apiKey: "AIzaSyCTOXhHZLGRbzdUnMc1grQi711uaXSLA6k",
   authDomain: "presentation-score-65753.firebaseapp.com",
   databaseURL: "https://presentation-score-65753-default-rtdb.asia-southeast1.firebasedatabase.app",
   projectId: "presentation-score-65753",
@@ -227,76 +207,41 @@ const firebaseConfig = {
   messagingSenderId: "904312501135",
   appId: "1:904312501135:web:db03173baa400af63f91fa",
   measurementId: "G-1F6C77XVH4"
-  }
 
-// ── Firebase 초기화 (실패해도 앱은 동작) ──
-let db = null
-let fbRef, fbSet, fbGet, fbOnValue, fbRemove
+}
+
+let db = null, FB = {}
 try {
   const app = initializeApp(firebaseConfig)
   db = getDatabase(app)
-  fbRef = ref; fbSet = set; fbGet = get; fbOnValue = onValue; fbRemove = remove
-} catch(e) {
-  console.warn('Firebase 초기화 실패:', e.message)
-}
+  FB = { ref, set, get, onValue, remove }
+} catch(e) { console.warn('Firebase init failed:', e) }
 
-function checkFirebase() {
-  if (!db) {
-    alert('⚠️ Firebase가 연결되지 않았습니다.\n\nHTML 파일을 메모장으로 열어서 firebaseConfig 부분에 본인의 Firebase 설정값을 입력하세요.')
-    return false
-  }
+function checkFB() {
+  if (!db) { alert('⚠️ Firebase 연결 실패.\nfirebaseConfig 설정값을 확인하세요.'); return false }
   return true
 }
 
-// ── Constants ──
+// ══════════════════════════════
+// 채점 항목 (가중치 합 = 100%)
+// ══════════════════════════════
 const CATEGORIES = [
-  { id:'content', label:'내용 충실도', emoji:'📋', desc:'주제에 대한 이해도와 정보의 깊이' },
-  { id:'presentation', label:'발표력', emoji:'🎤', desc:'전달력, 발성, 시선 처리, 자신감' },
-  { id:'creativity', label:'창의성', emoji:'💡', desc:'독창적인 아이디어와 차별화된 접근' },
-  { id:'teamwork', label:'팀워크', emoji:'🤝', desc:'팀원 간 협력과 역할 분담' },
-  { id:'qa', label:'Q&A 대응', emoji:'❓', desc:'질문에 대한 논리적 답변 능력' },
+  { id:'report',  label:'팀 프로젝트 보고서', emoji:'📄', weight:40, desc:'과학적 정확성, 분석 깊이, 논리적 구조, 참고문헌 활용' },
+  { id:'present', label:'발표 및 경진대회',   emoji:'🎤', weight:35, desc:'전달력, 시각 자료 품질, Q&A 대응력, 시간 준수, 창의성' },
+  { id:'review',  label:'리뷰 참여',          emoji:'💬', weight:15, desc:'다른 팀 발표에 대한 구체적 피드백의 질 (구체성·건설성·공정성)' },
+  { id:'discuss', label:'Day 1 토론 기여',    emoji:'🗣️', weight:10, desc:'토론 참여도, 비판적 질문의 질, 근거 기반 논증' },
 ]
 const MEDAL_COLORS = ['#fbbf24','#94a3b8','#d97706']
-const MEDAL_EMOJI = ['🥇','🥈','🥉']
 
-// ── State ──
-let state = {
-  sessionId: null,
-  config: null,
-  scores: {},
-  role: null,
-  scorerName: '',
-  groupCount: 2,
-  groups: [],
-  myScores: {},
-  submitted: false,
-  prevGroup: -1,
-  showAdminResults: false,
-  unsub: null,
-}
-
-// ── Helpers ──
-function genCode() {
-  const c = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'
-  let r = ''
-  for (let i = 0; i < 6; i++) r += c[Math.floor(Math.random()*c.length)]
-  return r
-}
+// ══════════
+// State
+// ══════════
+let S = { sessionId:null, config:null, scores:{}, role:null, scorerName:'', groupCount:2, groups:[], myScores:{}, submitted:false, prevGroup:-1, showAdminResults:false, unsub:null, joinUrl:'' }
 
 function $(id) { return document.getElementById(id) }
+function genCode() { const c='ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; let r=''; for(let i=0;i<6;i++) r+=c[Math.floor(Math.random()*c.length)]; return r }
 
-// ── 화면 전환 (window에 연결) ──
-window.showScreen = function(id) {
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'))
-  $(id).classList.add('active')
-  if (id === 'screen-setup') {
-    renderGroupCountGrid()
-    $('setup-step1').style.display = 'block'
-    $('setup-step2').style.display = 'none'
-  }
-}
-function showScreen(id) { window.showScreen(id) }
-
+// ── 가중 점수 계산 (100점 만점) ──
 function getGroupResult(scores, groupId) {
   const gs = scores?.[groupId] || {}
   const scorers = Object.keys(gs)
@@ -306,514 +251,360 @@ function getGroupResult(scores, groupId) {
     const vals = scorers.map(s => gs[s][c.id]).filter(v => typeof v === 'number')
     avg[c.id] = vals.length ? vals.reduce((a,b)=>a+b,0)/vals.length : 0
   })
-  const total = Object.values(avg).reduce((a,b)=>a+b,0)
+  const total = CATEGORIES.reduce((sum, c) => sum + (avg[c.id] / 10) * c.weight, 0)
   return { avg, total, count: scorers.length }
 }
 
-function getRanked(config, scores) {
-  return config.groups
-    .map(g => ({ ...g, result: getGroupResult(scores, g.id) }))
-    .filter(g => g.result)
-    .sort((a,b) => b.result.total - a.result.total)
+function getRanked() {
+  return S.config.groups.map(g => ({ ...g, result: getGroupResult(S.scores, g.id) })).filter(g => g.result).sort((a,b) => b.result.total - a.result.total)
 }
 
-// ══════════════════════════════════════
+// ══════════════════
+// Screen Navigation
+// ══════════════════
+window.showScreen = function(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'))
+  $(id).classList.add('active')
+  if (id === 'screen-setup') { renderGroupCountGrid(); $('setup-step1').style.display='block'; $('setup-step2').style.display='none' }
+}
+
+// ═══════
 // HOME
-// ══════════════════════════════════════
+// ═══════
 window.joinPrompt = function() {
   const code = prompt('세션 코드를 입력하세요:')
-  if (code?.trim()) {
-    state.sessionId = code.trim().toUpperCase()
-    loadJoinScreen()
-  }
+  if (code?.trim()) { S.sessionId = code.trim().toUpperCase(); loadJoinScreen() }
 }
 
-// ══════════════════════════════════════
+// ═══════════
 // ADMIN SETUP
-// ══════════════════════════════════════
+// ═══════════
 function renderGroupCountGrid() {
-  const grid = $('group-count-grid')
-  grid.innerHTML = ''
-  for (let n = 2; n <= 10; n++) {
-    const btn = document.createElement('button')
-    btn.textContent = n
-    btn.style.cssText = `aspect-ratio:1;border-radius:12px;font-size:20px;font-weight:800;font-family:'JetBrains Mono',monospace;transition:all .2s;border:2px solid ${n===state.groupCount?'#635bff':'#1e1e30'};background:${n===state.groupCount?'rgba(99,91,255,0.12)':'#12121c'};color:${n===state.groupCount?'#8b85ff':'#9898b4'}`
-    btn.onclick = () => { state.groupCount = n; renderGroupCountGrid() }
+  const grid = $('group-count-grid'); grid.innerHTML = ''
+  for (let n=2; n<=10; n++) {
+    const btn = document.createElement('button'); btn.textContent = n
+    btn.style.cssText = `aspect-ratio:1;border-radius:12px;font-size:20px;font-weight:800;font-family:'JetBrains Mono',monospace;transition:all .2s;border:2px solid ${n===S.groupCount?'#635bff':'#1e1e30'};background:${n===S.groupCount?'rgba(99,91,255,0.12)':'#12121c'};color:${n===S.groupCount?'#8b85ff':'#9898b4'}`
+    btn.onclick = () => { S.groupCount=n; renderGroupCountGrid() }
     grid.appendChild(btn)
   }
 }
 
 window.goToStep2 = function() {
-  state.groups = []
-  for (let i = 0; i < state.groupCount; i++) {
-    state.groups.push({ id:'g'+(i+1), name:(i+1)+'조', members:['',''] })
-  }
-  $('setup-step1').style.display = 'none'
-  $('setup-step2').style.display = 'block'
-  renderGroupsForm()
+  S.groups = []; for(let i=0;i<S.groupCount;i++) S.groups.push({id:'g'+(i+1),name:(i+1)+'조',members:['','']})
+  $('setup-step1').style.display='none'; $('setup-step2').style.display='block'; renderGroupsForm()
 }
-
-window.backToStep1 = function() {
-  $('setup-step1').style.display = 'block'
-  $('setup-step2').style.display = 'none'
-}
+window.backToStep1 = function() { $('setup-step1').style.display='block'; $('setup-step2').style.display='none' }
 
 function renderGroupsForm() {
-  const total = state.groups.reduce((a,g) => a + g.members.filter(m=>m.trim()).length, 0)
-  $('setup-status').textContent = `${state.groupCount}개 조 · 총 ${total}명 입력됨`
-
-  const container = $('groups-form')
-  container.innerHTML = ''
-  state.groups.forEach((group, gi) => {
+  const total = S.groups.reduce((a,g) => a+g.members.filter(m=>m.trim()).length, 0)
+  $('setup-status').textContent = `${S.groupCount}개 조 · 총 ${total}명`
+  const c = $('groups-form'); c.innerHTML = ''
+  S.groups.forEach((group,gi) => {
     const filled = group.members.filter(m=>m.trim()).length
-    let html = `<div class="card fade-in" style="animation-delay:${gi*0.05}s">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
-        <h3 style="font-size:15px;font-weight:700">${group.name} <span class="mono" style="color:#5c5c7a;font-weight:400;font-size:12px">${filled}명</span></h3>
-        <button class="btn btn-ghost btn-sm" onclick="addMember(${gi})">+ 추가</button>
-      </div>
-      <div style="display:flex;flex-direction:column;gap:6px">`
-    group.members.forEach((m, mi) => {
-      html += `<div style="display:flex;gap:6px">
-        <input class="input" value="${m}" oninput="updateMember(${gi},${mi},this.value)" placeholder="조원 ${mi+1}">
-        ${group.members.length > 1 ? `<button style="color:#5c5c7a;font-size:18px;padding:0 6px" onclick="removeMember(${gi},${mi})">×</button>` : ''}
-      </div>`
+    let h = `<div class="card fade-in" style="animation-delay:${gi*0.05}s"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px"><h3 style="font-size:15px;font-weight:700">${group.name} <span class="mono" style="color:#5c5c7a;font-weight:400;font-size:12px">${filled}명</span></h3><button class="btn btn-ghost btn-sm" onclick="addMember(${gi})">+ 추가</button></div><div style="display:flex;flex-direction:column;gap:6px">`
+    group.members.forEach((m,mi) => {
+      h += `<div style="display:flex;gap:6px"><input class="input" value="${m}" oninput="updateMember(${gi},${mi},this.value)" placeholder="조원 ${mi+1}">${group.members.length>1?`<button style="color:#5c5c7a;font-size:18px;padding:0 6px" onclick="removeMember(${gi},${mi})">×</button>`:''}</div>`
     })
-    html += '</div></div>'
-    container.innerHTML += html
+    h += '</div></div>'; c.innerHTML += h
   })
 }
 
-window.updateMember = function(gi, mi, val) {
-  state.groups[gi].members[mi] = val
-  const total = state.groups.reduce((a,g) => a + g.members.filter(m=>m.trim()).length, 0)
-  $('setup-status').textContent = `${state.groupCount}개 조 · 총 ${total}명 입력됨`
-}
-window.addMember = function(gi) {
-  state.groups[gi].members.push('')
-  renderGroupsForm()
-}
-window.removeMember = function(gi, mi) {
-  if (state.groups[gi].members.length <= 1) return
-  state.groups[gi].members.splice(mi, 1)
-  renderGroupsForm()
-}
+window.updateMember = function(gi,mi,val) { S.groups[gi].members[mi]=val; const t=S.groups.reduce((a,g)=>a+g.members.filter(m=>m.trim()).length,0); $('setup-status').textContent=`${S.groupCount}개 조 · 총 ${t}명` }
+window.addMember = function(gi) { S.groups[gi].members.push(''); renderGroupsForm() }
+window.removeMember = function(gi,mi) { if(S.groups[gi].members.length<=1) return; S.groups[gi].members.splice(mi,1); renderGroupsForm() }
 
 window.createSession = async function() {
-  if (!checkFirebase()) return
-  const btn = $('btn-create')
-  btn.disabled = true
-  btn.textContent = '생성 중...'
+  if (!checkFB()) return
+  const btn=$('btn-create'); btn.disabled=true; btn.textContent='생성 중...'
   try {
-    const sessionId = genCode()
-    const cleaned = state.groups.map(g => ({ ...g, members: g.members.filter(m=>m.trim()) }))
-    const config = { groups: cleaned, currentGroup: -1, finished: false, createdAt: Date.now() }
-    await fbSet(fbRef(db, `sessions/${sessionId}`), { config, scores: {}, status: 'active' })
-    state.sessionId = sessionId
-    state.role = 'admin'
-    loadAdminScreen()
-  } catch(err) {
-    alert('세션 생성 실패! Firebase 설정을 확인하세요.\n\n' + err.message)
-    btn.disabled = false
-    btn.textContent = '🚀 세션 생성하기'
-  }
+    const sid=genCode()
+    const cleaned=S.groups.map(g=>({...g,members:g.members.filter(m=>m.trim())}))
+    await FB.set(FB.ref(db,`sessions/${sid}`),{config:{groups:cleaned,currentGroup:-1,finished:false},scores:{}})
+    S.sessionId=sid; S.role='admin'; loadAdminScreen()
+  } catch(err) { alert('세션 생성 실패!\n\n'+err.message); btn.disabled=false; btn.textContent='🚀 세션 생성하기' }
 }
 
-// ══════════════════════════════════════
+// ══════════════
 // ADMIN CONTROL
-// ══════════════════════════════════════
+// ══════════════
 function loadAdminScreen() {
   showScreen('screen-admin')
-  const sid = state.sessionId
-  $('admin-session-id').textContent = `세션: ${sid}`
-  $('admin-code').textContent = sid
-
-  const baseUrl = window.location.href.split('?')[0].split('#')[0]
-  const joinUrl = `${baseUrl}?join=${sid}`
-  $('share-url').textContent = joinUrl
-  state.joinUrl = joinUrl
-
-  // Subscribe
-  if (state.unsub) state.unsub()
-  state.unsub = fbOnValue(fbRef(db, `sessions/${sid}`), (snap) => {
-    const data = snap.val()
-    if (!data) { showScreen('screen-home'); return }
-    state.config = data.config
-    state.scores = data.scores || {}
-    renderAdminGroups()
+  $('admin-session-id').textContent=`세션: ${S.sessionId}`
+  $('admin-code').textContent=S.sessionId
+  const base=window.location.href.split('?')[0].split('#')[0]
+  S.joinUrl=`${base}?join=${S.sessionId}`
+  $('share-url').textContent=S.joinUrl
+  if(S.unsub) S.unsub()
+  S.unsub=FB.onValue(FB.ref(db,`sessions/${S.sessionId}`),(snap)=>{
+    const d=snap.val(); if(!d){showScreen('screen-home');return}
+    S.config=d.config; S.scores=d.scores||{}; renderAdmin()
   })
 }
 
-function renderAdminGroups() {
-  if (state.showAdminResults) { renderAdminResults(); return }
-
-  const { config, scores } = state
-  let html = ''
-  config.groups.forEach((group, idx) => {
-    const isCurrent = config.currentGroup === idx
-    const scorerCount = Object.keys(scores[group.id] || {}).length
-    const result = getGroupResult(scores, group.id)
-
-    html += `<div class="card fade-in" style="position:relative;overflow:hidden;animation-delay:${idx*0.04}s;
-      ${isCurrent ? 'background:linear-gradient(135deg,rgba(99,91,255,0.08),#0f0f18);border-color:rgba(99,91,255,0.35)' : ''}">
-      ${isCurrent ? '<div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#635bff,#8b85ff)"></div>' : ''}
-      <div style="display:flex;justify-content:space-between;align-items:center">
-        <div>
-          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-            <span style="font-size:16px;font-weight:700;color:${isCurrent?'#8b85ff':'#e4e4ee'}">${group.name}</span>
-            ${isCurrent ? '<span class="badge badge-live">● LIVE</span>' : ''}
-            ${scorerCount > 0 ? `<span class="badge badge-success">${scorerCount}명 채점</span>` : ''}
-          </div>
-          <div style="color:#5c5c7a;font-size:12px;margin-top:4px">${group.members.join(' · ')}</div>
-          ${result ? `<div class="mono" style="color:#8b85ff;font-size:14px;font-weight:700;margin-top:6px">평균 ${result.total.toFixed(1)}점</div>` : ''}
+function renderAdmin() {
+  if(S.showAdminResults){renderAdminResults();return}
+  let html=''
+  S.config.groups.forEach((group,idx) => {
+    const isCur=S.config.currentGroup===idx
+    const cnt=Object.keys(S.scores[group.id]||{}).length
+    const res=getGroupResult(S.scores,group.id)
+    html+=`<div class="card fade-in" style="position:relative;overflow:hidden;animation-delay:${idx*0.04}s;${isCur?'background:linear-gradient(135deg,rgba(99,91,255,0.08),#0f0f18);border-color:rgba(99,91,255,0.35)':''}">
+      ${isCur?'<div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#635bff,#8b85ff)"></div>':''}
+      <div style="display:flex;justify-content:space-between;align-items:center"><div>
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+          <span style="font-size:16px;font-weight:700;color:${isCur?'#8b85ff':'#e4e4ee'}">${group.name}</span>
+          ${isCur?'<span class="badge badge-live">● LIVE</span>':''}
+          ${cnt>0?`<span class="badge badge-success">${cnt}명 채점</span>`:''}
         </div>
-        ${!isCurrent ? `<button class="btn btn-primary btn-sm" onclick="startGroup(${idx})">${result ? '재시작' : '발표 시작'}</button>` : ''}
+        <div style="color:#5c5c7a;font-size:12px;margin-top:4px">${group.members.join(' · ')}</div>
+        ${res?`<div class="mono" style="color:#8b85ff;font-size:14px;font-weight:700;margin-top:6px">${res.total.toFixed(1)}점 / 100</div>`:''}
       </div>
-    </div>`
+      ${!isCur?`<button class="btn btn-primary btn-sm" onclick="startGroup(${idx})">${res?'재시작':'발표 시작'}</button>`:''}
+      </div></div>`
   })
-  $('admin-groups-list').innerHTML = html
-  $('admin-groups-list').style.display = 'block'
-  $('admin-results').style.display = 'none'
-  $('btn-finish').style.display = 'block'
+  $('admin-groups-list').innerHTML=html; $('admin-groups-list').style.display='block'
+  $('admin-results').style.display='none'; $('btn-finish').style.display='block'
 }
 
 function renderAdminResults() {
-  const ranked = getRanked(state.config, state.scores)
-  let html = '<h2 style="font-size:18px;font-weight:800;margin-bottom:16px">🏆 최종 순위</h2>'
-
-  if (!ranked.length) {
-    html += '<div class="card" style="text-align:center;padding:32px"><p style="color:#9898b4">아직 채점 데이터가 없습니다</p></div>'
-  } else {
-    ranked.forEach((g, rank) => {
-      html += buildRankCard(g, rank)
-    })
-  }
-  html += `<button class="btn btn-outline btn-block" style="margin-top:8px" onclick="openFullResults()">📊 전체 화면 결과 보기</button>`
-
-  $('admin-groups-list').style.display = 'none'
-  $('admin-results').innerHTML = html
-  $('admin-results').style.display = 'block'
-  $('btn-finish').style.display = 'none'
+  const ranked=getRanked()
+  let html='<h2 style="font-size:18px;font-weight:800;margin-bottom:16px">🏆 최종 순위 (100점 만점)</h2>'
+  if(!ranked.length) html+='<div class="card" style="text-align:center;padding:32px"><p style="color:#9898b4">채점 데이터가 없습니다</p></div>'
+  else ranked.forEach((g,rank)=>{html+=buildRankCard(g,rank)})
+  html+=`<button class="btn btn-outline btn-block" style="margin-top:8px" onclick="openFullResults()">📊 전체 화면 결과 보기</button>`
+  $('admin-groups-list').style.display='none'; $('admin-results').innerHTML=html; $('admin-results').style.display='block'; $('btn-finish').style.display='none'
 }
 
-function buildRankCard(g, rank) {
-  const mc = rank < 3 ? MEDAL_COLORS[rank] : '#5c5c7a'
-  let cats = CATEGORIES.map(c => `<div style="background:#12121c;border-radius:8px;padding:8px 10px;text-align:center;flex:1 1 90px">
+function buildRankCard(g,rank) {
+  const mc=rank<3?MEDAL_COLORS[rank]:'#5c5c7a'
+  let cats=CATEGORIES.map(c=>`<div style="background:#12121c;border-radius:8px;padding:8px 10px;text-align:center;flex:1 1 100px">
     <div style="font-size:11px;color:#5c5c7a">${c.emoji} ${c.label}</div>
-    <div class="mono" style="font-size:16px;font-weight:700;color:#8b85ff;margin-top:3px">${g.result.avg[c.id].toFixed(1)}</div>
+    <div style="font-size:10px;color:#f59e0b;margin-top:2px">${c.weight}%</div>
+    <div class="mono" style="font-size:16px;font-weight:700;color:#8b85ff;margin-top:2px">${g.result.avg[c.id].toFixed(1)}</div>
   </div>`).join('')
-
   return `<div class="card slide-up" style="animation-delay:${rank*0.1}s;${rank<3?`border-color:${mc}33`:''};margin-bottom:12px">
     <div style="display:flex;align-items:center;gap:14px;margin-bottom:14px">
-      <div style="width:44px;height:44px;border-radius:50%;background:${mc}15;border:2px solid ${mc};display:flex;align-items:center;justify-content:center;font-weight:900;font-size:18px;font-family:'JetBrains Mono',monospace;color:${mc}">${rank+1}</div>
-      <div style="flex:1">
-        <div style="font-weight:700;font-size:17px">${g.name}${rank===0?' 👑':''}</div>
-        <div style="color:#5c5c7a;font-size:12px;margin-top:2px">${g.members.join(' · ')}</div>
-      </div>
-      <div class="mono" style="font-size:26px;font-weight:900;color:${mc}">${g.result.total.toFixed(1)}</div>
+      <div class="mono" style="width:44px;height:44px;border-radius:50%;background:${mc}15;border:2px solid ${mc};display:flex;align-items:center;justify-content:center;font-weight:900;font-size:18px;color:${mc}">${rank+1}</div>
+      <div style="flex:1"><div style="font-weight:700;font-size:17px">${g.name}${rank===0?' 👑':''}</div><div style="color:#5c5c7a;font-size:12px;margin-top:2px">${g.members.join(' · ')}</div></div>
+      <div><div class="mono" style="font-size:26px;font-weight:900;color:${mc}">${g.result.total.toFixed(1)}</div><div style="font-size:10px;color:#5c5c7a;text-align:right">/ 100점</div></div>
     </div>
-    <div style="display:flex;gap:6px;flex-wrap:wrap">${cats}</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:6px">${cats}</div>
     <div style="color:#5c5c7a;font-size:11px;margin-top:10px;text-align:right">${g.result.count}명 참여</div>
   </div>`
 }
 
-window.startGroup = async function(idx) {
-  if (!checkFirebase()) return
-  await fbSet(fbRef(db, `sessions/${state.sessionId}/config`), { ...state.config, currentGroup: idx, finished: false })
-}
-window.finishAll = async function() {
-  if (!checkFirebase()) return
-  await fbSet(fbRef(db, `sessions/${state.sessionId}/config`), { ...state.config, finished: true, currentGroup: -1 })
-  state.showAdminResults = true
-  renderAdminResults()
-}
-window.toggleAdminResults = function() {
-  state.showAdminResults = !state.showAdminResults
-  $('btn-toggle-results').textContent = state.showAdminResults ? '조 목록' : '📊 결과'
-  if (state.showAdminResults) renderAdminResults()
-  else renderAdminGroups()
-}
-window.resetSession = async function() {
-  if (!confirm('정말 이 세션을 삭제하시겠습니까?')) return
-  if (!checkFirebase()) return
-  await fbRemove(fbRef(db, `sessions/${state.sessionId}`))
-  if (state.unsub) state.unsub()
-  showScreen('screen-home')
-}
-window.copyLink = function() {
-  navigator.clipboard.writeText(state.joinUrl).then(() => {
-    $('btn-copy').textContent = '✓ 복사됨'
-    setTimeout(() => $('btn-copy').textContent = '복사', 2000)
-  })
-}
-window.openFullResults = function() {
-  showScreen('screen-results')
-  renderFullResults()
-}
+window.startGroup = async function(idx) { if(!checkFB()) return; await FB.set(FB.ref(db,`sessions/${S.sessionId}/config`),{...S.config,currentGroup:idx,finished:false}) }
+window.finishAll = async function() { if(!checkFB()) return; await FB.set(FB.ref(db,`sessions/${S.sessionId}/config`),{...S.config,finished:true,currentGroup:-1}); S.showAdminResults=true; renderAdminResults() }
+window.toggleAdminResults = function() { S.showAdminResults=!S.showAdminResults; $('btn-toggle-results').textContent=S.showAdminResults?'조 목록':'📊 결과'; S.showAdminResults?renderAdminResults():renderAdmin() }
+window.resetSession = async function() { if(!confirm('정말 삭제하시겠습니까?')) return; if(!checkFB()) return; await FB.remove(FB.ref(db,`sessions/${S.sessionId}`)); if(S.unsub) S.unsub(); showScreen('screen-home') }
+window.copyLink = function() { navigator.clipboard.writeText(S.joinUrl).then(()=>{$('btn-copy').textContent='✓ 복사됨';setTimeout(()=>$('btn-copy').textContent='복사',2000)}) }
+window.openFullResults = function() { showScreen('screen-results'); renderFullResults() }
 
-// ══════════════════════════════════════
-// SCORER JOIN
-// ══════════════════════════════════════
+// ═══════════════════════
+// SCORER JOIN (이름 선택)
+// ═══════════════════════
 async function loadJoinScreen() {
-  if (!checkFirebase()) { showScreen('screen-home'); return }
+  if(!checkFB()){showScreen('screen-home');return}
   showScreen('screen-join')
-  $('join-session-badge').textContent = `세션: ${state.sessionId}`
+  $('join-session-badge').textContent=`세션: ${S.sessionId}`
+  $('btn-join').disabled=true; S.scorerName=''
 
   try {
-    const snap = await fbGet(fbRef(db, `sessions/${state.sessionId}`))
-    const data = snap.val()
-    if (!data) { alert('세션을 찾을 수 없습니다.'); showScreen('screen-home'); return }
+    const snap=await FB.get(FB.ref(db,`sessions/${S.sessionId}`))
+    const data=snap.val()
+    if(!data){alert('세션을 찾을 수 없습니다.');showScreen('screen-home');return}
+    S.config=data.config
+    const members=data.config.groups.flatMap(g=>g.members)
+    const list=$('join-members-list'); list.innerHTML=''
 
-    state.config = data.config
-    const members = data.config.groups.flatMap(g => g.members)
-    const list = $('join-members-list')
-    list.innerHTML = ''
+    // 이름 버튼 생성 (addEventListener 사용)
     members.forEach(m => {
-      const btn = document.createElement('button')
-      btn.textContent = m
-      btn.style.cssText = 'background:#12121c;border:1px solid #1e1e30;border-radius:10px;padding:11px 14px;color:#e4e4ee;font-size:14px;text-align:left;transition:all .15s;width:100%'
-      btn.onclick = () => {
-        list.querySelectorAll('button').forEach(b => { b.style.background='#12121c'; b.style.borderColor='#1e1e30'; b.style.color='#e4e4ee'; b.style.fontWeight='400' })
-        btn.style.background = 'rgba(99,91,255,0.12)'
-        btn.style.borderColor = '#635bff'
-        btn.style.color = '#8b85ff'
-        btn.style.fontWeight = '600'
-        state.scorerName = m
+      const btn=document.createElement('button')
+      btn.className='name-btn'
+      btn.textContent=m
+      btn.addEventListener('click', function(e) {
+        e.preventDefault()
+        // 모든 버튼 선택 해제
+        list.querySelectorAll('.name-btn').forEach(b => b.classList.remove('selected'))
+        // 이 버튼 선택
+        this.classList.add('selected')
+        S.scorerName = m
         $('join-custom-name').value = ''
-      }
+        $('btn-join').disabled = false
+      })
       list.appendChild(btn)
     })
-    $('join-custom-name').oninput = function() {
-      if (this.value.trim()) {
-        state.scorerName = this.value.trim()
-        list.querySelectorAll('button').forEach(b => { b.style.background='#12121c'; b.style.borderColor='#1e1e30'; b.style.color='#e4e4ee'; b.style.fontWeight='400' })
+
+    // 직접 입력
+    const ci = $('join-custom-name')
+    ci.value = ''
+    ci.oninput = null
+    ci.addEventListener('input', function() {
+      if(this.value.trim()) {
+        S.scorerName = this.value.trim()
+        list.querySelectorAll('.name-btn').forEach(b => b.classList.remove('selected'))
+        $('btn-join').disabled = false
+      } else if(!list.querySelector('.name-btn.selected')) {
+        $('btn-join').disabled = true
       }
-    }
-  } catch(err) {
-    alert('연결 실패: ' + err.message)
-    showScreen('screen-home')
-  }
+    })
+  } catch(err) { alert('연결 실패: '+err.message); showScreen('screen-home') }
 }
 
 window.joinSession = function() {
-  if (!state.scorerName.trim()) return
-  state.role = 'scorer'
-  loadVoteScreen()
+  if(!S.scorerName.trim()) return
+  S.role='scorer'; loadVoteScreen()
 }
 
-// ══════════════════════════════════════
-// SCORER VOTE
-// ══════════════════════════════════════
+// ══════════════════════════════
+// SCORER VOTE (모든 사람 채점 가능)
+// ══════════════════════════════
 function loadVoteScreen() {
-  if (!checkFirebase()) return
+  if(!checkFB()) return
   showScreen('screen-vote')
-  state.myScores = {}
-  state.submitted = false
-  state.prevGroup = -99
-
-  if (state.unsub) state.unsub()
-  state.unsub = fbOnValue(fbRef(db, `sessions/${state.sessionId}`), (snap) => {
-    const data = snap.val()
-    if (!data) return
-    state.config = data.config
-    state.scores = data.scores || {}
-    renderVote()
+  S.myScores={}; S.submitted=false; S.prevGroup=-99
+  if(S.unsub) S.unsub()
+  S.unsub=FB.onValue(FB.ref(db,`sessions/${S.sessionId}`),(snap)=>{
+    const d=snap.val(); if(!d) return
+    S.config=d.config; S.scores=d.scores||{}; renderVote()
   })
 }
 
 function renderVote() {
-  const { config, scores, scorerName } = state
-  $('vote-footer').textContent = `${scorerName} · 세션 ${state.sessionId}`
+  const {config,scores,scorerName}=S
+  $('vote-footer').textContent=`${scorerName} · 세션 ${S.sessionId}`
 
-  // Detect group change
-  if (config.currentGroup !== state.prevGroup) {
-    state.prevGroup = config.currentGroup
-    state.myScores = {}
-    state.submitted = false
-
-    // Check if already submitted
-    if (config.currentGroup >= 0) {
-      const gid = config.groups[config.currentGroup]?.id
-      const existing = scores?.[gid]?.[scorerName]
-      if (existing) {
-        CATEGORIES.forEach(c => { if (existing[c.id]) state.myScores[c.id] = existing[c.id] })
-        state.submitted = true
-      }
+  // 그룹 변경 감지 → 초기화
+  if(config.currentGroup!==S.prevGroup) {
+    S.prevGroup=config.currentGroup; S.myScores={}; S.submitted=false
+    if(config.currentGroup>=0) {
+      const gid=config.groups[config.currentGroup]?.id
+      const ex=scores?.[gid]?.[scorerName]
+      if(ex){CATEGORIES.forEach(c=>{if(ex[c.id]) S.myScores[c.id]=ex[c.id]});S.submitted=true}
     }
   }
 
-  // Waiting
-  if (config.currentGroup === -1 && !config.finished) {
-    $('vote-banner').innerHTML = ''
-    $('vote-body').innerHTML = `<div style="text-align:center;padding:60px 20px">
-      <div style="font-size:48px;margin-bottom:16px">⏳</div>
-      <h2 style="font-size:18px;font-weight:700;margin-bottom:6px">발표 대기 중</h2>
-      <p style="color:#9898b4;font-size:14px">관리자가 발표를 시작하면 자동으로 채점 화면이 표시됩니다</p>
-    </div>`
+  // 대기
+  if(config.currentGroup===-1 && !config.finished) {
+    $('vote-banner').innerHTML=''
+    $('vote-body').innerHTML=`<div style="text-align:center;padding:60px 20px"><div style="font-size:48px;margin-bottom:16px">⏳</div><h2 style="font-size:18px;font-weight:700;margin-bottom:6px">발표 대기 중</h2><p style="color:#9898b4;font-size:14px">관리자가 발표를 시작하면 자동으로 채점 화면이 표시됩니다</p></div>`
     return
   }
 
-  // Finished
-  if (config.finished) {
-    $('vote-banner').innerHTML = ''
-    $('vote-body').innerHTML = `<div style="text-align:center;padding:60px 20px">
-      <div style="font-size:48px;margin-bottom:16px">🏆</div>
-      <h2 style="font-size:18px;font-weight:700;margin-bottom:6px">모든 발표가 종료되었습니다</h2>
-      <p style="color:#9898b4;font-size:14px;margin-bottom:20px">참여해 주셔서 감사합니다!</p>
-      <button class="btn btn-outline" onclick="showScreen('screen-results');renderFullResults()">📊 최종 결과 보기</button>
-    </div>`
+  // 종료
+  if(config.finished) {
+    $('vote-banner').innerHTML=''
+    $('vote-body').innerHTML=`<div style="text-align:center;padding:60px 20px"><div style="font-size:48px;margin-bottom:16px">🏆</div><h2 style="font-size:18px;font-weight:700;margin-bottom:6px">모든 발표가 종료되었습니다</h2><p style="color:#9898b4;font-size:14px;margin-bottom:20px">참여해 주셔서 감사합니다!</p><button class="btn btn-outline" onclick="showScreen('screen-results');renderFullResults()">📊 최종 결과 보기</button></div>`
     return
   }
 
-  const currentGroup = config.groups[config.currentGroup]
-  const isMember = currentGroup?.members?.includes(scorerName)
+  const cg=config.groups[config.currentGroup]
 
-  // Banner
-  $('vote-banner').innerHTML = `<div class="scale-in" style="background:linear-gradient(135deg,rgba(99,91,255,0.1),#0f0f18);border:1px solid rgba(99,91,255,0.2);border-radius:18px;padding:24px;margin-bottom:20px;text-align:center">
+  // 배너
+  $('vote-banner').innerHTML=`<div class="scale-in" style="background:linear-gradient(135deg,rgba(99,91,255,0.1),#0f0f18);border:1px solid rgba(99,91,255,0.2);border-radius:18px;padding:24px;margin-bottom:20px;text-align:center">
     <div style="margin-bottom:8px"><span class="badge badge-live" style="font-size:12px">● LIVE</span></div>
-    <div style="font-size:32px;font-weight:900;color:#8b85ff;letter-spacing:-0.02em">${currentGroup?.name}</div>
-    <div style="color:#9898b4;font-size:13px;margin-top:8px">${currentGroup?.members?.join(' · ')}</div>
-  </div>`
+    <div style="font-size:32px;font-weight:900;color:#8b85ff">${cg?.name}</div>
+    <div style="color:#9898b4;font-size:13px;margin-top:8px">${cg?.members?.join(' · ')}</div></div>`
 
-  // Body
-  if (isMember) {
-    $('vote-body').innerHTML = `<div style="background:rgba(245,158,11,0.12);border:1px solid rgba(245,158,11,0.25);border-radius:16px;padding:32px;text-align:center">
-      <div style="font-size:48px;margin-bottom:12px">🎤</div>
-      <h3 style="font-size:17px;font-weight:700;margin-bottom:6px">발표 중입니다!</h3>
-      <p style="color:#9898b4;font-size:14px">본인이 속한 조는 채점할 수 없습니다</p>
-    </div>`
-  } else if (state.submitted) {
-    $('vote-body').innerHTML = `<div style="background:rgba(16,185,129,0.12);border:1px solid rgba(16,185,129,0.25);border-radius:16px;padding:32px;text-align:center">
-      <div style="font-size:48px;margin-bottom:12px">✅</div>
-      <h3 style="font-size:17px;font-weight:700;margin-bottom:6px">채점 완료!</h3>
-      <p style="color:#9898b4;font-size:14px">다음 발표를 기다려주세요</p>
-    </div>`
-  } else {
-    renderVoteForm()
+  // 이미 제출함
+  if(S.submitted) {
+    $('vote-body').innerHTML=`<div style="background:rgba(16,185,129,0.12);border:1px solid rgba(16,185,129,0.25);border-radius:16px;padding:32px;text-align:center"><div style="font-size:48px;margin-bottom:12px">✅</div><h3 style="font-size:17px;font-weight:700;margin-bottom:6px">채점 완료!</h3><p style="color:#9898b4;font-size:14px">다음 발표를 기다려주세요</p></div>`
+    return
   }
-}
 
-function renderVoteForm() {
-  let html = ''
-  CATEGORIES.forEach((cat, i) => {
-    const val = state.myScores[cat.id] || 0
-    html += `<div class="card fade-in" style="animation-delay:${i*0.06}s;border-color:${val?'rgba(99,91,255,0.2)':'#1e1e30'};transition:border-color .3s">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-        <div style="display:flex;align-items:center;gap:8px">
-          <span style="font-size:18px">${cat.emoji}</span>
-          <span style="font-weight:600;font-size:15px">${cat.label}</span>
-        </div>
-        ${val > 0 ? `<span class="mono badge badge-primary" style="font-size:14px;font-weight:700">${val}</span>` : ''}
-      </div>
-      <div style="color:#5c5c7a;font-size:12px;margin-bottom:10px">${cat.desc}</div>
-      <div class="star-row">${renderStars(cat.id, val)}</div>
-    </div>`
-  })
-
-  const remaining = CATEGORIES.filter(c => !state.myScores[c.id]).length
-  html += `<button class="btn btn-primary btn-lg btn-block" style="margin-top:8px" onclick="submitVote()" ${remaining?'disabled':''}>
-    ${remaining ? `${remaining}개 항목 남음` : '✨ 채점 제출'}
-  </button>`
-
-  $('vote-body').innerHTML = html
-}
-
-function renderStars(catId, current) {
-  let html = ''
-  for (let s = 1; s <= 10; s++) {
-    const active = s <= current
-    html += `<button class="star-btn" onclick="setScore('${catId}',${s})" style="color:${active?'#fbbf24':'#3a3a52'};transform:${active?'scale(1.2)':'scale(1)'}">${active?'★':'☆'}</button>`
-  }
-  if (current > 0) {
-    html += `<span class="mono" style="margin-left:8px;font-size:14px;font-weight:700;color:#8b85ff">${current}</span>`
-  }
-  return html
-}
-
-window.setScore = function(catId, val) {
-  state.myScores[catId] = val
+  // 채점 폼 (자기 조 포함 모두 채점 가능)
   renderVoteForm()
 }
 
-window.submitVote = async function() {
-  const gid = state.config.groups[state.config.currentGroup]?.id
-  if (!gid) return
-  try {
-    await fbSet(fbRef(db, `sessions/${state.sessionId}/scores/${gid}/${state.scorerName}`), {
-      ...state.myScores,
-      submittedAt: Date.now()
-    })
-    state.submitted = true
-    renderVote()
-  } catch(err) {
-    alert('제출 실패: ' + err.message)
-  }
+function renderVoteForm() {
+  let html=''
+  CATEGORIES.forEach((cat,i) => {
+    const val=S.myScores[cat.id]||0
+    html+=`<div class="card fade-in" style="animation-delay:${i*0.06}s;border-color:${val?'rgba(99,91,255,0.2)':'#1e1e30'};transition:border-color .3s">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+        <div style="display:flex;align-items:center;gap:8px"><span style="font-size:18px">${cat.emoji}</span><span style="font-weight:600;font-size:15px">${cat.label}</span></div>
+        <div style="display:flex;align-items:center;gap:6px">
+          <span class="badge badge-weight">${cat.weight}%</span>
+          ${val>0?`<span class="mono badge badge-primary" style="font-size:14px;font-weight:700">${val}</span>`:''}
+        </div>
+      </div>
+      <div style="color:#5c5c7a;font-size:12px;margin-bottom:10px">${cat.desc}</div>
+      <div class="star-row">${renderStars(cat.id,val)}</div>
+    </div>`
+  })
+  const rem=CATEGORIES.filter(c=>!S.myScores[c.id]).length
+  html+=`<button class="btn btn-primary btn-lg btn-block" style="margin-top:8px" onclick="submitVote()" ${rem?'disabled':''}>${rem?`${rem}개 항목 남음`:'✨ 채점 제출'}</button>`
+  $('vote-body').innerHTML=html
 }
 
-// ══════════════════════════════════════
+function renderStars(catId,current) {
+  let html=''
+  for(let s=1;s<=10;s++){
+    const on=s<=current
+    html+=`<button class="star-btn" onclick="setScore('${catId}',${s})" style="color:${on?'#fbbf24':'#3a3a52'};transform:${on?'scale(1.2)':'scale(1)'}">★</button>`
+  }
+  if(current>0) html+=`<span class="mono" style="margin-left:8px;font-size:14px;font-weight:700;color:#8b85ff">${current}</span>`
+  return html
+}
+
+window.setScore = function(catId,val) { S.myScores[catId]=val; renderVoteForm() }
+
+window.submitVote = async function() {
+  if(!checkFB()) return
+  const gid=S.config.groups[S.config.currentGroup]?.id; if(!gid) return
+  try {
+    await FB.set(FB.ref(db,`sessions/${S.sessionId}/scores/${gid}/${S.scorerName}`),{...S.myScores,submittedAt:Date.now()})
+    S.submitted=true; renderVote()
+  } catch(err) { alert('제출 실패: '+err.message) }
+}
+
+// ═════════════
 // FULL RESULTS
-// ══════════════════════════════════════
+// ═════════════
 window.renderFullResults = function() {
-  const ranked = getRanked(state.config, state.scores)
-  $('results-subtitle').textContent = `세션 ${state.sessionId} · ${state.config.groups.length}개 조`
-
-  let html = ''
-  if (!ranked.length) {
-    html = '<div class="card" style="text-align:center;padding:40px"><p style="color:#9898b4">채점 데이터가 없습니다</p></div>'
+  const ranked=getRanked()
+  $('results-subtitle').textContent=`세션 ${S.sessionId} · ${S.config.groups.length}개 조 · 가중 100점 만점`
+  let html=''
+  if(!ranked.length) {
+    html='<div class="card" style="text-align:center;padding:40px"><p style="color:#9898b4">채점 데이터가 없습니다</p></div>'
   } else {
-    // Podium for top 3
-    if (ranked.length >= 3) {
-      html += '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;max-width:640px;margin:0 auto 32px">'
-      ;[1,0,2].forEach(ri => {
-        const g = ranked[ri]
-        if (!g) return
-        const isFirst = ri === 0
-        html += `<div style="background:#0f0f18;border:1px solid ${MEDAL_COLORS[ri]}33;border-radius:18px;padding:24px 16px;text-align:center;${isFirst?'transform:scale(1.05);box-shadow:0 8px 32px rgba(251,191,36,0.1)':''};order:${ri===1?0:ri===0?1:2}">
-          <div style="font-size:${isFirst?48:36}px;margin-bottom:8px">${MEDAL_EMOJI[ri]}</div>
-          <div style="font-size:${isFirst?20:17}px;font-weight:800;margin-bottom:4px">${g.name}</div>
+    if(ranked.length>=3) {
+      html+='<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;max-width:640px;margin:0 auto 32px">'
+      ;[1,0,2].forEach(ri=>{
+        const g=ranked[ri]; if(!g) return; const isF=ri===0
+        html+=`<div style="background:#0f0f18;border:1px solid ${MEDAL_COLORS[ri]}33;border-radius:18px;padding:24px 16px;text-align:center;${isF?'transform:scale(1.05);box-shadow:0 8px 32px rgba(251,191,36,0.1)':''};order:${ri===1?0:ri===0?1:2}">
+          <div style="font-size:${isF?48:36}px;margin-bottom:8px">${['🥇','🥈','🥉'][ri]}</div>
+          <div style="font-size:${isF?20:17}px;font-weight:800;margin-bottom:4px">${g.name}</div>
           <div style="color:#5c5c7a;font-size:11px;margin-bottom:12px">${g.members.join(' · ')}</div>
-          <div class="mono" style="font-size:${isFirst?32:26}px;font-weight:900;color:${MEDAL_COLORS[ri]}">${g.result.total.toFixed(1)}</div>
-          <div style="color:#3a3a52;font-size:11px;margin-top:4px">${g.result.count}명 채점</div>
-        </div>`
+          <div class="mono" style="font-size:${isF?32:26}px;font-weight:900;color:${MEDAL_COLORS[ri]}">${g.result.total.toFixed(1)}</div>
+          <div style="color:#3a3a52;font-size:11px;margin-top:4px">/ 100점 · ${g.result.count}명</div></div>`
       })
-      html += '</div>'
+      html+='</div>'
     }
-
-    // Full list
-    const maxTotal = ranked[0]?.result?.total || 50
-    ranked.forEach((g, rank) => {
-      const mc = rank < 3 ? MEDAL_COLORS[rank] : '#5c5c7a'
-      const barWidth = ((g.result.total / maxTotal) * 100).toFixed(1)
-      const cats = CATEGORIES.map(c =>
-        `<span style="background:#12121c;border-radius:6px;padding:3px 8px;font-size:11px;color:#9898b4">${c.emoji} ${g.result.avg[c.id].toFixed(1)}</span>`
-      ).join('')
-
-      html += `<div class="card fade-in" style="animation-delay:${rank*0.08}s;${rank<3?`border-color:${mc}22`:''}">
+    const maxT=ranked[0]?.result?.total||100
+    ranked.forEach((g,rank)=>{
+      const mc=rank<3?MEDAL_COLORS[rank]:'#5c5c7a'
+      const bw=((g.result.total/maxT)*100).toFixed(1)
+      const cats=CATEGORIES.map(c=>`<span style="background:#12121c;border-radius:6px;padding:3px 8px;font-size:11px;color:#9898b4">${c.emoji}${c.weight}% ${g.result.avg[c.id].toFixed(1)}</span>`).join('')
+      html+=`<div class="card fade-in" style="animation-delay:${rank*0.08}s;${rank<3?`border-color:${mc}22`:''}">
         <div style="display:flex;align-items:center;gap:14px">
           <div class="mono" style="width:36px;height:36px;border-radius:50%;background:${mc}15;border:2px solid ${mc};display:flex;align-items:center;justify-content:center;font-weight:900;font-size:15px;color:${mc};flex-shrink:0">${rank+1}</div>
           <div style="flex:1;min-width:0">
-            <div style="font-weight:700;font-size:15px;display:flex;align-items:center;gap:6px">${g.name} <span style="color:#3a3a52;font-size:11px;font-weight:400">${g.result.count}명</span></div>
+            <div style="font-weight:700;font-size:15px">${g.name} <span style="color:#3a3a52;font-size:11px;font-weight:400">${g.result.count}명</span></div>
             <div style="margin-top:6px;height:6px;background:#12121c;border-radius:3px;overflow:hidden">
-              <div style="height:100%;width:${barWidth}%;background:${rank<3?`linear-gradient(90deg,${mc}88,${mc})`:'#635bff'};border-radius:3px;--bar-width:${barWidth}%;animation:barGrow 1s ease both"></div>
-            </div>
+              <div style="height:100%;width:${bw}%;background:${rank<3?`linear-gradient(90deg,${mc}88,${mc})`:'#635bff'};border-radius:3px;--bar-width:${bw}%;animation:barGrow 1s ease both"></div></div>
           </div>
-          <div class="mono" style="font-size:20px;font-weight:900;color:${mc};flex-shrink:0">${g.result.total.toFixed(1)}</div>
+          <div style="text-align:right"><div class="mono" style="font-size:20px;font-weight:900;color:${mc}">${g.result.total.toFixed(1)}</div><div style="font-size:10px;color:#3a3a52">/ 100</div></div>
         </div>
-        <div style="display:flex;gap:4px;margin-top:10px;flex-wrap:wrap">${cats}</div>
-      </div>`
+        <div style="display:flex;gap:4px;margin-top:10px;flex-wrap:wrap">${cats}</div></div>`
     })
   }
-
-  $('results-body').innerHTML = html
+  $('results-body').innerHTML=html
 }
 
-// ══════════════════════════════════════
-// URL PARAMS (auto-join via ?join=CODE)
-// ══════════════════════════════════════
-const params = new URLSearchParams(window.location.search)
-if (params.get('join')) {
-  state.sessionId = params.get('join').toUpperCase()
-  loadJoinScreen()
-}
+// URL auto-join
+const params=new URLSearchParams(window.location.search)
+if(params.get('join')){S.sessionId=params.get('join').toUpperCase();loadJoinScreen()}
 </script>
 </body>
 </html>

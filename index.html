@@ -211,8 +211,8 @@ button:disabled{cursor:not-allowed;opacity:0.45}
 <!-- FIREBASE + APP LOGIC                              -->
 <!-- ══════════════════════════════════════════════════ -->
 <script type="module">
-import { initializeApp } from 'firebase/app'
-import { getDatabase, ref, set, get, onValue, remove } from 'firebase/analytics'
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js'
+import { getDatabase, ref, set, get, onValue, remove } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js'
 
 // ╔══════════════════════════════════════════════════════╗
 // ║  🔥 여기에 본인 Firebase 설정을 넣으세요!              ║
@@ -227,7 +227,7 @@ const firebaseConfig = {
   messagingSenderId: "904312501135",
   appId: "1:904312501135:web:db03173baa400af63f91fa",
   measurementId: "G-1F6C77XVH4"
-}
+  }
 
 // ── Firebase 초기화 (실패해도 앱은 동작) ──
 let db = null

@@ -199,7 +199,7 @@ import { getDatabase, ref, set, get, onValue, remove } from 'https://www.gstatic
 // ║  🔥 여기에 본인 Firebase 설정을 넣으세요!              ║
 // ╚══════════════════════════════════════════════════════╝
 const firebaseConfig = {
- apiKey: "AIzaSyCTOXhHZLGRbzdUnMc1grQi711uaXSLA6k",
+  apiKey: "AIzaSyCTOXhHZLGRbzdUnMc1grQi711uaXSLA6k",
   authDomain: "presentation-score-65753.firebaseapp.com",
   databaseURL: "https://presentation-score-65753-default-rtdb.asia-southeast1.firebasedatabase.app",
   projectId: "presentation-score-65753",
@@ -243,12 +243,20 @@ function genCode() { const c='ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; let r=''; for(l
 
 // ── 가중 점수 계산 (100점 만점) ──
 function getGroupResult(scores, groupId) {
-  const gs = scores?.[groupId] || {}
+  const gs = scores?.[groupId]
+  if (!gs || typeof gs !== 'object') return null
   const scorers = Object.keys(gs)
   if (!scorers.length) return null
+  const catIds = CATEGORIES.map(c => c.id)
   const avg = {}
   CATEGORIES.forEach(c => {
-    const vals = scorers.map(s => gs[s][c.id]).filter(v => typeof v === 'number')
+    const vals = []
+    scorers.forEach(s => {
+      const scoreObj = gs[s]
+      if (scoreObj && typeof scoreObj === 'object' && typeof scoreObj[c.id] === 'number') {
+        vals.push(scoreObj[c.id])
+      }
+    })
     avg[c.id] = vals.length ? vals.reduce((a,b)=>a+b,0)/vals.length : 0
   })
   const total = CATEGORIES.reduce((sum, c) => sum + (avg[c.id] / 10) * c.weight, 0)
@@ -364,6 +372,26 @@ function renderAdmin() {
   })
   $('admin-groups-list').innerHTML=html; $('admin-groups-list').style.display='block'
   $('admin-results').style.display='none'; $('btn-finish').style.display='block'
+
+  // 하단 점수 요약 (채점 데이터 있을 때)
+  const ranked = getRanked()
+  if (ranked.length > 0) {
+    let summary = '<div style="margin-top:16px;padding:16px;background:rgba(99,91,255,0.06);border:1px solid rgba(99,91,255,0.12);border-radius:14px"><div style="font-size:13px;font-weight:700;color:#8b85ff;margin-bottom:10px">📊 현재 점수 현황 (100점 만점)</div>'
+    ranked.forEach((g, i) => {
+      const mc = i < 3 ? MEDAL_COLORS[i] : '#5c5c7a'
+      const bw = ((g.result.total / (ranked[0]?.result?.total || 100)) * 100).toFixed(0)
+      summary += `<div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
+        <span class="mono" style="font-size:12px;font-weight:700;color:${mc};width:20px;text-align:right">${i+1}</span>
+        <span style="font-size:13px;font-weight:600;width:50px">${g.name}</span>
+        <div style="flex:1;height:8px;background:#12121c;border-radius:4px;overflow:hidden">
+          <div style="height:100%;width:${bw}%;background:${i<3?mc:'#635bff'};border-radius:4px;transition:width 0.5s"></div>
+        </div>
+        <span class="mono" style="font-size:13px;font-weight:700;color:${mc};width:45px;text-align:right">${g.result.total.toFixed(1)}</span>
+      </div>`
+    })
+    summary += '</div>'
+    $('admin-groups-list').innerHTML += summary
+  }
 }
 
 function renderAdminResults() {
@@ -394,10 +422,17 @@ function buildRankCard(g,rank) {
 }
 
 window.startGroup = async function(idx) { if(!checkFB()) return; await FB.set(FB.ref(db,`sessions/${S.sessionId}/config`),{...S.config,currentGroup:idx,finished:false}) }
-window.finishAll = async function() { if(!checkFB()) return; await FB.set(FB.ref(db,`sessions/${S.sessionId}/config`),{...S.config,finished:true,currentGroup:-1}); S.showAdminResults=true; renderAdminResults() }
+window.finishAll = async function() {
+  if(!checkFB()) return
+  S.showAdminResults = true
+  try {
+    await FB.set(FB.ref(db,`sessions/${S.sessionId}/config`),{...S.config,finished:true,currentGroup:-1})
+  } catch(e) { alert('오류: '+e.message) }
+  // Firebase listener가 renderAdmin → renderAdminResults 호출함
+}
 window.toggleAdminResults = function() { S.showAdminResults=!S.showAdminResults; $('btn-toggle-results').textContent=S.showAdminResults?'조 목록':'📊 결과'; S.showAdminResults?renderAdminResults():renderAdmin() }
 window.resetSession = async function() { if(!confirm('정말 삭제하시겠습니까?')) return; if(!checkFB()) return; await FB.remove(FB.ref(db,`sessions/${S.sessionId}`)); if(S.unsub) S.unsub(); showScreen('screen-home') }
-window.copyLink = function() { navigator.clipboard.writeText(S.joinUrl).then(()=>{$('btn-copy').textContent='✓ 복사됨';setTimeout(()=>$('btn-copy').textContent='복사',2000)}) }
+window.copyLink = function() { navigator.clipboard.writeText(S.joinUrl).then(()=>{$('btn-copy').textContent='✓ 복사됨';setTimeout(()=>$('btn-copy').textContent='복사',2000)}).catch(()=>{prompt('아래 링크를 복사하세요:',S.joinUrl)}) }
 window.openFullResults = function() { showScreen('screen-results'); renderFullResults() }
 
 // ═══════════════════════

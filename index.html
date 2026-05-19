@@ -211,8 +211,8 @@ button:disabled{cursor:not-allowed;opacity:0.45}
 <!-- FIREBASE + APP LOGIC                              -->
 <!-- ══════════════════════════════════════════════════ -->
 <script type="module">
-import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js'
-import { getDatabase, ref, set, get, onValue, remove } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js'
+import { initializeApp } from 'firebase/app'
+import { getDatabase, ref, set, get, onValue, remove } from 'firebase/analytics'
 
 // ╔══════════════════════════════════════════════════════╗
 // ║  🔥 여기에 본인 Firebase 설정을 넣으세요!              ║

@@ -224,7 +224,7 @@ const firebaseConfig = {
   messagingSenderId: "904312501135",
   appId: "1:904312501135:web:db03173baa400af63f91fa",
   measurementId: "G-1F6C77XVH4"
-
+}
 let db=null, FB={}
 try { const app=initializeApp(firebaseConfig); db=getDatabase(app); FB={ref,set,get,onValue,remove} } catch(e){ console.warn('Firebase:',e) }
 function checkFB(){ if(!db){alert('⚠️ Firebase 연결 실패.\nfirebaseConfig를 확인하세요.');return false} return true }

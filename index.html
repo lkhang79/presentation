@@ -169,14 +169,13 @@ import { getDatabase, ref, set, get, onValue, remove } from 'https://www.gstatic
 // ║  🔥 여기에 본인 Firebase 설정을 넣으세요!              ║
 // ╚══════════════════════════════════════════════════════╝
 const firebaseConfig = {
-    apiKey: "AIzaSyCTOXhHZLGRbzdUnMc1grQi711uaXSLA6k",
-  authDomain: "presentation-score-65753.firebaseapp.com",
-  databaseURL: "https://presentation-score-65753-default-rtdb.asia-southeast1.firebasedatabase.app",
-  projectId: "presentation-score-65753",
-  storageBucket: "presentation-score-65753.firebasestorage.app",
-  messagingSenderId: "904312501135",
-  appId: "1:904312501135:web:db03173baa400af63f91fa",
-  measurementId: "G-1F6C77XVH4"
+  apiKey: "여기에-본인-API-KEY",
+  authDomain: "여기에-본인-프로젝트.firebaseapp.com",
+  databaseURL: "https://여기에-본인-프로젝트-default-rtdb.firebaseio.com",
+  projectId: "여기에-본인-프로젝트-ID",
+  storageBucket: "여기에-본인-프로젝트.appspot.com",
+  messagingSenderId: "여기에-SENDER-ID",
+  appId: "여기에-APP-ID"
 }
 
 let db=null,FB={}
@@ -199,7 +198,7 @@ function genCode(){const c='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';let r='';for(let i
 let S={}
 function resetState(){
   if(S.unsub){S.unsub();S.unsub=null}
-  S={sessionId:null,config:null,scores:{},role:null,scorerName:'',scorerGroup:null,groupCount:2,groups:[],staffMembers:['',''],myScores:{},submitted:false,prevGroup:-1,showAdminResults:false,unsub:null,joinUrl:'',setupStep:0}
+  S={sessionId:null,config:null,scores:{},role:null,scorerName:'',scorerGroup:null,groupCount:2,groups:[],staffMembers:['',''],myScores:{},submitted:false,prevGroup:-1,showAdminResults:false,unsub:null,joinUrl:'',setupStep:0,voteStep:0}
 }
 resetState()
 
@@ -461,7 +460,7 @@ function loadVoteScreen(){
 
 function renderVote(){
   const{config,scores,scorerName}=S;$('vote-footer').textContent=`${scorerName}${S.scorerGroup?.isStaff?' (Staff)':''} · 세션 ${S.sessionId}`
-  if(config.currentGroup!==S.prevGroup){S.prevGroup=config.currentGroup;S.myScores={};S.submitted=false
+  if(config.currentGroup!==S.prevGroup){S.prevGroup=config.currentGroup;S.myScores={};S.submitted=false;S.voteStep=0
     if(config.currentGroup>=0){const gid=config.groups[config.currentGroup]?.id;const ex=scores?.[gid]?.[scorerName];if(ex){CATEGORIES.forEach(c=>{if(typeof ex[c.id]==='number')S.myScores[c.id]=ex[c.id]});S.submitted=true}}
   }
   if(config.currentGroup===-1&&!config.finished){$('vote-banner').innerHTML='';$('vote-body').innerHTML=`<div style="text-align:center;padding:60px 20px"><div style="font-size:48px;margin-bottom:16px">⏳</div><h2 style="font-size:18px;font-weight:700;margin-bottom:6px">발표 대기 중</h2><p style="color:#9898b4;font-size:14px">관리자가 발표를 시작하면 자동으로 채점 화면이 표시됩니다</p></div>`;return}
@@ -475,13 +474,78 @@ function renderVote(){
 }
 
 function renderVoteForm(){
-  let html='';CATEGORIES.forEach((cat,i)=>{const val=S.myScores[cat.id]||0
-    html+=`<div class="card fade-in" style="animation-delay:${i*0.06}s;border-color:${val?'rgba(99,91,255,0.2)':'#1e1e30'};transition:border-color .3s"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><div style="display:flex;align-items:center;gap:8px"><span style="font-size:18px">${cat.emoji}</span><span style="font-weight:600;font-size:15px">${cat.label}</span></div><div style="display:flex;align-items:center;gap:6px"><span class="badge badge-weight">${cat.weight}%</span>${val>0?`<span class="mono badge badge-primary" style="font-size:14px;font-weight:700">${val}</span>`:''}</div></div><div style="color:#5c5c7a;font-size:12px;margin-bottom:10px">${cat.desc}</div><div class="star-row">${renderStars(cat.id,val)}</div></div>`
+  const cat=CATEGORIES[S.voteStep]
+  const val=S.myScores[cat.id]||0
+  const isLast=S.voteStep===CATEGORIES.length-1
+  const isFirst=S.voteStep===0
+  const allFilled=CATEGORIES.every(c=>S.myScores[c.id]>0)
+
+  // Progress dots
+  let dots='<div class="dots" style="margin-bottom:16px">'
+  CATEGORIES.forEach((c,i)=>{
+    const scored=S.myScores[c.id]>0
+    dots+=`<div class="dot ${i===S.voteStep?'active':scored?'done':''}" onclick="goVoteStep(${i})" style="cursor:pointer"></div>`
   })
-  const rem=CATEGORIES.filter(c=>!S.myScores[c.id]).length
-  html+=`<button class="btn btn-primary btn-lg btn-block" style="margin-top:8px" onclick="submitVote()" ${rem?'disabled':''}>${rem?`${rem}개 항목 남음`:'✨ 채점 제출'}</button>`;$('vote-body').innerHTML=html
+  dots+='</div>'
+
+  // Score summary strip
+  let strip='<div style="display:flex;gap:4px;margin-bottom:16px">'
+  CATEGORIES.forEach((c,i)=>{
+    const v=S.myScores[c.id]||0
+    const isCur=i===S.voteStep
+    strip+=`<div onclick="goVoteStep(${i})" style="flex:1;cursor:pointer;background:${isCur?'rgba(99,91,255,0.15)':v?'rgba(16,185,129,0.1)':'#12121c'};border:1px solid ${isCur?'#635bff':v?'rgba(16,185,129,0.2)':'#1e1e30'};border-radius:10px;padding:6px 4px;text-align:center;transition:all .2s">
+      <div style="font-size:14px">${c.emoji}</div>
+      <div class="mono" style="font-size:12px;font-weight:700;color:${v?'#8b85ff':'#3a3a52'};margin-top:2px">${v||'-'}</div>
+    </div>`
+  })
+  strip+='</div>'
+
+  // Main card
+  let card=`<div id="vote-card-wrap" style="overflow:hidden;touch-action:pan-y">
+    <div id="vote-card" class="card slide-left" style="border-color:${val?'rgba(99,91,255,0.25)':'#1e1e30'};padding:28px 20px;min-height:260px;display:flex;flex-direction:column;justify-content:space-between">
+      <div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+          <div style="display:flex;align-items:center;gap:10px">
+            <span style="font-size:28px">${cat.emoji}</span>
+            <div>
+              <div style="font-weight:700;font-size:17px">${cat.label}</div>
+              <span class="badge badge-weight" style="margin-top:4px">${cat.weight}%</span>
+            </div>
+          </div>
+          ${val>0?`<div class="mono" style="font-size:32px;font-weight:900;color:#8b85ff">${val}</div>`:''}
+        </div>
+        <div style="color:#5c5c7a;font-size:13px;margin-bottom:20px;line-height:1.5">${cat.desc}</div>
+        <div style="display:flex;gap:3px;justify-content:center;flex-wrap:wrap">`
+  for(let s=1;s<=10;s++){
+    const on=s<=val
+    card+=`<button onclick="setScore('${cat.id}',${s})" style="width:36px;height:44px;border-radius:10px;border:2px solid ${on?'#fbbf24':'#1e1e30'};background:${on?'rgba(251,191,36,0.12)':'#12121c'};color:${on?'#fbbf24':'#3a3a52'};font-size:16px;font-weight:800;font-family:'JetBrains Mono',monospace;transition:all .15s;-webkit-tap-highlight-color:transparent">${s}</button>`
+  }
+  card+=`</div></div></div></div>`
+
+  // Navigation buttons
+  let nav=`<div style="display:flex;gap:8px;margin-top:12px">`
+  if(!isFirst) nav+=`<button class="btn btn-outline" onclick="voteStepPrev()" style="flex:1">← ${CATEGORIES[S.voteStep-1].emoji}</button>`
+  if(!isLast) nav+=`<button class="btn btn-primary" onclick="voteStepNext()" style="flex:${isFirst?3:2}" ${!val?'disabled':''}>${CATEGORIES[S.voteStep+1].emoji} ${CATEGORIES[S.voteStep+1].label} →</button>`
+  if(isLast) nav+=`<button class="btn btn-primary btn-lg" onclick="submitVote()" style="flex:2" ${!allFilled?'disabled':''}>${allFilled?'✨ 채점 제출':`${CATEGORIES.filter(c=>!S.myScores[c.id]).length}개 항목 남음`}</button>`
+  nav+='</div>'
+
+  // Swipe hint
+  let hint=''
+  if(isFirst) hint='<div style="text-align:center;margin-top:12px;color:#3a3a52;font-size:11px">← 좌우로 밀어서 항목 이동 →</div>'
+
+  $('vote-body').innerHTML=dots+strip+card+nav+hint
+
+  // Swipe handling
+  const wrap=$('vote-card-wrap')
+  let startX=0,startY=0,diffX=0,swiping=false
+  wrap.addEventListener('touchstart',function(e){startX=e.touches[0].clientX;startY=e.touches[0].clientY;swiping=true},{passive:true})
+  wrap.addEventListener('touchmove',function(e){if(!swiping)return;diffX=e.touches[0].clientX-startX;const diffY=e.touches[0].clientY-startY;if(Math.abs(diffY)>Math.abs(diffX)){swiping=false;return};const card=$('vote-card');if(card)card.style.transform=`translateX(${diffX*0.3}px)`;if(Math.abs(diffX)>10)e.preventDefault()},{passive:false})
+  wrap.addEventListener('touchend',function(){if(!swiping){diffX=0;return};const card=$('vote-card');if(card)card.style.transform='';if(diffX<-50&&S.voteStep<CATEGORIES.length-1){S.voteStep++;renderVoteForm()}else if(diffX>50&&S.voteStep>0){S.voteStep--;renderVoteForm()};diffX=0;swiping=false},{passive:true})
 }
-function renderStars(catId,cur){let h='';for(let s=1;s<=10;s++){const on=s<=cur;h+=`<button class="star-btn" onclick="setScore('${catId}',${s})" style="color:${on?'#fbbf24':'#3a3a52'};transform:${on?'scale(1.2)':'scale(1)'}">★</button>`}if(cur>0)h+=`<span class="mono" style="margin-left:8px;font-size:14px;font-weight:700;color:#8b85ff">${cur}</span>`;return h}
+
+window.goVoteStep=function(i){S.voteStep=i;renderVoteForm()}
+window.voteStepNext=function(){if(S.voteStep<CATEGORIES.length-1){S.voteStep++;renderVoteForm()}}
+window.voteStepPrev=function(){if(S.voteStep>0){S.voteStep--;renderVoteForm()}}
 window.setScore=function(catId,val){S.myScores[catId]=val;renderVoteForm()}
 window.submitVote=async function(){if(!checkFB())return;const gid=S.config.groups[S.config.currentGroup]?.id;if(!gid)return;try{await FB.set(FB.ref(db,`sessions/${S.sessionId}/scores/${gid}/${S.scorerName}`),{...S.myScores,submittedAt:Date.now()});S.submitted=true;renderVote()}catch(err){alert('제출 실패: '+err.message)}}
 

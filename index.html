@@ -135,17 +135,11 @@ button:disabled{cursor:not-allowed;opacity:0.45}
   </div>
 </div>
 
-<!-- SCORER JOIN -->
+<!-- SCORER JOIN (wizard) -->
 <div id="screen-join" class="screen fullscreen-center bg-grad">
   <div style="max-width:400px;width:100%">
     <div class="scale-in" style="text-align:center;margin-bottom:28px"><div style="font-size:40px;margin-bottom:8px">🎯</div><h1 style="font-size:22px;font-weight:800;margin-bottom:4px">발표 채점</h1><span class="badge badge-primary" id="join-session-badge" style="font-size:12px"></span></div>
-    <div class="card slide-up" style="padding:24px">
-      <h2 style="font-size:15px;font-weight:700;margin-bottom:16px">이름을 선택해주세요</h2>
-      <div id="join-members-list"></div>
-      <div style="display:flex;align-items:center;gap:10px;margin:14px 0"><div style="flex:1;height:1px;background:#1e1e30"></div><span style="color:#3a3a52;font-size:11px">또는 직접 입력</span><div style="flex:1;height:1px;background:#1e1e30"></div></div>
-      <input class="input" id="join-custom-name" placeholder="이름 입력" style="margin-bottom:14px">
-      <button class="btn btn-primary btn-lg btn-block" onclick="joinSession()" id="btn-join" disabled>입장하기 →</button>
-    </div>
+    <div id="join-body"></div>
   </div>
 </div>
 
@@ -169,7 +163,7 @@ import { getDatabase, ref, set, get, onValue, remove } from 'https://www.gstatic
 // ║  🔥 여기에 본인 Firebase 설정을 넣으세요!              ║
 // ╚══════════════════════════════════════════════════════╝
 const firebaseConfig = {
- apiKey: "AIzaSyCTOXhHZLGRbzdUnMc1grQi711uaXSLA6k",
+   apiKey: "AIzaSyCTOXhHZLGRbzdUnMc1grQi711uaXSLA6k",
   authDomain: "presentation-score-65753.firebaseapp.com",
   databaseURL: "https://presentation-score-65753-default-rtdb.asia-southeast1.firebasedatabase.app",
   projectId: "presentation-score-65753",
@@ -199,7 +193,7 @@ function genCode(){const c='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';let r='';for(let i
 let S={}
 function resetState(){
   if(S.unsub){S.unsub();S.unsub=null}
-  S={sessionId:null,config:null,scores:{},role:null,scorerName:'',scorerGroup:null,groupCount:2,groups:[],staffMembers:['',''],myScores:{},submitted:false,prevGroup:-1,showAdminResults:false,unsub:null,joinUrl:'',setupStep:0,voteStep:0}
+  S={sessionId:null,config:null,scores:{},online:{},role:null,scorerName:'',scorerGroup:null,groupCount:2,groups:[],staffMembers:['',''],myScores:{},submitted:false,prevGroup:-1,showAdminResults:false,unsub:null,joinUrl:'',setupStep:0,voteStep:0,joinStep:0,joinGroupIdx:-1}
 }
 resetState()
 
@@ -376,12 +370,31 @@ function loadAdminScreen(){
   $('admin-session-id').textContent=`세션: ${S.sessionId}`;$('admin-code').textContent=S.sessionId
   const base=window.location.href.split('?')[0].split('#')[0];S.joinUrl=`${base}?join=${S.sessionId}`;$('share-url').textContent=S.joinUrl
   if(S.unsub){S.unsub();S.unsub=null}
-  S.unsub=FB.onValue(FB.ref(db,`sessions/${S.sessionId}`),(snap)=>{const d=snap.val();if(!d){goHome();return};S.config=d.config;S.scores=d.scores||{};renderAdmin()})
+  S.unsub=FB.onValue(FB.ref(db,`sessions/${S.sessionId}`),(snap)=>{const d=snap.val();if(!d){goHome();return};S.config=d.config;S.scores=d.scores||{};S.online=d.online||{};renderAdmin()})
 }
 
 function renderAdmin(){
   if(S.showAdminResults){renderAdminResults();return}
   let html=''
+
+  // 접속자 현황
+  const onlineNames=Object.keys(S.online)
+  const onlineCount=onlineNames.length
+  html+=`<div style="background:rgba(16,185,129,0.06);border:1px solid rgba(16,185,129,0.15);border-radius:14px;padding:14px 16px;margin-bottom:16px">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:${onlineCount?'10':'0'}px">
+      <div style="display:flex;align-items:center;gap:8px"><span style="font-size:14px">👥</span><span style="font-size:13px;font-weight:700;color:#10b981">접속 중</span><span class="mono badge badge-success" style="font-size:13px;font-weight:800">${onlineCount}명</span></div>
+    </div>`
+  if(onlineCount>0){
+    html+='<div style="display:flex;flex-wrap:wrap;gap:6px">'
+    onlineNames.forEach(name=>{
+      const info=S.online[name]
+      const isStaff=info?.isStaff
+      html+=`<span style="background:${isStaff?'rgba(168,85,247,0.12)':'#12121c'};border:1px solid ${isStaff?'rgba(168,85,247,0.25)':'#1e1e30'};border-radius:8px;padding:4px 10px;font-size:12px;font-weight:500;color:${isStaff?'#a855f7':'#e4e4ee'}">${name}${isStaff?' ✦':''}</span>`
+    })
+    html+='</div>'
+  }
+  html+='</div>'
+
   S.config.groups.filter(g=>!g.isStaff).forEach((group)=>{
     const realIdx=S.config.groups.indexOf(group);const isCur=S.config.currentGroup===realIdx
     const cnt=Object.keys(S.scores[group.id]||{}).length;const res=getGroupResult(S.scores,group.id)
@@ -429,26 +442,85 @@ window.openFullResults=function(){showScreen('screen-results');renderFullResults
 // ════════════════════
 async function loadJoinScreen(){
   if(!checkFB()){showScreen('screen-home');return}
-  showScreen('screen-join');$('join-session-badge').textContent=`세션: ${S.sessionId}`;$('btn-join').disabled=true;S.scorerName=''
+  showScreen('screen-join');$('join-session-badge').textContent=`세션: ${S.sessionId}`
+  S.scorerName='';S.joinStep=0;S.joinGroupIdx=-1
   try{
     const snap=await FB.get(FB.ref(db,`sessions/${S.sessionId}`));const data=snap.val()
     if(!data){alert('세션을 찾을 수 없습니다.');showScreen('screen-home');return}
-    S.config=data.config;const list=$('join-members-list');list.innerHTML=''
-    S.config.groups.forEach(g=>{
-      const label=document.createElement('div');label.style.cssText='font-size:11px;font-weight:600;color:#5c5c7a;margin:10px 0 4px;display:flex;align-items:center;gap:6px'
-      label.innerHTML=g.isStaff?'<span class="badge badge-staff">STAFF</span>':g.name;list.appendChild(label)
-      g.members.forEach(m=>{
-        const btn=document.createElement('button');btn.className='name-btn';btn.textContent=m
-        if(g.isStaff)btn.style.borderColor='rgba(168,85,247,0.2)'
-        btn.addEventListener('click',function(e){e.preventDefault();list.querySelectorAll('.name-btn').forEach(b=>b.classList.remove('selected'));this.classList.add('selected');S.scorerName=m;$('join-custom-name').value='';$('btn-join').disabled=false})
-        list.appendChild(btn)
-      })
-    })
-    $('join-custom-name').value=''
-    $('join-custom-name').oninput=function(){if(this.value.trim()){S.scorerName=this.value.trim();list.querySelectorAll('.name-btn').forEach(b=>b.classList.remove('selected'));$('btn-join').disabled=false}else if(!list.querySelector('.name-btn.selected')){$('btn-join').disabled=true}}
+    S.config=data.config;renderJoin()
   }catch(err){alert('연결 실패: '+err.message);showScreen('screen-home')}
 }
-window.joinSession=function(){if(!S.scorerName.trim())return;S.scorerGroup=findScorerGroup(S.scorerName);S.role='scorer';loadVoteScreen()}
+
+function renderJoin(){
+  const body=$('join-body')
+
+  // ─── Step 0: 소속 조 선택 ───
+  if(S.joinStep===0){
+    let h=`<div class="card slide-left" style="padding:24px">
+      <h2 style="font-size:17px;font-weight:700;margin-bottom:6px">소속 조를 선택하세요</h2>
+      <p style="color:#5c5c7a;font-size:12px;margin-bottom:18px">본인이 속한 조를 선택하면 해당 조원 목록이 나타납니다</p>
+      <div style="display:flex;flex-direction:column;gap:8px">`
+    S.config.groups.forEach((g,i)=>{
+      const emoji=g.isStaff?'👑':'👥'
+      const memberPreview=g.members.slice(0,3).join(', ')+(g.members.length>3?' …':'')
+      h+=`<button onclick="selectJoinGroup(${i})" style="width:100%;background:${g.isStaff?'rgba(168,85,247,0.06)':'#12121c'};border:1px solid ${g.isStaff?'rgba(168,85,247,0.2)':'#1e1e30'};border-radius:12px;padding:16px;text-align:left;transition:all .15s;cursor:pointer">
+        <div style="display:flex;align-items:center;gap:10px">
+          <div style="width:42px;height:42px;border-radius:12px;background:${g.isStaff?'rgba(168,85,247,0.12)':'rgba(99,91,255,0.08)'};display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">${emoji}</div>
+          <div style="flex:1;min-width:0">
+            <div style="font-weight:700;font-size:15px;color:#e4e4ee;display:flex;align-items:center;gap:6px">${g.name}${g.isStaff?'<span class="badge badge-staff">STAFF</span>':''}</div>
+            <div style="color:#5c5c7a;font-size:12px;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${memberPreview}</div>
+          </div>
+          <span style="color:#3a3a52;font-size:16px">→</span>
+        </div>
+      </button>`
+    })
+    h+=`</div></div>`
+    body.innerHTML=h
+    return
+  }
+
+  // ─── Step 1: 이름 선택 ───
+  const group=S.config.groups[S.joinGroupIdx]
+  let h=`<div class="card slide-left" style="padding:24px">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:16px">
+      <button onclick="joinBack()" style="color:#9898b4;font-size:20px;padding:4px 8px">←</button>
+      <h2 style="font-size:17px;font-weight:700;margin:0">${group.name}${group.isStaff?' <span class="badge badge-staff">STAFF</span>':''} — 이름 선택</h2>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:6px">`
+  group.members.forEach(m=>{
+    const sel=S.scorerName===m
+    h+=`<button class="name-btn${sel?' selected':''}" onclick="selectJoinName('${m.replace(/'/g,"\\'")}')">${m}</button>`
+  })
+  h+=`</div>
+    <div style="display:flex;align-items:center;gap:10px;margin:14px 0"><div style="flex:1;height:1px;background:#1e1e30"></div><span style="color:#3a3a52;font-size:11px">또는 직접 입력</span><div style="flex:1;height:1px;background:#1e1e30"></div></div>
+    <input class="input" id="join-custom" placeholder="이름 직접 입력" value="${S.scorerName&&!group.members.includes(S.scorerName)?S.scorerName:''}" oninput="joinCustomInput(this.value)" style="margin-bottom:14px">
+    <button class="btn btn-primary btn-lg btn-block" onclick="joinSession()" ${S.scorerName?'':'disabled'}>입장하기 →</button>
+  </div>`
+  body.innerHTML=h
+}
+
+window.selectJoinGroup=function(i){S.joinGroupIdx=i;S.joinStep=1;S.scorerName='';renderJoin()}
+window.joinBack=function(){S.joinStep=0;S.scorerName='';renderJoin()}
+window.selectJoinName=function(name){S.scorerName=name;renderJoin()}
+window.joinCustomInput=function(val){
+  S.scorerName=val.trim()
+  // Update button state
+  const btn=document.querySelector('#join-body .btn-primary')
+  if(btn)btn.disabled=!S.scorerName
+  // Deselect name buttons
+  document.querySelectorAll('#join-body .name-btn').forEach(b=>b.classList.remove('selected'))
+}
+
+window.joinSession=async function(){
+  if(!S.scorerName.trim())return
+  S.scorerGroup=findScorerGroup(S.scorerName)
+  // 접속자 등록
+  try{
+    const isStaff=S.scorerGroup?.isStaff||false
+    await FB.set(FB.ref(db,`sessions/${S.sessionId}/online/${S.scorerName}`),{joinedAt:Date.now(),isStaff})
+  }catch(e){}
+  S.role='scorer';loadVoteScreen()
+}
 
 // ════════════════════
 // SCORER VOTE

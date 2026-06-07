@@ -1,10 +1,14 @@
-요구하신 두 가지 조건(**① 심사위원 등록 시 조 이름을 기본 흰색으로 표시하되 해당 조원이 접속하면 파란색으로 변경, ② 상단에 총 접속 인원 실시간 동기화 표시**)을 완벽하게 반영했습니다.
+대형 스코어보드(프로젝터 화면)에서 접속 인원과 실시간 채점 현황이 직관적으로 보이지 않았던 이유를 찾아 해결했습니다!
 
-다른 사람이 새로 로그인하거나 나갈 때 화면이 실시간으로 감지하여 조 이름 색상과 접속 인원수가 즉각 변하도록 **`loadJoinScreen` 로직을 실시간 리스너(`FB.onValue`) 방식으로 업그레이드**했습니다. 입력창을 타이핑하는 중에는 포커스가 풀리지 않도록 방어 코드도 추가했습니다.
+기존 코드에서는 관리자 패널에만 상세 명단과 채점 현황이 나오도록 설계되어 있었고, 대형 스코어보드에는 텍스트로만 작게 표현되어 인원 파악이 어려웠습니다.
+
+요구사항을 반영하여 **대형 실시간 스코어보드(`screen-live`) 상단에 총 접속 인원을 눈에 띄는 배지로 배치**하고, 현재 발표 중인 조가 있을 때 **어떤 심사위원이 접속해 있으며 누가 채점을 완료(✓)했거나 대기(…) 중인지 대형 화면에서도 실시간 전광판 형태로 확인할 수 있도록 추적 패널을 추가**했습니다. 맥박치듯 움직이는 실시간 라이브 애니메이션 버그도 함께 정돈했습니다.
+
+---
 
 ### 💻 수정된 전체 코드
 
-아래의 코드를 전체 복사하여 기존 HTML 파일에 그대로 덮어쓰기 하시면 바로 적용됩니다.
+아래 코드를 전체 복사하여 기존 HTML 파일에 그대로 덮어쓰기 하시면 프로젝트 화면에서도 모든 참여 인원과 채점 진척도가 멋지게 실시간 동기화됩니다.
 
 ```html
 <!DOCTYPE html>
@@ -41,7 +45,7 @@ button:disabled { cursor: not-allowed; opacity: 0.4; }
 ::-webkit-scrollbar-thumb { background: #25253d; border-radius: 3px; }
 
 @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
-@keyframes pulseGlow { 0%, 100% { box-shadow: 0 0 0 0 rgba(239,68,68,0.4); } 50% { box-shadow: 0 0 0 6px rgba(239,68,68,0); } }
+@keyframes pulseGlow { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.15); opacity: 0.6; } }
 
 .fade-in { animation: fadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) both; }
 .container { max-width: 600px; margin: 0 auto; padding: 20px 16px; }
@@ -49,7 +53,7 @@ button:disabled { cursor: not-allowed; opacity: 0.4; }
 
 .card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 16px; padding: 20px; margin-bottom: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.2); }
 .badge { display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; border-radius: 30px; font-size: 11px; font-weight: 700; text-transform: uppercase; }
-.badge-live { background: rgba(239,68,68,0.12); color: var(--danger); animation: pulseGlow 2s infinite; }
+.badge-live { background: rgba(239,68,68,0.12); color: var(--danger); }
 .badge-success { background: rgba(16,185,129,0.12); color: var(--success); }
 .badge-primary { background: rgba(99,91,255,0.12); color: #9c97ff; }
 .badge-weight { background: #16162a; color: var(--warning); font-family: 'JetBrains Mono', monospace; border: 1px solid #252542; }
@@ -90,6 +94,8 @@ button:disabled { cursor: not-allowed; opacity: 0.4; }
 table { width: 100%; border-collapse: collapse; min-width: 600px; text-align: center; }
 th, td { padding: 10px 8px; font-size: 13px; border-bottom: 1px solid var(--border-color); }
 th { background: #07070f; color: var(--text-muted); font-weight: 600; font-size: 11px; }
+
+.live-dot { width: 8px; height: 8px; background: var(--danger); border-radius: 50%; display: inline-block; animation: pulseGlow 1.5s ease infinite; }
 </style>
 </head>
 <body>
@@ -288,7 +294,7 @@ function handleRoute() {
 window.addEventListener('hashchange', () => { location.reload(); });
 handleRoute();
 
-window.goHome = function() { if(JOIN_CODE) { location.hash = ''; location.reload(); return; } resetState(); showScreen('home'); }
+window.goHome = function() { if(JOIN_CODE) { location.hash = ''; location.reload(); return; } resetState(); showScreen('screen-home'); }
 window.goSetup = function() { resetState(); S.setupStep = 0; showScreen('screen-setup'); renderSetup(); }
 window.openLivePrompt = function() { const c = prompt('연결할 세션 코드를 입력하세요:'); if(c?.trim()) { const b = window.location.href.split('#')[0]; window.open(`${b}#live=${c.trim().toUpperCase()}`, '_blank'); } }
 window.openLiveFromAdmin = function() { const b = window.location.href.split('#')[0]; window.open(`${b}#live=${S.sessionId}`, '_blank'); }
@@ -520,30 +526,23 @@ window.resetSession = async function() { if(!confirm('세션을 초기화하시�
 window.copyLink = function() { navigator.clipboard.writeText(S.joinUrl).then(() => { $('btn-copy').textContent = '완료✓'; setTimeout(() => $('btn-copy').textContent = '복사', 2000); }).catch(() => { prompt('아래 링크를 복사하세요:', S.joinUrl); }); }
 window.openFullResults = function() { showScreen('screen-results'); renderResults(); }
 
-// ═══ 심사위원 실시간 접속 및 조 컬러 체인지 모듈 ═══
+// JOIN SYSTEM
 function loadJoinScreen() {
   showScreen('screen-join'); S.scorerName = ''; S.joinStep = 0;
   if (S.unsub) S.unsub();
   
-  // 실시간 변경 감지 활성화 (get에서 onValue로 변경)
   S.unsub = FB.onValue(FB.ref(db, `sessions/${S.sessionId}`), (snap) => {
     const d = snap.val();
     if (!d) { 
       $('join-body').innerHTML = '<div class="card" style="text-align:center; padding:24px;"><p style="color:var(--danger);">존재하지 않는 코드이거나 삭제된 방입니다.</p></div>'; 
       return; 
     }
-    S.config = d.config;
-    S.scores = d.scores || {};
-    S.online = d.online || {};
+    S.config = d.config; S.scores = d.scores || {}; S.online = d.online || {};
     
-    // 요구사항 ②: 총 접속 인원 숫자로 상단 배지에 동시 표기
     const totalConnected = Object.keys(S.online).length;
     $('join-badge').innerHTML = `코드: ${S.sessionId} &nbsp;|&nbsp; 👥 현재 접속: <strong style="color:var(--success); font-weight:900;">${totalConnected}</strong>명`;
     
-    // 심사위원이 하위 이름 입력창(Step 1)에서 타이핑하는 중에는 화면 전체 리렌더링을 막아 포커스가 풀리지 않게 방어
-    if (S.joinStep === 0) {
-      renderJoin();
-    }
+    if (S.joinStep === 0) { renderJoin(); }
   });
 }
 
@@ -553,13 +552,11 @@ function renderJoin() {
     let h = `<div class="card"><h2 style="font-size:15px; font-weight:700; margin-bottom:14px">소속 조를 선택해 주세요</h2><div style="display:flex; flex-direction:column; gap:8px">`;
     
     S.config.groups.forEach((g, i) => {
-      // 해당 조에 소속된 유저 중 현재 실시간 접속(online) 상태인 사람이 있는지 판별
       const isGroupOnline = Object.keys(S.online).some(username => {
         const groupInfo = findGroup(username);
         return groupInfo && groupInfo.id === g.id;
       });
       
-      // 요구사항 ①: 미접속은 흰색(#fff), 조원 접속 시 파란색(--online-blue)으로 변경
       const nameColor = isGroupOnline ? 'var(--online-blue)' : '#ffffff';
       const borderStyle = isGroupOnline 
         ? 'border: 1px solid rgba(59, 130, 246, 0.4); background: rgba(59, 130, 246, 0.04);' 
@@ -752,7 +749,7 @@ window.subBonus = async function(gid) {
   } catch(e) { alert('전송실패'); }
 }
 
-// 📺 LIVE PROJECTOR SCREEN
+// ═══ 대형 스코어보드 실시간 인원 및 채점 진척도 동기화 ═══
 function loadLive() {
   if (!checkFB()) return; showScreen('screen-live');
   if (S.unsub2) S.unsub2();
@@ -764,21 +761,57 @@ function loadLive() {
 }
 
 function renderLive() {
-  const ranked = getRanked(); const on = Object.keys(S.online).length;
+  const ranked = getRanked(); const on = Object.keys(S.online);
   const cg = S.config.currentGroup >= 0 ? S.config.groups[S.config.currentGroup] : null;
   
+  // 상단 헤더 영역 리렌더링 (총 접속 인원수 대형 강조 배지 탑재)
   $('live-header').innerHTML = `
-    <div style="display:flex; align-items:center; justify-content:center; gap:12px; margin-bottom:6px">
-      <div style="width:8px; height:8px; background:var(--danger); border-radius:50%"></div>
-      <span style="font-size:12px; font-weight:700; color:var(--danger); letter-spacing:1px">REALTIME LIVE BOARD</span>
-      <span class="mono" style="color:var(--text-muted); font-size:12px">코드: ${S.sessionId}</span>
-      <span class="badge badge-success mono">${on}명 연결됨</span>
+    <div style="display:flex; align-items:center; justify-content:center; gap:16px; margin-bottom:16px; flex-wrap:wrap;">
+      <div style="display:inline-flex; align-items:center; gap:6px; background:rgba(239,68,68,0.1); border:1px solid rgba(239,68,68,0.2); padding:6px 12px; border-radius:20px;">
+        <div class="live-dot"></div>
+        <span style="font-size:12px; font-weight:700; color:var(--danger); letter-spacing:1px">REALTIME LIVE</span>
+      </div>
+      <span class="mono" style="color:var(--text-muted); font-size:14px">세션 코드: <strong style="color:#fff; letter-spacing:1px;">${S.sessionId}</strong></span>
+      <span class="badge badge-success mono" style="font-size:13px; padding:6px 14px; background:rgba(16,185,129,0.15); border:1px solid rgba(16,185,129,0.3);">👥 총 접속 위원: <strong style="font-size:16px; color:#fff; font-weight:900;">${on.length}</strong>명</span>
     </div>
-    ${cg ? `<div style="font-size:28px; font-weight:900; color:#fff">🎤 발표 진행 조: <span style="color:var(--primary)">${cg.name}</span></div>` : S.config.finished ? '<div style="font-size:22px; font-weight:900; color:var(--success)">🏆 모든 조 심사 마감</div>' : '<div style="color:var(--text-muted); font-size:14px">발표 준비 대기 상태</div>'}`;
+    ${cg ? `<div style="font-size:32px; font-weight:900; color:#fff; margin-bottom:12px;">🎤 현재 발표 진행: <span style="color:var(--primary); text-shadow:0 0 12px rgba(99,91,255,0.3);">${cg.name}</span></div>` : S.config.finished ? '<div style="font-size:24px; font-weight:900; color:var(--success); margin-bottom:12px;">🏆 모든 조 공식 심사 종료</div>' : '<div style="color:var(--text-muted); font-size:16px; margin-bottom:12px;">발표 준비 및 심사위원 입장 대기 중</div>'}`;
     
-  if (!ranked.length) { $('live-body').innerHTML = '<p style="text-align:center; color:var(--text-muted); padding:40px">집계 대기 중...</p>'; return; }
+  let html = '';
+
+  // 현재 발표 진행 중일 때, 스코어보드를 보고 채점 누락자를 현장 통제할 수 있도록 대형 진척도 현황판 로드
+  if (cg && on.length > 0) {
+    const gs = S.scores[cg.id] || {};
+    const scored = Object.keys(gs).filter(k => gs[k] && typeof gs[k] === 'object');
+
+    // 본인 조 제외 처리 (스태프거나 타 조 인원만 채점 자격 대상으로 카운트)
+    const eligible = on.filter(n => {
+      const g2 = findGroup(n);
+      return !g2 || g2.isStaff || g2.id !== cg.id;
+    });
+
+    const done = eligible.filter(n => scored.includes(n));
+    const pending = eligible.filter(n => !scored.includes(n));
+
+    html += `
+      <div class="card" style="border-color: rgba(99,91,255,0.25); background: linear-gradient(135deg, rgba(99,91,255,0.03), var(--bg-card)); margin-bottom: 24px; padding: 18px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:8px;">
+          <span style="font-size:14px; font-weight:700; color:#9c97ff; display:flex; align-items:center; gap:6px;">📊 [${cg.name}] 심사 평가 전송 진척도 (${done.length}/${eligible.length} 완료)</span>
+          <span style="font-size:11px; color:var(--text-muted)">성명 옆의 마크를 확인하세요 (✓ 완료 / … 대기)</span>
+        </div>
+        <div style="display:flex; flex-wrap:wrap; gap:6px;">
+          ${done.map(n => `<span class="status-chip done" style="font-size:12px; padding:6px 12px; border:1px solid rgba(16,185,129,0.25)">✓ ${n}</span>`).join('')}
+          ${pending.map(n => `<span class="status-chip pending" style="font-size:12px; padding:6px 12px; border:1px solid rgba(245,158,11,0.2)">… ${n}</span>`).join('')}
+          ${eligible.length === 0 ? '<span style="font-size:12px; color:var(--text-muted);">평가 자격을 가진 외부 조 위원이 아직 로그인하지 않았습니다.</span>' : ''}
+        </div>
+      </div>`;
+  }
+
+  if (!ranked.length) { 
+    $('live-body').innerHTML = html + '<p style="text-align:center; color:var(--text-muted); padding:40px">집계 대기 중...</p>'; 
+    return; 
+  }
   
-  let html = ''; const maxT = ranked[0]?.result?.total || 100;
+  const maxT = ranked[0]?.result?.total || 100;
   ranked.forEach((g, i) => {
     const mc = i < 3 ? MC[i] : BC[i % BC.length];
     const pct = maxT > 0 ? ((g.result.total / maxT) * 100).toFixed(0) : 0;

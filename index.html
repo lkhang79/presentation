@@ -1,187 +1,185 @@
-
 <!DOCTYPE html>
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>실시간 발표 채점 시스템</title>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&family=JetBrains+Mono:wght@500;700;800&display=swap" rel="stylesheet">
+<title>실시간 발표 심사 및 채점 플랫폼</title>
+<!-- Tailwind CSS & Google Fonts -->
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Noto+Sans+KR:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
-:root {
-  --bg-main: #06060c;
-  --bg-card: #0d0d19;
-  --border-color: #1e1e35;
-  --primary: #635bff;
-  --primary-glow: rgba(99,91,255,0.15);
-  --text-main: #f1f1f7;
-  --text-muted: #626285;
-  --success: #10b981;
-  --warning: #f59e0b;
-  --danger: #ef4444;
-  --bonus: #ec4899;
-  --online-blue: #3b82f6;
-}
-
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: 'Noto Sans KR', sans-serif; background: var(--bg-main); color: var(--text-main); min-height: 100dvh; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
-input, button, select { font-family: inherit; }
-input::placeholder { color: var(--text-muted); }
-input:focus { outline: none; border-color: var(--primary) !important; box-shadow: 0 0 0 3px var(--primary-glow); }
-button { cursor: pointer; border: none; background: none; transition: all 0.2s ease; }
-button:disabled { cursor: not-allowed; opacity: 0.4; }
-::-webkit-scrollbar { width: 6px; height: 6px; }
-::-webkit-scrollbar-thumb { background: #25253d; border-radius: 3px; }
-
-@keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
-@keyframes pulseGlow { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.15); opacity: 0.6; } }
-
-.fade-in { animation: fadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) both; }
-.container { max-width: 600px; margin: 0 auto; padding: 20px 16px; }
-.container-wide { max-width: 1000px; margin: 0 auto; padding: 20px 16px; }
-
-.card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 16px; padding: 20px; margin-bottom: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.2); }
-.badge { display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; border-radius: 30px; font-size: 11px; font-weight: 700; text-transform: uppercase; }
-.badge-live { background: rgba(239,68,68,0.12); color: var(--danger); }
-.badge-success { background: rgba(16,185,129,0.12); color: var(--success); }
-.badge-primary { background: rgba(99,91,255,0.12); color: #9c97ff; }
-.badge-weight { background: #16162a; color: var(--warning); font-family: 'JetBrains Mono', monospace; border: 1px solid #252542; }
-.badge-staff { background: rgba(168,85,247,0.15); color: #b975ff; }
-
-.btn { padding: 12px 24px; border-radius: 12px; font-weight: 700; font-size: 14px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; border: 1px solid transparent; }
-.btn-primary { background: var(--primary); color: #fff; box-shadow: 0 4px 12px rgba(99,91,255,0.3); }
-.btn-primary:hover { background: #4f46e5; }
-.btn-outline { background: #111122; border-color: var(--border-color); color: var(--text-main); }
-.btn-outline:hover { background: #16162d; border-color: #333356; }
-.btn-danger { background: rgba(239,68,68,0.1); border-color: rgba(239,68,68,0.2); color: var(--danger); }
-.btn-success { background: rgba(16,185,129,0.1); border-color: rgba(16,185,129,0.2); color: var(--success); }
-.btn-bonus { background: rgba(236,72,153,0.1); border-color: rgba(236,72,153,0.2); color: var(--bonus); }
-.btn-block { width: 100%; display: flex; }
-
-.mono { font-family: 'JetBrains Mono', monospace; }
-.input { width: 100%; background: #07070f; border: 1px solid var(--border-color); border-radius: 10px; padding: 12px 14px; color: #fff; font-size: 14px; transition: border 0.15s; }
-.screen { display: none; }
-.screen.active { display: block; }
-.fullscreen-center { min-height: 100dvh; display: flex; align-items: center; justify-content: center; padding: 20px; background: radial-gradient(circle at 50% 30%, #13122b 0%, var(--bg-main) 70%); }
-
-.name-btn { width: 100%; background: #07070f; border: 1px solid var(--border-color); border-radius: 10px; padding: 14px; color: var(--text-main); font-size: 14px; text-align: left; margin-bottom: 6px; }
-.name-btn.selected { background: rgba(99,91,255,0.15) !important; border-color: var(--primary) !important; color: #9c97ff !important; font-weight: 700; }
-
-.dots { display: flex; gap: 6px; justify-content: center; margin: 16px 0; }
-.dot { width: 8px; height: 8px; border-radius: 50%; background: #222238; transition: all 0.25s; }
-.dot.active { background: var(--primary); width: 20px; border-radius: 4px; }
-.dot.done { background: var(--success); }
-
-.chart-row { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
-.chart-container { flex: 1; height: 32px; background: #07070f; border-radius: 8px; overflow: hidden; position: relative; border: 1px solid #151526; }
-.chart-bar { height: 100%; transform-origin: left; transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1); border-radius: 0 4px 4px 0; }
-
-.status-chip { padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: 600; display: inline-flex; align-items: center; gap: 4px; }
-.status-chip.done { background: rgba(16,185,129,0.12); color: var(--success); }
-.status-chip.pending { background: rgba(245,158,11,0.08); color: var(--warning); }
-
-table { width: 100%; border-collapse: collapse; min-width: 600px; text-align: center; }
-th, td { padding: 10px 8px; font-size: 13px; border-bottom: 1px solid var(--border-color); }
-th { background: #07070f; color: var(--text-muted); font-weight: 600; font-size: 11px; }
-
-.live-dot { width: 8px; height: 8px; background: var(--danger); border-radius: 50%; display: inline-block; animation: pulseGlow 1.5s ease infinite; }
+  body {
+    font-family: 'Plus Jakarta Sans', 'Noto Sans KR', sans-serif;
+    background-color: #030307;
+    background-image: 
+      radial-gradient(circle at 10% 20%, rgba(99, 91, 255, 0.08) 0%, transparent 40%),
+      radial-gradient(circle at 90% 80%, rgba(236, 72, 153, 0.05) 0%, transparent 45%);
+    color: #f1f1f7;
+    -webkit-font-smoothing: antialiased;
+  }
+  .glass {
+    background: rgba(13, 13, 27, 0.65);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+  }
+  .glass-hover:hover {
+    background: rgba(20, 20, 40, 0.8);
+    border-color: rgba(99, 91, 255, 0.25);
+    transform: translateY(-2px);
+  }
+  .glow-indigo {
+    box-shadow: 0 0 25px rgba(99, 91, 255, 0.25);
+  }
+  .glow-rose {
+    box-shadow: 0 0 25px rgba(236, 72, 153, 0.2);
+  }
+  .mono {
+    font-family: 'JetBrains Mono', monospace;
+  }
+  @keyframes slideIn {
+    from { transform: translateX(100%) translateY(10px); opacity: 0; }
+    to { transform: translateX(0) translateY(0); opacity: 1; }
+  }
+  .toast-animate {
+    animation: slideIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
 </style>
 </head>
-<body>
+<body class="min-h-screen text-slate-100 selection:bg-indigo-500/30">
 
-<div id="screen-home" class="screen fullscreen-center">
-  <div style="text-align:center; max-width:360px; width:100%;" class="fade-in">
-    <div style="width:72px; height:72px; border-radius:20px; background:rgba(99,91,255,0.1); border:1px solid rgba(99,91,255,0.2); display:flex; align-items:center; justify-content:center; margin:0 auto 24px; font-size:32px">📊</div>
-    <h1 style="font-size:28px; font-weight:900; letter-spacing:-0.5px; margin-bottom:6px">실시간 발표 채점</h1>
-    <p style="color:var(--text-muted); font-size:14px; margin-bottom:36px">클라우드 통합 관리 플랫폼</p>
-    <div style="display:flex; flex-direction:column; gap:12px">
-      <button onclick="goSetup()" class="btn btn-primary btn-block" style="padding:16px;">👑 새로운 평가 세션 생성</button>
-      <button onclick="openLivePrompt()" class="btn btn-outline btn-block" style="padding:14px;">📺 대형 스코어보드 열기</button>
+<!-- 토스트 메시지 컨테이너 -->
+<div id="toast-container" class="fixed top-5 right-5 z-50 flex flex-col gap-2 pointer-events-none max-w-sm w-full px-4"></div>
+
+<!-- HOME -->
+<div id="screen-home" class="screen hidden min-h-screen flex items-center justify-center px-4">
+  <div class="max-w-md w-full glass p-8 rounded-3xl text-center border border-white/5 shadow-2xl relative overflow-hidden">
+    <div class="absolute -top-10 -left-10 w-32 h-32 bg-indigo-600/10 rounded-full blur-2xl"></div>
+    <div class="absolute -bottom-10 -right-10 w-32 h-32 bg-pink-600/10 rounded-full blur-2xl"></div>
+    
+    <div class="w-16 h-16 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center mx-auto mb-6 text-3xl">🎯</div>
+    <h1 class="text-3xl font-extrabold tracking-tight bg-gradient-to-r from-indigo-200 via-indigo-400 to-pink-300 bg-clip-text text-transparent mb-2">실시간 심사 플랫폼</h1>
+    <p class="text-slate-400 text-sm mb-8 font-medium">Smart Real-time Evaluation System</p>
+    
+    <div class="space-y-3">
+      <button onclick="goSetup()" class="w-full py-4 px-6 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 rounded-2xl font-bold transition duration-200 shadow-lg shadow-indigo-600/20 hover:scale-[1.01]">
+        👑 새 평가 세션 생성
+      </button>
+      <button onclick="openLivePrompt()" class="w-full py-4 px-6 bg-slate-900/60 hover:bg-slate-900 border border-white/5 hover:border-indigo-500/30 rounded-2xl font-bold text-slate-300 transition duration-200">
+        📺 대형 스코어보드 관제
+      </button>
     </div>
   </div>
 </div>
 
-<div id="screen-setup" class="screen">
-  <div class="container fade-in">
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px">
-      <button class="btn btn-outline mono" style="padding:6px 12px; font-size:12px;" onclick="setupBack()">← BACK</button>
-      <span id="setup-title" style="font-size:15px; font-weight:700"></span>
-      <span id="setup-step-label" class="mono" style="font-size:12px; color:var(--text-muted)"></span>
+<!-- SETUP -->
+<div id="screen-setup" class="screen hidden min-h-screen py-10 px-4">
+  <div class="max-w-xl mx-auto">
+    <div class="flex items-center justify-between mb-8">
+      <button class="px-4 py-2 rounded-xl bg-white/5 border border-white/5 hover:bg-white/10 transition text-sm font-semibold text-slate-300" onclick="setupBack()">
+        ← 뒤로가기
+      </button>
+      <span id="setup-title" class="text-base font-bold text-slate-200">세션 환경 구성</span>
+      <span id="setup-step-label" class="mono text-xs bg-indigo-500/10 text-indigo-400 px-3 py-1 rounded-full border border-indigo-500/20"></span>
     </div>
-    <div id="setup-dots" class="dots"></div>
-    <div id="setup-content"></div>
+    
+    <div id="setup-dots" class="flex gap-2 justify-center mb-8"></div>
+    <div id="setup-content" class="glass rounded-3xl p-6 border border-white/5"></div>
   </div>
 </div>
 
-<div id="screen-admin" class="screen">
-  <div class="container fade-in">
-    <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:20px">
+<!-- ADMIN CONTROL PANEL -->
+<div id="screen-admin" class="screen hidden min-h-screen py-8 px-4">
+  <div class="max-w-3xl mx-auto">
+    <!-- 헤더 -->
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
       <div>
-        <h1 style="font-size:20px; font-weight:900">👑 세션 통제 패널</h1>
-        <p id="admin-session-id" class="mono" style="color:var(--text-muted); font-size:12px; margin-top:2px"></p>
-      </div>
-      <div style="display:flex; gap:6px">
-        <button class="btn btn-outline" style="padding:6px 12px; font-size:12px;" id="btn-toggle" onclick="toggleAdminView()">📊 결과전환</button>
-        <button class="btn btn-danger" style="padding:6px 12px; font-size:12px;" onclick="resetSession()">삭제</button>
-      </div>
-    </div>
-    
-    <div id="share-bar" style="background:#0d0d19; border:1px solid var(--border-color); border-radius:12px; padding:12px 14px; margin-bottom:16px">
-      <div style="display:flex; justify-content:space-between; align-items:center; gap:10px">
-        <div style="flex:1; min-width:0">
-          <div style="color:var(--text-muted); font-size:11px; margin-bottom:2px">심사위원 접속 URL</div>
-          <div id="share-url" class="mono" style="color:#9c97ff; font-size:12px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis"></div>
+        <div class="flex items-center gap-2">
+          <span class="w-2 h-2 bg-indigo-500 rounded-full animate-ping"></span>
+          <h1 class="text-2xl font-extrabold tracking-tight">👑 실시간 운영자 센터</h1>
         </div>
-        <button class="btn btn-primary" style="padding:6px 12px; font-size:12px;" onclick="copyLink()" id="btn-copy">복사</button>
+        <p id="admin-session-id" class="mono text-slate-400 text-xs mt-1 bg-white/5 inline-block px-3 py-1 rounded-md border border-white/5"></p>
+      </div>
+      <div class="flex items-center gap-2">
+        <button class="px-4 py-2 rounded-xl bg-white/5 border border-white/5 hover:bg-white/10 text-xs font-bold transition" id="btn-toggle" onclick="toggleAdminView()">
+          📊 결과전환
+        </button>
+        <button class="px-4 py-2 rounded-xl bg-red-500/10 border border-red-500/20 hover:bg-red-500/20 text-red-400 text-xs font-bold transition" onclick="resetSession()">
+          세션삭제
+        </button>
       </div>
     </div>
     
-    <div id="admin-body"></div>
-    <div id="admin-buttons" style="margin-top:16px; display:flex; flex-direction:column; gap:8px"></div>
-  </div>
-</div>
-
-<div id="screen-join" class="screen fullscreen-center">
-  <div style="max-width:380px; width:100%;" class="fade-in">
-    <div style="text-align:center; margin-bottom:24px">
-      <div style="font-size:36px; margin-bottom:4px">🎯</div>
-      <h1 style="font-size:20px; font-weight:900">심사위원 등록</h1>
-      <span class="badge badge-primary mono" id="join-badge" style="margin-top:6px; font-size:12px;"></span>
+    <!-- 링크 배포 바 -->
+    <div class="glass rounded-2xl p-4 mb-6 border border-white/5 flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div class="min-width-0 flex-1">
+        <div class="text-[11px] text-slate-500 font-bold uppercase tracking-wider mb-1">심사위원 접속 링크 (이 주소를 복사해 전달하세요)</div>
+        <div id="share-url" class="mono text-xs text-indigo-300 truncate bg-black/30 p-2.5 rounded-lg border border-white/5 select-all"></div>
+      </div>
+      <button class="py-2.5 px-5 bg-indigo-600 hover:bg-indigo-500 rounded-xl font-bold text-sm transition" onclick="copyLink()" id="btn-copy">
+        링크 복사
+      </button>
     </div>
-    <div id="join-body"></div>
+    
+    <div id="admin-body" class="space-y-4"></div>
+    <div id="admin-buttons" class="mt-6 space-y-2"></div>
   </div>
 </div>
 
-<div id="screen-vote" class="screen">
-  <div class="container fade-in">
-    <div id="vote-banner"></div>
-    <div id="vote-body"></div>
-    <div style="text-align:center; margin-top:20px"><span id="vote-footer" class="mono" style="color:var(--text-muted); font-size:11px"></span></div>
-  </div>
-</div>
-
-<div id="screen-live" class="screen">
-  <div class="container-wide fade-in">
-    <div id="live-header" style="text-align:center; margin-bottom:24px"></div>
-    <div id="live-body"></div>
-  </div>
-</div>
-
-<div id="screen-results" class="screen">
-  <div class="container-wide fade-in" style="padding-top:30px;">
-    <div style="text-align:center; margin-bottom:32px">
-      <div style="font-size:48px; margin-bottom:8px">🏆</div>
-      <h1 style="font-size:32px; font-weight:900">최종 심사 결과</h1>
-      <p id="results-sub" class="mono" style="color:var(--text-muted); font-size:13px; margin-top:4px"></p>
+<!-- JOIN SCREEN (심사위원 등록) -->
+<div id="screen-join" class="screen hidden min-h-screen flex items-center justify-center px-4">
+  <div class="max-w-md w-full glass p-8 rounded-3xl border border-white/5 relative">
+    <div class="text-center mb-6">
+      <div class="text-4xl mb-3">🎯</div>
+      <h1 class="text-2xl font-extrabold">심사위원 입장</h1>
+      <span class="inline-block mt-2 text-xs bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 px-3 py-1 rounded-full font-bold" id="join-badge"></span>
     </div>
-    <div id="results-body"></div>
-    <div style="text-align:center; margin-top:32px"><button class="btn btn-outline" onclick="goHome()">🏠 메인 화면으로</button></div>
+    <div id="join-body" class="space-y-4"></div>
   </div>
 </div>
 
+<!-- SCORER VOTE SCREEN (심사 채점 카드) -->
+<div id="screen-vote" class="screen hidden min-h-screen py-6 px-4">
+  <div class="max-w-xl mx-auto">
+    <div id="vote-banner" class="mb-4"></div>
+    <div id="vote-body" class="space-y-4"></div>
+    <div class="text-center mt-6">
+      <span id="vote-footer" class="mono text-slate-500 text-[11px] tracking-wider uppercase bg-white/5 py-1.5 px-4 rounded-full border border-white/5"></span>
+    </div>
+  </div>
+</div>
+
+<!-- LIVE SCOREBOARD -->
+<div id="screen-live" class="screen hidden min-h-screen py-10 px-4">
+  <div class="max-w-5xl mx-auto">
+    <div id="live-header" class="text-center mb-8 flex flex-col items-center justify-center gap-2"></div>
+    <div id="live-body" class="space-y-6"></div>
+  </div>
+</div>
+
+<!-- RESULTS DETAIL SCREEN -->
+<div id="screen-results" class="screen hidden min-h-screen py-10 px-4">
+  <div class="max-w-5xl mx-auto">
+    <div class="text-center mb-10">
+      <div class="text-5xl mb-4">🏆</div>
+      <h1 class="text-4xl font-black tracking-tight">최종 평가 결과</h1>
+      <p id="results-sub" class="mono text-xs text-slate-400 mt-2 inline-block bg-white/5 px-3 py-1 rounded-md border border-white/5"></p>
+    </div>
+    <div id="results-body" class="space-y-6"></div>
+    <div class="text-center mt-10">
+      <button class="px-6 py-3 rounded-xl bg-white/5 border border-white/5 hover:bg-white/10 transition font-bold" onclick="goHome()">
+        🏠 홈으로 이동
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Firebase SDK 및 앱 로직 -->
 <script type="module">
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js'
 import { getDatabase, ref, set, get, onValue, remove } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js'
 
+// Firebase 구성 정보
 const firebaseConfig = {
   apiKey: "AIzaSyCTOXhHZLGRbzdUnMc1grQi711uaXSLA6k",
   authDomain: "presentation-score-65753.firebaseapp.com",
@@ -193,9 +191,23 @@ const firebaseConfig = {
 }
 
 let db = null, FB = {}
-try { const app = initializeApp(firebaseConfig); db = getDatabase(app); FB = { ref, set, get, onValue, remove } } catch(e) { console.warn('Firebase Error:', e) }
-function checkFB() { if(!db) { alert('⚠️ 데이터베이스 실시간 통신망에 연결할 수 없습니다.'); return false; } return true; }
+try { 
+  const app = initializeApp(firebaseConfig); 
+  db = getDatabase(app); 
+  FB = { ref, set, get, onValue, remove } 
+} catch(e) { 
+  console.warn('Firebase connection failed:', e) 
+}
 
+function checkFB() { 
+  if(!db) { 
+    showToast('⚠️ 실시간 통신 서버에 연결할 수 없습니다.', 'error'); 
+    return false; 
+  } 
+  return true; 
+}
+
+// 7대 핵심 본 심사 항목 (가중치 100%)
 const CATS = [
   { id: 'c1', g: '학술연구역량', label: '과학적 정확성', emoji: '🔬', w: 15, desc: '연구 방법론, 실험 설계 및 데이터 처리의 오류 여부' },
   { id: 'c2', g: '학술연구역량', label: '논리적 구조', emoji: '🧩', w: 20, desc: '서론-본론-결론의 유기적 흐름 및 전개 방식' },
@@ -210,6 +222,32 @@ const BONUS = { id: 'bonus', label: 'Q&A 실시간 대응력', emoji: '❓', des
 const MC = ['#fbbf24', '#94a3b8', '#d97706']
 const BC = ['#635bff', '#8b5cf6', '#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#ec4899', '#14b8a6']
 
+// 커스텀 모던 토스트 알림창
+window.showToast = function(message, type = 'success') {
+  const container = $('toast-container');
+  const toast = document.createElement('div');
+  toast.className = `toast-animate p-4 rounded-2xl glass shadow-2xl flex items-center gap-3 border pointer-events-auto transition duration-300`;
+  
+  let icon = 'ℹ️';
+  let borderColor = 'rgba(255, 255, 255, 0.1)';
+  if (type === 'success') { icon = '✅'; borderColor = 'rgba(16, 185, 129, 0.3)'; }
+  else if (type === 'error') { icon = '❌'; borderColor = 'rgba(239, 68, 68, 0.3)'; }
+  else if (type === 'warning') { icon = '⚠️'; borderColor = 'rgba(245, 158, 11, 0.3)'; }
+  
+  toast.style.borderColor = borderColor;
+  toast.innerHTML = `
+    <div class="text-xl">${icon}</div>
+    <div class="text-sm font-bold text-slate-100 flex-1">${message}</div>
+    <button class="text-slate-400 hover:text-slate-200 text-lg font-bold" onclick="this.parentElement.remove()">×</button>
+  `;
+  container.appendChild(toast);
+  setTimeout(() => {
+    toast.style.opacity = '0';
+    toast.style.transform = 'translateY(-10px)';
+    setTimeout(() => toast.remove(), 300);
+  }, 4000);
+}
+
 function $(id) { return document.getElementById(id); }
 function genCode() { const c = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; let r = ''; for(let i=0; i<6; i++) r += c[Math.floor(Math.random() * c.length)]; return r; }
 
@@ -220,7 +258,10 @@ function resetState() {
 }
 resetState();
 
-function showScreen(id) { document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); $(id).classList.add('active'); }
+function showScreen(id) { 
+  document.querySelectorAll('.screen').forEach(s => s.classList.add('hidden')); 
+  $(id).classList.remove('hidden'); 
+}
 
 function calcResult(scores, gid) {
   const gs = scores?.[gid];
@@ -277,15 +318,34 @@ function handleRoute() {
     loadJoinScreen(); return;
   }
   if (LIVE_CODE) { resetState(); S.sessionId = LIVE_CODE.toUpperCase(); loadLive(); return; }
+  
+  // 만약 해시가 비어있고, 특정 세션 ID가 세션스토리지나 로컬에 있다면 복구 시도 (또는 홈화면)
   showScreen('screen-home');
 }
 window.addEventListener('hashchange', () => { location.reload(); });
 handleRoute();
 
-window.goHome = function() { if(JOIN_CODE) { location.hash = ''; location.reload(); return; } resetState(); showScreen('screen-home'); }
+window.goHome = function() { 
+  if(JOIN_CODE) { 
+    location.hash = ''; 
+    location.reload(); 
+    return; 
+  } 
+  resetState(); 
+  showScreen('screen-home'); 
+}
 window.goSetup = function() { resetState(); S.setupStep = 0; showScreen('screen-setup'); renderSetup(); }
-window.openLivePrompt = function() { const c = prompt('연결할 세션 코드를 입력하세요:'); if(c?.trim()) { const b = window.location.href.split('#')[0]; window.open(`${b}#live=${c.trim().toUpperCase()}`, '_blank'); } }
-window.openLiveFromAdmin = function() { const b = window.location.href.split('#')[0]; window.open(`${b}#live=${S.sessionId}`, '_blank'); }
+window.openLivePrompt = function() { 
+  const c = prompt('연결할 세션 코드를 입력하세요:'); 
+  if(c?.trim()) { 
+    const b = window.location.href.split('#')[0]; 
+    window.open(`${b}#live=${c.trim().toUpperCase()}`, '_blank'); 
+  } 
+}
+window.openLiveFromAdmin = function() { 
+  const b = window.location.href.split('#')[0]; 
+  window.open(`${b}#live=${S.sessionId}`, '_blank'); 
+}
 
 function getTotalSteps() { return S.groupCount + 3; }
 function renderSetup() {
@@ -298,17 +358,24 @@ function renderSetup() {
   if (step === 0) {
     $('setup-title').textContent = '⚙️ 세션 코드 및 규모 설정';
     box.innerHTML = `
-      <div class="card" style="padding:24px;">
-        <h2 style="font-size:15px; font-weight:700; margin-bottom:12px">커스텀 세션 코드 명칭 지정</h2>
-        <input class="input mono" id="inp-code" placeholder="미입력 시 무작위 자동 할당" maxlength="10" value="${S.customCode||''}" style="font-size:16px; letter-spacing:2px; text-transform:uppercase; text-align:center; margin-bottom:24px">
-        <h2 style="font-size:15px; font-weight:700; margin-bottom:16px">참가팀 총 조수 선택</h2>
-        <div id="gc-grid" style="display:grid; grid-template-columns:repeat(5,1fr); gap:8px; margin-bottom:24px"></div>
-        <button class="btn btn-primary btn-block" style="padding:14px;" onclick="setupNext()">다음 단계로 진행 →</button>
+      <div class="space-y-6">
+        <div>
+          <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">커스텀 세션 코드 명칭 지정</label>
+          <input class="input text-center text-xl tracking-widest font-bold uppercase" id="inp-code" placeholder="미입력 시 무작위 자동 할당" maxlength="10" value="${S.customCode||''}">
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">참가팀 총 조수 선택</label>
+          <div id="gc-grid" class="grid grid-cols-5 gap-2"></div>
+        </div>
+        <button class="w-full py-4 bg-indigo-600 hover:bg-indigo-500 rounded-2xl font-bold transition flex items-center justify-center gap-2" onclick="setupNext()">
+          다음 단계로 진행 →
+        </button>
       </div>`;
     const g = $('gc-grid');
     for (let n = 2; n <= 10; n++) {
-      const b = document.createElement('button'); b.textContent = n;
-      b.style.cssText = `aspect-ratio:1; border-radius:12px; font-size:18px; font-weight:800; border:2px solid ${n===S.groupCount?'var(--primary)':'var(--border-color)'}; background:${n===S.groupCount?'var(--primary-glow)':'#07070f'}; color:${n===S.groupCount?'#9c97ff':'var(--text-muted)'}`;
+      const b = document.createElement('button'); 
+      b.textContent = n;
+      b.className = `aspect-square rounded-2xl text-lg font-black transition border-2 ${n===S.groupCount ? 'border-indigo-500 bg-indigo-500/10 text-indigo-300' : 'border-white/5 bg-black/40 text-slate-500 hover:border-white/10'}`;
       b.onclick = () => { S.groupCount = n; renderSetup(); };
       g.appendChild(b);
     }
@@ -321,58 +388,58 @@ function renderSetup() {
     const g = S.groups[gi];
     $('setup-title').textContent = `👥 명단 작성 (${g.name})`;
     let h = `
-      <div class="card">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px">
-          <h2 style="font-size:16px; font-weight:700">${g.name} 발표자 인원 <span class="mono" style="color:var(--primary)">(${g.members.filter(m=>m.trim()).length}명)</span></h2>
-          <button class="btn btn-outline" style="padding:6px 12px; font-size:12px;" onclick="wizAdd(${gi})">+ 추가</button>
+      <div class="space-y-4">
+        <div class="flex justify-between items-center">
+          <h2 class="text-sm font-bold text-slate-200">${g.name} 발표자 인원 <span class="mono text-indigo-400">(${g.members.filter(m=>m.trim()).length}명)</span></h2>
+          <button class="px-3 py-1 bg-white/5 hover:bg-white/10 border border-white/5 rounded-lg text-xs font-bold" onclick="wizAdd(${gi})">+ 추가</button>
         </div>
-        <div style="display:flex; flex-direction:column; gap:8px">`;
+        <div class="space-y-2">`;
     g.members.forEach((m, mi) => {
       h += `
-        <div style="display:flex; gap:6px">
+        <div class="flex gap-2">
           <input class="input" value="${m}" oninput="wizUpd(${gi},${mi},this.value)" placeholder="발표자 성명 입력 ${mi+1}">
-          ${g.members.length > 1 ? `<button style="color:var(--text-muted); font-size:20px; padding:0 8px" onclick="wizRm(${gi},${mi})">×</button>` : ''}
+          ${g.members.length > 1 ? `<button class="text-slate-500 hover:text-red-400 text-xl px-2" onclick="wizRm(${gi},${mi})">×</button>` : ''}
         </div>`;
     });
-    h += `</div><div style="display:flex; gap:8px; margin-top:24px"><button class="btn btn-outline" onclick="setupBack()" style="flex:1">이전</button><button class="btn btn-primary" onclick="setupNext()" style="flex:2">다음 →</button></div></div>`;
+    h += `</div><div class="grid grid-cols-3 gap-2 mt-6"><button class="btn btn-outline" onclick="setupBack()">이전</button><button class="col-span-2 btn btn-primary" onclick="setupNext()">다음 →</button></div></div>`;
     box.innerHTML = h; return;
   }
   
   if (gi === S.groupCount) {
     $('setup-title').textContent = '👑 운영진/Staff 등록';
     let h = `
-      <div class="card" style="border-color:rgba(168,85,247,0.3)">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px">
-          <h2 style="font-size:16px; font-weight:700"><span class="badge badge-staff">STAFF</span> 명단 채움</h2>
-          <button class="btn btn-outline" style="padding:6px 12px; font-size:12px;" onclick="wizAddS()">+ 추가</button>
+      <div class="space-y-4">
+        <div class="flex justify-between items-center">
+          <h2 class="text-sm font-bold text-slate-200"><span class="badge badge-staff mr-1">STAFF</span> 운영 위원 등록</h2>
+          <button class="px-3 py-1 bg-white/5 hover:bg-white/10 border border-white/5 rounded-lg text-xs font-bold" onclick="wizAddS()">+ 추가</button>
         </div>
-        <p style="color:var(--text-muted); font-size:12px; margin-bottom:16px">스태프는 모든 조를 차별 없이 상시 전방위 채점할 수 있습니다.</p>
-        <div style="display:flex; flex-direction:column; gap:8px">`;
+        <p class="text-xs text-slate-400 leading-relaxed">스태프는 특정 조에 구애받지 않고 모든 조를 제한없이 전방위 채점할 수 있습니다.</p>
+        <div class="space-y-2">`;
     S.staffMembers.forEach((m, i) => {
       h += `
-        <div style="display:flex; gap:6px">
-          <input class="input" value="${m}" oninput="wizUpdS(${i},this.value)" placeholder="운영진 성명 입력 ${i+1}">
-          ${S.staffMembers.length > 1 ? `<button style="color:var(--text-muted); font-size:20px; padding:0 8px" onclick="wizRmS(${i})">×</button>` : ''}
+        <div class="flex gap-2">
+          <input class="input" value="${m}" oninput="wizUpdS(${i},this.value)" placeholder="운영 위원 성명 입력 ${i+1}">
+          ${S.staffMembers.length > 1 ? `<button class="text-slate-500 hover:text-red-400 text-xl px-2" onclick="wizRmS(${i})">×</button>` : ''}
         </div>`;
     });
-    h += `</div><div style="display:flex; gap:8px; margin-top:24px"><button class="btn btn-outline" onclick="setupBack()" style="flex:1">이전</button><button class="btn btn-primary" onclick="setupNext()" style="flex:2">다음 →</button></div></div>`;
+    h += `</div><div class="grid grid-cols-3 gap-2 mt-6"><button class="btn btn-outline" onclick="setupBack()">이전</button><button class="col-span-2 btn btn-primary" onclick="setupNext()">다음 →</button></div></div>`;
     box.innerHTML = h; return;
   }
   
-  $('setup-title').textContent = '✅ 세션 개설 전 최종 검증';
+  $('setup-title').textContent = '✅ 세션 개설 최종 확인';
   const tm = S.groups.reduce((a, g) => a + g.members.filter(m => m.trim()).length, 0);
   const sc = S.staffMembers.filter(m => m.trim()).length;
-  let h = `<div class="card">`;
+  let h = `<div class="space-y-4">`;
   S.groups.slice(0, S.groupCount).forEach(g => {
     const m = g.members.filter(x => x.trim());
-    h += `<div style="display:flex; align-items:center; gap:10px; margin-bottom:6px; padding:10px 14px; background:#07070f; border:1px solid var(--border-color); border-radius:10px"><span style="font-weight:700; font-size:14px; width:44px">${g.name}</span><span style="color:#b2b2cc; font-size:13px; flex:1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis">${m.join(', ') || '(비어있음)'}</span></div>`;
+    h += `<div class="flex items-center justify-between p-3 bg-black/40 border border-white/5 rounded-xl"><span class="font-extrabold text-sm text-indigo-300 w-16">${g.name}</span><span class="text-xs text-slate-400 flex-1 truncate text-right mr-3">${m.join(', ') || '(비어있음)'}</span></div>`;
   });
-  if (sc > 0) h += `<div style="display:flex; align-items:center; padding:10px 14px; background:rgba(168,85,247,0.04); border:1px solid rgba(168,85,247,0.15); border-radius:10px; margin-top:12px"><span class="badge badge-staff" style="margin-right:10px">STAFF</span><span style="color:#b2b2cc; font-size:13px">${S.staffMembers.filter(m => m.trim()).join(', ')}</span></div>`;
+  if (sc > 0) h += `<div class="p-3 bg-indigo-500/5 border border-indigo-500/10 rounded-xl flex justify-between items-center"><span class="badge badge-staff">STAFF</span><span class="text-xs text-slate-400 truncate text-right flex-1">${S.staffMembers.filter(m => m.trim()).join(', ')}</span></div>`;
   h += `
-    <div style="background:var(--primary-glow); border-radius:10px; padding:14px; text-align:center; margin:20px 0">
-      <span style="color:#9c97ff; font-weight:700; font-size:14px">총계: ${S.groupCount}개 조 개설 / 발표 명단 ${tm}명 구성</span>
+    <div class="p-4 bg-indigo-500/10 border border-indigo-500/20 rounded-2xl text-center text-sm font-bold text-indigo-300">
+      총계: ${S.groupCount}개 조 개설 / 발표진 ${tm}명 지정 완료
     </div>
-    <div style="display:flex; gap:8px"><button class="btn btn-outline" onclick="setupBack()" style="flex:1">수정</button><button class="btn btn-primary" onclick="createSession()" id="btn-create" style="flex:2">🚀 실시간 통신망 생성 및 기동</button></div></div>`;
+    <div class="grid grid-cols-3 gap-2"><button class="btn btn-outline" onclick="setupBack()">수정</button><button class="col-span-2 btn btn-primary py-3.5" onclick="createSession()" id="btn-create">🚀 실시간 평가 기동</button></div></div>`;
   box.innerHTML = h;
 }
 
@@ -394,34 +461,71 @@ window.wizUpdS = function(i, v) { S.staffMembers[i] = v; }
 
 window.createSession = async function() {
   if (!checkFB()) return;
-  const btn = $('btn-create'); btn.disabled = true; btn.textContent = '통신망 생성 가동 중...';
+  const btn = $('btn-create'); btn.disabled = true; btn.textContent = '통신망 활성화 중...';
   try {
     let sid = S.customCode;
-    if (sid && sid.length < 4) { alert('코드는 최소 4자 이상 선언해야 합니다.'); btn.disabled = false; btn.textContent = '🚀 생성'; return; }
+    if (sid && sid.length < 4) { 
+      showToast('⚠️ 세션 코드는 최소 4자 이상으로 입력해주세요.', 'warning'); 
+      btn.disabled = false; btn.textContent = '🚀 실시간 평가 기동'; 
+      return; 
+    }
     if (!sid) sid = genCode();
     const ex = await FB.get(FB.ref(db, `sessions/${sid}`));
-    if (ex.val()) { alert(`"${sid}" 코드는 이미 선점된 세션입니다.`); btn.disabled = false; return; }
+    if (ex.val()) { 
+      showToast(`⚠️ "${sid}" 코드는 이미 사용 중입니다.`, 'warning'); 
+      btn.disabled = false; btn.textContent = '🚀 실시간 평가 기동'; 
+      return; 
+    }
+    
+    // **어드민 보안 토큰 키 발급 및 로컬저장**
+    const adminToken = 'ADMIN-' + genCode() + '-' + genCode();
+    localStorage.setItem(`admin_token_${sid}`, adminToken);
     
     const cl = S.groups.slice(0, S.groupCount).map(g => ({ ...g, members: g.members.filter(m => m.trim()), isStaff: false }));
     const st = S.staffMembers.filter(m => m.trim());
     if (st.length > 0) cl.push({ id: 'staff', name: '운영진 스태프', members: st, isStaff: true });
     
     await FB.set(FB.ref(db, `sessions/${sid}`), {
-      config: { groups: cl, currentGroup: -1, finished: false, bonusOpen: false }, scores: {}, online: {}
+      config: { groups: cl, currentGroup: -1, finished: false, bonusOpen: false },
+      scores: {},
+      online: {},
+      adminToken: adminToken // 보안 토큰 Firebase DB 저장
     });
-    S.sessionId = sid; S.role = 'admin'; loadAdmin();
-  } catch(err) { alert('엔진 오류: ' + err.message); btn.disabled = false; }
+    
+    S.sessionId = sid; 
+    S.role = 'admin'; 
+    showToast('✨ 세션이 성공적으로 개설되었습니다!', 'success');
+    loadAdmin();
+  } catch(err) { 
+    showToast('🚨 에러 발생: ' + err.message, 'error'); 
+    btn.disabled = false; 
+  }
 }
 
 // ADMIN CONTROL SCREEN
 function loadAdmin() {
   showScreen('screen-admin');
-  $('admin-session-id').textContent = `ACTIVE SESSION: ${S.sessionId}`;
+  $('admin-session-id').textContent = `ACTIVE: ${S.sessionId}`;
   const b = window.location.href.split('#')[0]; S.joinUrl = `${b}#join=${S.sessionId}`;
   $('share-url').textContent = S.joinUrl;
+  
   if (S.unsub) S.unsub();
   S.unsub = FB.onValue(FB.ref(db, `sessions/${S.sessionId}`), (snap) => {
-    const d = snap.val(); if (!d) { goHome(); return; }
+    const d = snap.val(); 
+    if (!d) { 
+      goHome(); 
+      return; 
+    }
+    
+    // **[핵심 보안 조치] 어드민 토큰 검증**
+    const storedToken = localStorage.getItem(`admin_token_${S.sessionId}`);
+    if (!storedToken || storedToken !== d.adminToken) {
+      // 토큰 불일치 시 채점자 화면으로 강제 이송 조치
+      showToast('🔒 어드민 관리 권한이 없습니다. 심사위원 화면으로 이동합니다.', 'warning');
+      location.hash = `#join=${S.sessionId}`;
+      return;
+    }
+    
     S.config = d.config; S.scores = d.scores || {}; S.online = d.online || {};
     renderAdmin();
   });
@@ -432,12 +536,15 @@ function renderAdmin() {
   let html = ''; const on = Object.keys(S.online);
   
   html += `
-    <div style="background:rgba(16,185,129,0.03); border:1px solid rgba(16,185,129,0.15); border-radius:14px; padding:14px; margin-bottom:14px">
-      <div style="display:flex; align-items:center; gap:8px; margin-bottom:6px">
-        <span style="font-size:14px">👥</span><span style="font-size:13px; font-weight:700; color:var(--success)">실시간 참여 위원단 현황</span>
-        <span class="mono badge badge-success">${on.length}명 대기</span>
+    <div class="glass p-4 rounded-2xl border border-white/5 mb-4">
+      <div class="flex items-center justify-between mb-2">
+        <span class="text-xs font-bold text-emerald-400 flex items-center gap-1.5">
+          <span class="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse"></span>
+          실시간 온라인 접속 현황
+        </span>
+        <span class="mono text-xs bg-emerald-500/10 text-emerald-300 px-2.5 py-0.5 rounded-full border border-emerald-500/20">${on.length}명 대기</span>
       </div>
-      ${on.length ? '<div style="display:flex; flex-wrap:wrap; gap:4px; margin-top:10px">' + on.map(n => `<span style="background:${S.online[n]?.isStaff ? 'rgba(168,85,247,0.1)':'#07070f'}; border:1px solid ${S.online[n]?.isStaff ? 'rgba(168,85,247,0.2)':'var(--border-color)'}; border-radius:6px; padding:4px 8px; font-size:11px; color:${S.online[n]?.isStaff ? '#b975ff':'#c5c5d2'}">${n}</span>`).join('') + '</div>' : '<p style="font-size:11px; color:var(--text-muted); margin-top:6px">접속자가 한 명도 없습니다. 링크를 배포하세요.</p>'}
+      ${on.length ? '<div class="flex flex-wrap gap-1.5 mt-3">' + on.map(n => `<span class="px-2.5 py-1 text-xs rounded-lg border ${S.online[n]?.isStaff ? 'bg-purple-500/10 border-purple-500/20 text-purple-300' : 'bg-black/30 border-white/5 text-slate-300'}">${n}</span>`).join('') + '</div>' : '<p class="text-xs text-slate-500 py-1 font-medium">현재 접속자가 없습니다. 공유 링크를 발송해 접속을 유도하세요.</p>'}
     </div>`;
     
   S.config.groups.filter(g => !g.isStaff).forEach(group => {
@@ -452,27 +559,30 @@ function renderAdmin() {
     const pending = eligible.filter(n => !scored.includes(n));
     
     html += `
-      <div class="card" style="position:relative; overflow:hidden; ${isCur ? 'border-color:var(--primary); background:linear-gradient(135deg,#0d0d26, #0d0d19)' : ''}">
-        <div style="display:flex; justify-content:space-between; align-items:center">
-          <div>
-            <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap">
-              <span style="font-size:16px; font-weight:700; color:${isCur?'#9c97ff':'#fff'}">${group.name}</span>
-              ${isCur ? '<span class="badge badge-live">● 발표 LIVE</span>' : ''}
-              ${scored.length > 0 ? `<span class="badge badge-success">${scored.length}명 채점완료</span>` : ''}
+      <div class="glass p-5 rounded-2xl border transition duration-300 ${isCur ? 'border-indigo-500/40 shadow-lg shadow-indigo-500/5 relative overflow-hidden bg-indigo-950/10' : 'border-white/5 hover:border-white/10'}">
+        ${isCur ? '<div class="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-indigo-500 to-pink-500"></div>' : ''}
+        <div class="flex items-center justify-between gap-4">
+          <div class="min-w-0 flex-1">
+            <div class="flex items-center gap-2 flex-wrap">
+              <span class="text-lg font-bold ${isCur ? 'text-indigo-300':'text-slate-100'}">${group.name}</span>
+              ${isCur ? '<span class="px-2 py-0.5 rounded-full text-[10px] font-black bg-rose-500/10 border border-rose-500/20 text-rose-400 animate-pulse">● LIVE</span>' : ''}
+              ${scored.length > 0 ? `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/10 border border-emerald-500/20 text-emerald-400">${scored.length}명 심사완료</span>` : ''}
             </div>
-            <div style="color:var(--text-muted); font-size:12px; margin-top:4px">${group.members.join(' · ')}</div>
-            <div class="mono" style="color:var(--warning); font-size:14px; font-weight:700; margin-top:6px">중간점수: ${res.mt.toFixed(1)}${res.bt > 0 ? ' + ⭐' + res.bt.toFixed(1) : ''} = ${res.total.toFixed(1)}점</div>
+            <div class="text-xs text-slate-400 truncate mt-1">${group.members.join(' · ')}</div>
+            <div class="mono text-xs font-bold text-amber-400 mt-2">평점합산: ${res.mt.toFixed(1)}${res.bt > 0 ? ' + ⭐' + res.bt.toFixed(1) : ''} = ${res.total.toFixed(1)}점</div>
           </div>
-          <button class="btn ${isCur ? 'btn-outline' : 'btn-primary'} btn-sm" onclick="startGroup(${ri})">${res.count > 0 ? '재기동' : '발표시작'}</button>
+          <button class="btn py-2 px-4 text-xs font-bold ${isCur ? 'btn-outline' : 'btn-primary'}" onclick="startGroup(${ri})">
+            ${res.count > 0 ? '재기동' : '발표시작'}
+          </button>
         </div>`;
         
     if (isCur && eligible.length) {
       html += `
-        <div style="margin-top:12px; padding-top:10px; border-top:1px solid var(--border-color)">
-          <div style="font-size:11px; color:var(--text-muted); margin-bottom:6px">실시간 채점 참여 진척도 (${done.length}/${eligible.length})</div>
-          <div style="display:flex; flex-wrap:wrap; gap:4px">
-            ${done.map(n => `<span class="status-chip done">✓ ${n}</span>`).join('')}
-            ${pending.map(n => `<span class="status-chip pending">… ${n}</span>`).join('')}
+        <div class="mt-4 pt-3 border-t border-white/5">
+          <div class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2">실시간 채점 참여 진척도 (${done.length}/${eligible.length})</div>
+          <div class="flex flex-wrap gap-1">
+            ${done.map(n => `<span class="status-chip done text-[10px] py-1 px-2.5">✓ ${n}</span>`).join('')}
+            ${pending.map(n => `<span class="status-chip pending text-[10px] py-1 px-2.5">… ${n}</span>`).join('')}
           </div>
         </div>`;
     }
@@ -481,40 +591,73 @@ function renderAdmin() {
   
   $('admin-body').innerHTML = html;
   
-  let btns = `<button class="btn btn-success btn-block" style="padding:14px;" onclick="finishAll()">🏆 메인 발표 세션 완전 심사종료</button>`;
-  if (S.config.finished && !S.config.bonusOpen) btns += `<button class="btn btn-bonus btn-block" style="padding:14px;" onclick="openBonus()">⭐ 요구사항 [Q&A 보너스 채점 벨브] 개방</button>`;
-  if (S.config.bonusOpen) btns += `<div style="text-align:center; padding:12px; background:rgba(236,72,153,0.06); border:1px solid rgba(236,72,153,0.15); border-radius:12px; color:var(--bonus); font-size:13px; font-weight:700">⭐ 실시간 보너스 채점 벨브 가동 중</div>`;
-  btns += `<button class="btn btn-outline btn-block" onclick="openFullResults()">📊 최종 결과 보충 보드 보기</button><button class="btn btn-outline btn-block" onclick="openLiveFromAdmin()" style="color:var(--danger); border-color:rgba(239,68,68,0.2)">📺 스코어 프로젝터 화면 열기</button>`;
+  let btns = `<button class="w-full btn btn-success py-3.5" onclick="finishAll()">🏆 메인 심사 공식 마감</button>`;
+  if (S.config.finished && !S.config.bonusOpen) {
+    btns += `<button class="w-full btn btn-bonus py-3.5" onclick="openBonus()">⭐ Q&A 실시간 보너스 입력 벨브 개방</button>`;
+  }
+  if (S.config.bonusOpen) {
+    btns += `<div class="p-3.5 bg-pink-500/5 border border-pink-500/20 rounded-2xl text-pink-400 text-center text-xs font-bold animate-pulse">⭐ 실시간 Q&A 가산점 입력창 가동 중</div>`;
+  }
+  btns += `
+    <button class="w-full btn btn-outline py-3" onclick="openFullResults()">📊 종합 리더보드 결과창</button>
+    <button class="w-full btn btn-outline py-3 text-rose-400 border-rose-500/10 hover:border-rose-500/20" onclick="openLiveFromAdmin()">📺 대형 스코어 프로젝터 화면 기동</button>
+  `;
   $('admin-buttons').innerHTML = btns;
 }
 
 function renderAdminRes() {
-  const ranked = getRanked(); let html = '<h2 style="font-size:16px; font-weight:700; margin-bottom:16px">🏆 리더보드 순위 현황</h2>';
-  if (!ranked.length) html += '<p style="color:var(--text-muted); text-align:center; padding:32px">집계 데이터가 부재합니다.</p>';
-  else ranked.forEach((g, r) => {
-    const mc = r < 3 ? MC[r] : '#5c5c7a';
-    html += `
-      <div class="card" style="${r < 3 ? `border-color:${mc}44`:''}">
-        <div style="display:flex; align-items:center; gap:14px">
-          <div class="mono" style="width:36px; height:36px; border-radius:50%; background:${mc}10; border:2px solid ${mc}; display:flex; align-items:center; justify-content:center; font-weight:900; color:${mc}">${r+1}</div>
-          <div style="flex:1"><div style="font-weight:700; font-size:15px">${g.name}</div><div style="color:var(--text-muted); font-size:12px">${g.members.join(' · ')}</div></div>
-          <div class="mono" style="font-size:20px; font-weight:900; color:${mc}">${g.result.total.toFixed(1)}</div>
-        </div>
-      </div>`;
-  });
-  html += `<button class="btn btn-outline btn-block" onclick="openFullResults()">전체 화면 결과 확인</button>`;
-  $('admin-body').innerHTML = html; $('admin-buttons').innerHTML = '';
+  const ranked = getRanked(); 
+  let html = '<h2 class="text-lg font-bold text-slate-200 mb-4">🏆 리더보드 순위</h2>';
+  if (!ranked.length) {
+    html += '<p class="text-xs text-slate-500 text-center py-8">아직 심사 결과 데이터가 집계되지 않았습니다.</p>';
+  } else {
+    ranked.forEach((g, r) => {
+      const mc = r < 3 ? MC[r] : '#5c5c7a';
+      html += `
+        <div class="glass p-4 rounded-2xl border flex items-center gap-4 ${r < 3 ? `border-indigo-500/20 bg-indigo-500/5`:''}">
+          <div class="mono w-10 h-10 rounded-full flex items-center justify-center font-black border-2" style="border-color:${mc}; color:${mc}; background:${mc}10">${r+1}</div>
+          <div class="flex-1 min-w-0">
+            <div class="font-bold text-slate-200 text-base truncate">${g.name}</div>
+            <div class="text-xs text-slate-400 truncate mt-0.5">${g.members.join(' · ')}</div>
+          </div>
+          <div class="mono font-black text-xl" style="color:${mc}">${g.result.total.toFixed(1)}</div>
+        </div>`;
+    });
+  }
+  html += `<button class="w-full btn btn-outline mt-4 py-3" onclick="openFullResults()">전체 결과 화면 보기</button>`;
+  $('admin-body').innerHTML = html; 
+  $('admin-buttons').innerHTML = '';
 }
 
 window.startGroup = async function(i) { if(!checkFB()) return; await FB.set(FB.ref(db, `sessions/${S.sessionId}/config`), { ...S.config, currentGroup: i, finished: false, bonusOpen: false }); }
 window.finishAll = async function() { if(!checkFB()) return; await FB.set(FB.ref(db, `sessions/${S.sessionId}/config`), { ...S.config, finished: true, currentGroup: -1 }); }
 window.openBonus = async function() { if(!checkFB()) return; await FB.set(FB.ref(db, `sessions/${S.sessionId}/config`), { ...S.config, bonusOpen: true }); }
 window.toggleAdminView = function() { S.showRes = !S.showRes; $('btn-toggle').textContent = S.showRes ? '조 대기 현황' : '📊 결과전환'; renderAdmin(); }
-window.resetSession = async function() { if(!confirm('세션을 초기화하시겠습니까? 데이터가 파괴됩니다.')) return; if(!checkFB()) return; await FB.remove(FB.ref(db, `sessions/${S.sessionId}`)); goHome(); }
-window.copyLink = function() { navigator.clipboard.writeText(S.joinUrl).then(() => { $('btn-copy').textContent = '완료✓'; setTimeout(() => $('btn-copy').textContent = '복사', 2000); }).catch(() => { prompt('아래 링크를 복사하세요:', S.joinUrl); }); }
-window.openFullResults = function() { showScreen('screen-results'); renderResults(); }
+window.resetSession = async function() { 
+  if(!confirm('⚠️ 정말 세션을 삭제하시겠습니까? 기록된 모든 데이터가 삭제됩니다.')) return; 
+  if(!checkFB()) return; 
+  await FB.remove(FB.ref(db, `sessions/${S.sessionId}`)); 
+  localStorage.removeItem(`admin_token_${S.sessionId}`);
+  showToast('세션이 삭제되었습니다.', 'info');
+  goHome(); 
+}
 
-// JOIN SYSTEM
+window.copyLink = function() { 
+  // execCommand Fallback을 이용한 견고한 클립보드 복사
+  const input = document.createElement('input');
+  input.value = S.joinUrl;
+  document.body.appendChild(input);
+  input.select();
+  try {
+    document.execCommand('copy');
+    showToast('📋 링크가 클립보드에 복사되었습니다.', 'success');
+  } catch (err) {
+    showToast('복사에 실패했습니다. 주소를 직접 복사하세요.', 'warning');
+  }
+  document.body.removeChild(input);
+}
+
+// VOTER JOIN SYSTEM
 function loadJoinScreen() {
   showScreen('screen-join'); S.scorerName = ''; S.joinStep = 0;
   if (S.unsub) S.unsub();
@@ -522,13 +665,13 @@ function loadJoinScreen() {
   S.unsub = FB.onValue(FB.ref(db, `sessions/${S.sessionId}`), (snap) => {
     const d = snap.val();
     if (!d) { 
-      $('join-body').innerHTML = '<div class="card" style="text-align:center; padding:24px;"><p style="color:var(--danger);">존재하지 않는 코드이거나 삭제된 방입니다.</p></div>'; 
+      $('join-body').innerHTML = '<div class="glass p-6 rounded-2xl text-center"><p class="text-sm text-red-400 font-semibold">유효하지 않거나 만료된 세션 코드입니다.</p></div>'; 
       return; 
     }
     S.config = d.config; S.scores = d.scores || {}; S.online = d.online || {};
     
     const totalConnected = Object.keys(S.online).length;
-    $('join-badge').innerHTML = `코드: ${S.sessionId} &nbsp;|&nbsp; 👥 현재 접속: <strong style="color:var(--success); font-weight:900;">${totalConnected}</strong>명`;
+    $('join-badge').innerHTML = `코드: ${S.sessionId} &nbsp;|&nbsp; 👥 실시간 참여: <strong class="text-emerald-400 font-black">${totalConnected}</strong>명`;
     
     if (S.joinStep === 0) { renderJoin(); }
   });
@@ -537,61 +680,94 @@ function loadJoinScreen() {
 function renderJoin() {
   const body = $('join-body');
   if (S.joinStep === 0) {
-    let h = `<div class="card"><h2 style="font-size:15px; font-weight:700; margin-bottom:14px">소속 조를 선택해 주세요</h2><div style="display:flex; flex-direction:column; gap:8px">`;
+    let h = `<h2 class="text-sm font-bold text-slate-300 mb-3">소속 조를 선택해주세요.</h2><div class="space-y-2">`;
     
     S.config.groups.forEach((g, i) => {
+      // 해당 조에 소속된 유저 중 현재 실시간 접속(online) 상태인 사람이 있는지 실시간 판별
       const isGroupOnline = Object.keys(S.online).some(username => {
         const groupInfo = findGroup(username);
         return groupInfo && groupInfo.id === g.id;
       });
       
-      const nameColor = isGroupOnline ? 'var(--online-blue)' : '#ffffff';
+      const nameColor = isGroupOnline ? 'text-indigo-400' : 'text-slate-100';
       const borderStyle = isGroupOnline 
-        ? 'border: 1px solid rgba(59, 130, 246, 0.4); background: rgba(59, 130, 246, 0.04);' 
-        : `border: 1px solid ${g.isStaff ? 'rgba(168,85,247,0.3)' : 'var(--border-color)'}; background:#07070f;`;
-      const iconBg = isGroupOnline ? 'background: rgba(59, 130, 246, 0.15); color: var(--online-blue);' : `background:${g.isStaff?'rgba(168,85,247,0.1)':'rgba(99,91,255,0.06)'};`;
+        ? 'border-indigo-500/40 bg-indigo-500/5' 
+        : g.isStaff ? 'border-purple-500/20 bg-purple-500/5' : 'border-white/5 bg-black/40';
 
       h += `
-        <button onclick="selJoinG(${i})" style="width:100%; ${borderStyle} border-radius:12px; padding:12px 14px; text-align:left; transition: all 0.2s;">
-          <div style="display:flex; align-items:center; gap:10px">
-            <div style="width:36px; height:36px; border-radius:8px; ${iconBg} display:flex; align-items:center; justify-content:center; font-size:15px">${g.isStaff?'👑':'👥'}</div>
-            <div style="flex:1">
-              <div style="font-weight:700; font-size:14px; color:${nameColor}">
-                ${g.name}${g.isStaff?' <span class="badge badge-staff">STAFF</span>':''}
-                ${isGroupOnline ? '<span style="font-size:11px; font-weight:normal; margin-left:6px; color:var(--online-blue);">● 접속중</span>' : ''}
-              </div>
+        <button onclick="selJoinG(${i})" class="w-full glass-hover p-3.5 rounded-2xl text-left transition border ${borderStyle}">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl flex items-center justify-center text-lg ${isGroupOnline ? 'bg-indigo-500/10 text-indigo-400' : 'bg-white/5'}">
+              ${g.isStaff?'👑':'👥'}
             </div>
-            <span style="color:var(--text-muted)">→</span>
+            <div class="flex-1 min-w-0">
+              <div class="font-bold text-sm ${nameColor} flex items-center gap-1.5 truncate">
+                ${g.name}${g.isStaff?' <span class="badge badge-staff text-[10px]">STAFF</span>':''}
+                ${isGroupOnline ? '<span class="w-1.5 h-1.5 bg-indigo-400 rounded-full animate-pulse"></span>' : ''}
+              </div>
+              <div class="text-[11px] text-slate-500 truncate mt-0.5">${g.members.join(', ')}</div>
+            </div>
+            <span class="text-slate-600">→</span>
           </div>
         </button>`;
     });
-    h += '</div></div>'; body.innerHTML = h; return;
+    h += '</div>'; body.innerHTML = h; return;
   }
   
   const g = S.config.groups[S.joinGI];
-  let h = `<div class="card"><div style="display:flex; align-items:center; gap:8px; margin-bottom:16px"><button class="btn btn-outline" style="padding:4px 8px; font-size:11px;" onclick="joinBack()">← 뒤로</button><h2 style="font-size:15px; font-weight:700">${g.name} 성명 식별</h2></div><div style="display:flex; flex-direction:column; gap:6px">`;
-  g.members.forEach(m => { h += `<button class="name-btn ${S.scorerName===m?'selected':''}" onclick="selJoinN('${m.replace(/'/g,"\\'")}')">${m}</button>`; });
+  let h = `
+    <div class="space-y-4">
+      <div class="flex items-center gap-3 mb-2">
+        <button class="px-3 py-1 bg-white/5 border border-white/5 hover:bg-white/10 rounded-xl text-xs font-bold text-slate-300" onclick="joinBack()">← 뒤로</button>
+        <h2 class="text-base font-bold text-slate-100">${g.name} 성명 선택</h2>
+      </div>
+      <div class="grid grid-cols-2 gap-2">`;
+  g.members.forEach(m => { 
+    h += `<button class="name-btn ${S.scorerName===m?'selected':''}" onclick="selJoinN('${m.replace(/'/g,"\\'")}')">${m}</button>`; 
+  });
   h += `
-    <div style="display:flex; align-items:center; gap:10px; margin:14px 0"><div style="flex:1; height:1px; background:var(--border-color)"></div><span style="color:var(--text-muted); font-size:11px">성명이 없을 시 직접 입력</span><div style="flex:1; height:1px; background:var(--border-color)"></div></div>
-    <input class="input" id="jc" placeholder="성명 입력" value="${S.scorerName&&!g.members.includes(S.scorerName)?S.scorerName:''}" oninput="jcInput(this.value)" style="margin-bottom:14px">
-    <button class="btn btn-primary btn-block" onclick="doJoin()" ${S.scorerName?'':'disabled'}>심사 위원장 패스포트 입장 →</button></div>`;
+      </div>
+      <div class="flex items-center gap-3 my-4">
+        <div class="flex-1 h-[1px] bg-white/5"></div>
+        <span class="text-slate-500 text-[11px] font-bold uppercase tracking-wider">성명이 없는 경우 직접 입력</span>
+        <div class="flex-1 h-[1px] bg-white/5"></div>
+      </div>
+      <input class="input" id="jc" placeholder="성명 직접 입력" value="${S.scorerName&&!g.members.includes(S.scorerName)?S.scorerName:''}" oninput="jcInput(this.value)">
+      <button class="w-full btn btn-primary py-3.5 mt-2" onclick="doJoin()" ${S.scorerName?'':'disabled'}>
+        심사위원 등록 및 평가 입장 →
+      </button>
+    </div>`;
   body.innerHTML = h;
 }
 
 window.selJoinG = function(i) { S.joinGI = i; S.joinStep = 1; S.scorerName = ''; renderJoin(); }
 window.joinBack = function() { S.joinStep = 0; S.scorerName = ''; renderJoin(); }
 window.selJoinN = function(n) { S.scorerName = n; renderJoin(); }
-window.jcInput = function(v) { S.scorerName = v.trim(); const b = document.querySelector('#join-body .btn-primary'); if(b) b.disabled = !S.scorerName; }
+window.jcInput = function(v) { 
+  S.scorerName = v.trim(); 
+  const b = document.querySelector('#join-body button[onclick="doJoin()"]'); 
+  if(b) b.disabled = !S.scorerName; 
+}
 window.doJoin = async function() {
-  if (!S.scorerName.trim()) return; S.scorerGroup = findGroup(S.scorerName);
-  try { await FB.set(FB.ref(db, `sessions/${S.sessionId}/online/${S.scorerName}`), { t: Date.now(), isStaff: S.scorerGroup?.isStaff || false }); } catch(e){}
-  S.role = 'scorer'; loadVote();
+  if (!S.scorerName.trim()) return; 
+  S.scorerGroup = findGroup(S.scorerName);
+  try { 
+    await FB.set(FB.ref(db, `sessions/${S.sessionId}/online/${S.scorerName}`), { 
+      t: Date.now(), 
+      isStaff: S.scorerGroup?.isStaff || false 
+    }); 
+  } catch(e){}
+  S.role = 'scorer'; 
+  loadVote();
 }
 
 // REALTIME SCORER INTERFACE
 function loadVote() {
-  if (!checkFB()) return; showScreen('screen-vote'); S.myScores = {}; S.submitted = false; S.prevGroup = -99; S.bonusMode = false;
+  if (!checkFB()) return; 
+  showScreen('screen-vote'); 
+  S.myScores = {}; S.submitted = false; S.prevGroup = -99; S.bonusMode = false;
   if (S.unsub) S.unsub();
+  
   S.unsub = FB.onValue(FB.ref(db, `sessions/${S.sessionId}`), (snap) => {
     const d = snap.val(); if (!d) return;
     S.config = d.config; S.scores = d.scores || {}; S.scorerGroup = findGroup(S.scorerName);
@@ -601,7 +777,7 @@ function loadVote() {
 
 function renderVote() {
   const { config: c, scores, scorerName: sn } = S;
-  $('vote-footer').textContent = `위원명: ${sn}${S.scorerGroup?.isStaff ? ' (Staff)' : ''} | ID: ${S.sessionId}`;
+  $('vote-footer').textContent = `심사위원: ${sn}${S.scorerGroup?.isStaff ? ' (Staff)' : ''} | 세션코드: ${S.sessionId}`;
   
   if (c.bonusOpen && !S.bonusMode) { S.bonusMode = true; S.bonusGI = 0; S.bonusScores = {}; }
   if (S.bonusMode && c.bonusOpen) { renderBonusVote(); return; }
@@ -610,34 +786,58 @@ function renderVote() {
     S.prevGroup = c.currentGroup; S.myScores = {}; S.submitted = false; S.voteStep = 0;
     if (c.currentGroup >= 0) {
       const gid = c.groups[c.currentGroup]?.id; const ex = scores?.[gid]?.[sn];
-      if (ex) { CATS.forEach(ct => { if(typeof ex[ct.id] === 'number') S.myScores[ct.id] = ex[ct.id]; }); S.submitted = true; }
+      if (ex) { 
+        CATS.forEach(ct => { if(typeof ex[ct.id] === 'number') S.myScores[ct.id] = ex[ct.id]; }); 
+        S.submitted = true; 
+      }
     }
   }
   
   if (c.currentGroup === -1 && !c.finished) {
     $('vote-banner').innerHTML = '';
-    $('vote-body').innerHTML = `<div style="text-align:center; padding:60px 20px"><div style="font-size:44px; margin-bottom:12px">⏳</div><h2 style="font-size:16px; font-weight:700">다음 발표 대기 상태</h2><p style="color:var(--text-muted); font-size:13px; margin-top:4px">총괄 통제관이 발표를 시작하면 자동으로 활성화됩니다.</p></div>`;
+    $('vote-body').innerHTML = `
+      <div class="glass p-10 rounded-3xl text-center border border-white/5">
+        <div class="text-5xl mb-4 animate-bounce">⏳</div>
+        <h2 class="text-xl font-bold text-slate-200">평가 대기 중</h2>
+        <p class="text-xs text-slate-400 mt-2">운영진이 발표를 시작하면 채점창이 활성화됩니다.</p>
+      </div>`;
     return;
   }
   if (c.finished && !c.bonusOpen) {
     $('vote-banner').innerHTML = '';
-    $('vote-body').innerHTML = `<div style="text-align:center; padding:60px 20px"><div style="font-size:44px; margin-bottom:12px">🏆</div><h2 style="font-size:16px; font-weight:700">모든 메인 서면 평가 종료</h2><p style="color:var(--text-muted); font-size:13px; margin-top:4px">운영진측 Q&A 보너스 심사 개방을 기다리고 있습니다.</p></div>`;
+    $('vote-body').innerHTML = `
+      <div class="glass p-10 rounded-3xl text-center border border-white/5">
+        <div class="text-5xl mb-4">🏆</div>
+        <h2 class="text-xl font-bold text-slate-200">본선 발표 심사 마감</h2>
+        <p class="text-xs text-slate-400 mt-2">운영진측 질의응답 보너스 심사 개방을 기다리고 있습니다.</p>
+      </div>`;
     return;
   }
   
   const cg = c.groups[c.currentGroup];
   $('vote-banner').innerHTML = `
-    <div style="background:linear-gradient(135deg, rgba(99,91,255,0.06), #0d0d19); border:1px solid rgba(99,91,255,0.2); border-radius:14px; padding:16px; margin-bottom:14px; text-align:center">
-      <span class="badge badge-live">● LIVE ASSESSMENT</span>
-      <div style="font-size:24px; font-weight:900; color:#9c97ff; margin-top:6px">${cg?.name} 발표 평가</div>
+    <div class="glass p-6 rounded-2xl border border-indigo-500/20 text-center relative overflow-hidden bg-gradient-to-r from-indigo-950/20 via-black/40 to-indigo-950/20">
+      <div class="absolute -top-12 -left-12 w-24 h-24 bg-indigo-500/10 rounded-full blur-xl"></div>
+      <span class="badge badge-live mb-2.5">● 평가 라이브</span>
+      <div class="text-2xl font-black text-indigo-300">${cg?.name} 발표 평가</div>
     </div>`;
     
   if (S.scorerGroup && !S.scorerGroup.isStaff && S.scorerGroup.id === cg?.id) {
-    $('vote-body').innerHTML = `<div style="background:rgba(245,158,11,0.05); border:1px solid rgba(245,158,11,0.15); border-radius:14px; padding:32px; text-align:center"><div style="font-size:40px; margin-bottom:8px">🎤</div><h3 style="font-size:15px; font-weight:700">현재 소속 조의 발표 진행 중입니다</h3><p style="color:var(--text-muted); font-size:12px; margin-top:4px">공정 심사를 위해 본인 소속 팀에는 투표할 수 없습니다.</p></div>`;
+    $('vote-body').innerHTML = `
+      <div class="glass p-8 rounded-3xl text-center border border-amber-500/10 bg-amber-500/5">
+        <div class="text-4xl mb-3">🎤</div>
+        <h3 class="text-base font-bold text-amber-400">우리 팀 발표 진행 중</h3>
+        <p class="text-xs text-slate-400 mt-2 leading-relaxed">공정성을 보장하기 위해 자사 또는 아군 조에는 점수를 입력할 수 없습니다.</p>
+      </div>`;
     return;
   }
   if (S.submitted) {
-    $('vote-body').innerHTML = `<div style="background:rgba(16,185,129,0.05); border:1px solid rgba(16,185,129,0.15); border-radius:14px; padding:32px; text-align:center"><div style="font-size:40px; margin-bottom:8px">✅</div><h3 style="font-size:15px; font-weight:700">본 조의 데이터 전송 완료</h3><p style="color:var(--text-muted); font-size:12px; margin-top:4px">다음 발표 조 통제가 내려질 때까지 잠시 대기하세요.</p></div>`;
+    $('vote-body').innerHTML = `
+      <div class="glass p-8 rounded-3xl text-center border border-emerald-500/10 bg-emerald-500/5">
+        <div class="text-4xl mb-3">✅</div>
+        <h3 class="text-base font-bold text-emerald-400">심사 데이터 제출 완료</h3>
+        <p class="text-xs text-slate-400 mt-2">다음 발표 조 통제가 내려질 때까지 잠시 대기하세요.</p>
+      </div>`;
     return;
   }
   renderVoteCard();
@@ -648,70 +848,92 @@ function renderVoteCard() {
   const isL = S.voteStep === CATS.length - 1; const isF = S.voteStep === 0;
   const allOk = CATS.every(c => S.myScores[c.id] > 0);
   
-  let strip = '<div style="display:flex; gap:3px; margin-bottom:14px">';
+  let strip = '<div class="flex gap-1 mb-4 overflow-x-auto pb-1">';
   CATS.forEach((c, i) => {
     const sv = S.myScores[c.id] || 0; const cur = i === S.voteStep;
-    strip += `<div onclick="goVS(${i})" style="flex:1; cursor:pointer; background:${cur ? 'var(--primary-glow)':'#07070f'}; border:1px solid ${cur ? 'var(--primary)':sv ? 'rgba(16,185,129,0.3)':'var(--border-color)'}; border-radius:6px; padding:6px 2px; text-align:center"><div style="font-size:11px">${sv||'-'}</div></div>`;
+    strip += `<div onclick="goVS(${i})" class="flex-1 min-w-[32px] cursor-pointer text-center py-2 rounded-lg border transition ${cur ? 'bg-indigo-500/10 border-indigo-500 text-indigo-300' : sv ? 'bg-emerald-500/5 border-emerald-500/20 text-emerald-400' : 'bg-black/30 border-white/5 text-slate-600'}"><div class="text-xs font-bold">${sv||'-'}</div></div>`;
   });
   strip += '</div>';
   
   let card = `
     <div id="vc-wrap" style="touch-action:pan-y">
-      <div id="vc" class="card" style="min-height:180px; transition: transform 0.1s;">
-        <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:8px">
+      <div id="vc" class="glass p-6 rounded-2xl border border-white/5 min-h-[190px] transition duration-200">
+        <div class="flex justify-between items-start gap-4 mb-3">
           <div>
-            <div style="font-weight:700; font-size:16px; display:flex; align-items:center; gap:6px"><span>${cat.emoji}</span>${cat.label}</div>
-            <div style="margin-top:4px"><span class="badge badge-weight">가중치 ${cat.w}%</span></div>
+            <div class="font-extrabold text-base flex items-center gap-1.5 text-slate-100">
+              <span>${cat.emoji}</span>${cat.label}
+            </div>
+            <div class="mt-1.5"><span class="badge badge-weight">가중치 ${cat.w}%</span></div>
           </div>
-          ${v ? `<div class="mono" style="font-size:32px; font-weight:900; color:var(--primary)">${v}</div>` : '<div style="font-size:11px; color:var(--text-muted)">점수선택 필요</div>'}
+          ${v ? `<div class="mono text-3xl font-black text-indigo-400">${v}</div>` : '<div class="text-[11px] text-slate-500 font-bold bg-white/5 px-2.5 py-1 rounded-md border border-white/5">선택필요</div>'}
         </div>
-        <p style="color:#b2b2cc; font-size:12px; line-height:1.5; margin-bottom:20px">${cat.desc}</p>
-        <div style="display:flex; gap:4px; justify-content:center; flex-wrap:wrap">`;
+        <p class="text-xs text-slate-400 leading-relaxed mb-6 font-medium">${cat.desc}</p>
+        <div class="grid grid-cols-5 gap-1.5">`;
   for (let s = 1; s <= 10; s++) {
     const on = s <= v;
-    card += `<button onclick="setS('${cat.id}',${s})" style="width:34px; height:38px; border-radius:8px; border:1px solid ${on ? 'var(--warning)':'var(--border-color)'}; background:${on ? 'rgba(255,158,11,0.12)':'#07070f'}; color:${on ? 'var(--warning)':'var(--text-muted)'}; font-size:13px; font-weight:700" class="mono">${s}</button>`;
+    card += `<button onclick="setS('${cat.id}',${s})" class="mono py-2 rounded-xl border font-bold text-xs transition ${on ? 'border-amber-500/50 bg-amber-500/10 text-amber-400 font-black' : 'border-white/5 bg-black/40 text-slate-400 hover:border-white/10'}">${s}</button>`;
   }
   card += '</div></div></div>';
   
-  let nav = '<div style="display:flex; gap:8px; margin-top:14px">';
-  if (!isF) nav += `<button class="btn btn-outline" onclick="vsPrev()" style="flex:1">← 이전</button>`;
-  if (!isL) nav += `<button class="btn btn-primary" onclick="vsNext()" style="flex:${isF?3:2}" ${!v?'disabled':''}>다음 항목</button>`;
-  if (isL) nav += `<button class="btn btn-success btn-lg" onclick="submitMain()" style="flex:2" ${!allOk?'disabled':''}>${allOk?'📥 완성본 최종 제출':`${CATS.filter(c=>!S.myScores[c.id]).length}개 문항 누락`}</button>`;
+  let nav = '<div class="grid grid-cols-3 gap-2 mt-4">';
+  if (!isF) nav += `<button class="btn btn-outline py-3.5" onclick="vsPrev()">← 이전</button>`;
+  if (!isL) nav += `<button class="col-span-2 btn btn-primary py-3.5" onclick="vsNext()" ${!v?'disabled':''}>다음 항목</button>`;
+  if (isL) nav += `<button class="col-span-2 btn btn-success py-3.5" onclick="submitMain()" ${!allOk?'disabled':''}>${allOk?'📥 완성본 최종 제출':`미기입 ${CATS.filter(c=>!S.myScores[c.id]).length}개`}</button>`;
   nav += '</div>';
   
   $('vote-body').innerHTML = strip + card + nav;
 }
 
+// Q&A 가산점 보너스 모듈 (Q&A 보너스로 이동)
 function renderBonusVote() {
   const ngs = S.config.groups.filter(g => !g.isStaff);
   if (S.bonusGI >= ngs.length) {
     $('vote-banner').innerHTML = '';
-    $('vote-body').innerHTML = `<div style="text-align:center; padding:40px 20px"><div style="font-size:44px; margin-bottom:12px">🎉</div><h2 style="font-size:16px; font-weight:700">모든 보너스 평가 완료</h2><p style="font-size:12px; color:var(--text-muted); margin-top:4px">전사 심사 일정이 완전 마감되었습니다.</p></div>`;
+    $('vote-body').innerHTML = `
+      <div class="glass p-10 rounded-3xl text-center border border-pink-500/10">
+        <div class="text-5xl mb-4 animate-bounce">🎉</div>
+        <h2 class="text-xl font-bold text-slate-200">모든 평가 종료</h2>
+        <p class="text-xs text-slate-400 mt-2">감사합니다. 모든 심사 데이터가 본부에 완벽히 집계되었습니다.</p>
+      </div>`;
     return;
   }
   const g = ngs[S.bonusGI]; const isMy = S.scorerGroup && !S.scorerGroup.isStaff && S.scorerGroup.id === g.id;
   const exB = S.scores?.[g.id]?.[S.scorerName]?.bonus;
   
   $('vote-banner').innerHTML = `
-    <div style="background:linear-gradient(135deg, rgba(236,72,153,0.06), #0d0d19); border:1px solid rgba(236,72,153,0.2); border-radius:14px; padding:16px; margin-bottom:14px; text-align:center">
-      <span class="badge badge-bonus">⭐ Q&A BONUS 심사</span>
-      <div style="font-size:24px; font-weight:900; color:var(--bonus); margin-top:6px">${g.name} 검증</div>
+    <div class="glass p-6 rounded-2xl border border-pink-500/20 text-center relative overflow-hidden bg-gradient-to-r from-pink-950/20 via-black/40 to-pink-950/20">
+      <span class="badge badge-bonus mb-2.5">⭐ Q&A BONUS 심사</span>
+      <div class="text-2xl font-black text-pink-300">${g.name} 실시간 검증</div>
     </div>`;
     
-  if (isMy) { $('vote-body').innerHTML = `<div class="card" style="text-align:center; padding:24px;"><p style="color:var(--warning); font-size:13px">자기 조 패스</p><button class="btn btn-primary btn-block" style="margin-top:12px;" onclick="bonusNxt()">다음 조 넘어가기 →</button></div>`; return; }
-  if (typeof exB === 'number') { $('vote-body').innerHTML = `<div class="card" style="text-align:center; padding:24px;"><p style="color:var(--success); font-size:13px">반영 완료 (⭐ ${exB}점)</p><button class="btn btn-primary btn-block" style="margin-top:12px;" onclick="bonusNxt()">다음 조 넘어가기 →</button></div>`; return; }
+  if (isMy) { 
+    $('vote-body').innerHTML = `
+      <div class="glass p-6 rounded-2xl text-center border border-white/5">
+        <p class="text-sm text-slate-400">소속 자사 조는 자동으로 보너스 평가 대상에서 보류됩니다.</p>
+        <button class="w-full btn btn-primary py-3 mt-4" onclick="bonusNxt()">다음 조 넘어가기 →</button>
+      </div>`; 
+    return; 
+  }
+  if (typeof exB === 'number') { 
+    $('vote-body').innerHTML = `
+      <div class="glass p-6 rounded-2xl text-center border border-white/5">
+        <p class="text-sm text-emerald-400 font-bold">✓ 이미 평가 전송 완료 (⭐ ${exB}점)</p>
+        <button class="w-full btn btn-primary py-3 mt-4" onclick="bonusNxt()">다음 조 넘어가기 →</button>
+      </div>`; 
+    return; 
+  }
   
   const v = S.bonusScores[g.id] || 0;
   let h = `
-    <div class="card" style="border-color:rgba(236,72,153,0.2)">
-      <div style="font-weight:700; font-size:15px; margin-bottom:4px; display:flex; align-items:center; gap:6px"><span>${BONUS.emoji}</span>${BONUS.label}</div>
-      <p style="color:var(--text-muted); font-size:12px; line-height:1.5; margin-bottom:16px">${BONUS.desc}</p>
-      <div style="display:flex; gap:4px; justify-content:center; margin-bottom:20px; flex-wrap:wrap">`;
+    <div class="glass p-6 rounded-2xl border border-pink-500/15">
+      <div class="font-extrabold text-base flex items-center gap-1.5 text-slate-100 mb-2"><span>${BONUS.emoji}</span>${BONUS.label}</div>
+      <p class="text-xs text-slate-400 leading-relaxed mb-6">${BONUS.desc}</p>
+      <div class="grid grid-cols-5 gap-1.5 mb-6">`;
   for (let s = 1; s <= 10; s++) {
     const on = s <= v;
-    h += `<button onclick="setBS('${g.id}',${s})" style="width:34px; height:38px; border-radius:8px; border:1px solid ${on ? 'var(--bonus)':'var(--border-color)'}; background:${on ? 'rgba(236,72,153,0.12)':'#07070f'}; color:${on ? 'var(--bonus)':'var(--text-muted)'}; font-size:13px; font-weight:700" class="mono">${s}</button>`;
+    h += `<button onclick="setBS('${g.id}',${s})" class="mono py-2 rounded-xl border font-bold text-xs transition ${on ? 'border-pink-500 bg-pink-500/10 text-pink-300 font-black' : 'border-white/5 bg-black/40 text-slate-400'}">${s}</button>`;
   }
-  h += `</div><div style="display:flex; gap:8px">${S.bonusGI > 0 ? '<button class="btn btn-outline" onclick="bonusPrv()">← 이전</button>':''}<button class="btn btn-bonus btn-block" onclick="subBonus('${g.id}')" ${!v?'disabled':''}>보너스 점수 전송 & 다음 조 →</button></div></div>`;
+  h += `</div><div class="flex gap-2">${S.bonusGI > 0 ? '<button class="btn btn-outline py-3 px-5" onclick="bonusPrv()">←</button>':''}<button class="flex-1 btn btn-bonus py-3" onclick="subBonus('${g.id}')" ${!v?'disabled':''}>가산점 전송 & 다음 조 →</button></div></div>`;
   $('vote-body').innerHTML = h;
 }
 
@@ -723,8 +945,12 @@ window.submitMain = async function() {
   if (!checkFB()) return; const gid = S.config.groups[S.config.currentGroup]?.id; if (!gid) return;
   try {
     await FB.set(FB.ref(db, `sessions/${S.sessionId}/scores/${gid}/${S.scorerName}`), { ...S.myScores, submittedAt: Date.now() });
-    S.submitted = true; renderVote();
-  } catch(e) { alert('제출실패'); }
+    S.submitted = true; 
+    showToast('💾 본 심사 데이터를 성공적으로 전송했습니다.', 'success');
+    renderVote();
+  } catch(e) { 
+    showToast('제출 실패', 'error'); 
+  }
 }
 window.setBS = function(gid, v) { S.bonusScores[gid] = v; renderBonusVote(); }
 window.bonusNxt = function() { S.bonusGI++; renderBonusVote(); }
@@ -733,11 +959,15 @@ window.subBonus = async function(gid) {
   if (!checkFB()) return; const v = S.bonusScores[gid]; if (!v) return;
   try {
     await FB.set(FB.ref(db, `sessions/${S.sessionId}/scores/${gid}/${S.scorerName}/bonus`), v);
-    S.bonusGI++; renderBonusVote();
-  } catch(e) { alert('전송실패'); }
+    S.bonusGI++; 
+    showToast('💾 보너스 가산점이 반영되었습니다.', 'success');
+    renderBonusVote();
+  } catch(e) { 
+    showToast('전송 실패', 'error'); 
+  }
 }
 
-// ═══ 대형 스코어보드 실시간 인원 및 채점 진척도 동기화 ═══
+// 📺 LIVE PROJECTOR SCREEN
 function loadLive() {
   if (!checkFB()) return; showScreen('screen-live');
   if (S.unsub2) S.unsub2();
@@ -752,26 +982,24 @@ function renderLive() {
   const ranked = getRanked(); const on = Object.keys(S.online);
   const cg = S.config.currentGroup >= 0 ? S.config.groups[S.config.currentGroup] : null;
   
-  // 상단 헤더 영역 리렌더링 (총 접속 인원수 대형 강조 배지 탑재)
   $('live-header').innerHTML = `
-    <div style="display:flex; align-items:center; justify-content:center; gap:16px; margin-bottom:16px; flex-wrap:wrap;">
-      <div style="display:inline-flex; align-items:center; gap:6px; background:rgba(239,68,68,0.1); border:1px solid rgba(239,68,68,0.2); padding:6px 12px; border-radius:20px;">
-        <div class="live-dot"></div>
-        <span style="font-size:12px; font-weight:700; color:var(--danger); letter-spacing:1px">REALTIME LIVE</span>
+    <div class="flex items-center justify-center gap-3 flex-wrap mb-2">
+      <div class="flex items-center gap-1.5 bg-red-500/10 border border-red-500/20 px-3 py-1 rounded-full text-xs font-bold text-red-400">
+        <span class="w-1.5 h-1.5 bg-red-500 rounded-full animate-ping"></span>
+        REALTIME LIVE
       </div>
-      <span class="mono" style="color:var(--text-muted); font-size:14px">세션 코드: <strong style="color:#fff; letter-spacing:1px;">${S.sessionId}</strong></span>
-      <span class="badge badge-success mono" style="font-size:13px; padding:6px 14px; background:rgba(16,185,129,0.15); border:1px solid rgba(16,185,129,0.3);">👥 총 접속 위원: <strong style="font-size:16px; color:#fff; font-weight:900;">${on.length}</strong>명</span>
+      <span class="mono text-slate-400 text-sm">세션 코드: <strong class="text-white">${S.sessionId}</strong></span>
+      <span class="badge badge-success text-xs font-bold py-1 px-3 bg-emerald-500/10 border border-emerald-500/20 text-emerald-300">👥 현재 접속 심사위원: <strong class="text-white font-extrabold">${on.length}</strong>명</span>
     </div>
-    ${cg ? `<div style="font-size:32px; font-weight:900; color:#fff; margin-bottom:12px;">🎤 현재 발표 진행: <span style="color:var(--primary); text-shadow:0 0 12px rgba(99,91,255,0.3);">${cg.name}</span></div>` : S.config.finished ? '<div style="font-size:24px; font-weight:900; color:var(--success); margin-bottom:12px;">🏆 모든 조 공식 심사 종료</div>' : '<div style="color:var(--text-muted); font-size:16px; margin-bottom:12px;">발표 준비 및 심사위원 입장 대기 중</div>'}`;
+    ${cg ? `<div class="text-3xl font-extrabold text-white mt-1">🎤 발표 진행 조: <span class="bg-gradient-to-r from-indigo-200 to-indigo-400 bg-clip-text text-transparent underline decoration-indigo-500 decoration-wavy underline-offset-4">${cg.name}</span></div>` : S.config.finished ? '<div class="text-2xl font-black text-emerald-400 mt-1">🏆 본선 발표 심사 공식 마감</div>' : '<div class="text-slate-500 text-sm mt-1">발표 기동 대기 상태</div>'}`;
     
   let html = '';
 
-  // 현재 발표 진행 중일 때, 스코어보드를 보고 채점 누락자를 현장 통제할 수 있도록 대형 진척도 현황판 로드
+  // 현재 발표 진행 중일 때, 채점 누락자를 관제하고 통제할 수 있도록 대형 인디케이터 상시 탑재
   if (cg && on.length > 0) {
     const gs = S.scores[cg.id] || {};
     const scored = Object.keys(gs).filter(k => gs[k] && typeof gs[k] === 'object');
 
-    // 본인 조 제외 처리 (스태프거나 타 조 인원만 채점 자격 대상으로 카운트)
     const eligible = on.filter(n => {
       const g2 = findGroup(n);
       return !g2 || g2.isStaff || g2.id !== cg.id;
@@ -781,21 +1009,21 @@ function renderLive() {
     const pending = eligible.filter(n => !scored.includes(n));
 
     html += `
-      <div class="card" style="border-color: rgba(99,91,255,0.25); background: linear-gradient(135deg, rgba(99,91,255,0.03), var(--bg-card)); margin-bottom: 24px; padding: 18px;">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:8px;">
-          <span style="font-size:14px; font-weight:700; color:#9c97ff; display:flex; align-items:center; gap:6px;">📊 [${cg.name}] 심사 평가 전송 진척도 (${done.length}/${eligible.length} 완료)</span>
-          <span style="font-size:11px; color:var(--text-muted)">성명 옆의 마크를 확인하세요 (✓ 완료 / … 대기)</span>
+      <div class="glass p-5 rounded-2xl border border-indigo-500/20 mb-6 bg-indigo-950/5">
+        <div class="flex justify-between items-center mb-3 flex-wrap gap-2">
+          <span class="text-xs font-bold text-indigo-300 flex items-center gap-1.5">⚡ [${cg.name}] 심사 전송 현황 (${done.length}/${eligible.length} 제출)</span>
+          <span class="text-[10px] text-slate-500 font-bold uppercase tracking-wider">✓ 완료 / … 대기</span>
         </div>
-        <div style="display:flex; flex-wrap:wrap; gap:6px;">
-          ${done.map(n => `<span class="status-chip done" style="font-size:12px; padding:6px 12px; border:1px solid rgba(16,185,129,0.25)">✓ ${n}</span>`).join('')}
-          ${pending.map(n => `<span class="status-chip pending" style="font-size:12px; padding:6px 12px; border:1px solid rgba(245,158,11,0.2)">… ${n}</span>`).join('')}
-          ${eligible.length === 0 ? '<span style="font-size:12px; color:var(--text-muted);">평가 자격을 가진 외부 조 위원이 아직 로그인하지 않았습니다.</span>' : ''}
+        <div class="flex flex-wrap gap-1.5">
+          ${done.map(n => `<span class="status-chip done text-xs px-3 py-1.5 border border-emerald-500/10">✓ ${n}</span>`).join('')}
+          ${pending.map(n => `<span class="status-chip pending text-xs px-3 py-1.5 border border-amber-500/10">… ${n}</span>`).join('')}
+          ${eligible.length === 0 ? '<span class="text-xs text-slate-500 font-medium py-1">평가 가능한 타 조원 심사위원이 아직 접속하지 않았습니다.</span>' : ''}
         </div>
       </div>`;
   }
 
   if (!ranked.length) { 
-    $('live-body').innerHTML = html + '<p style="text-align:center; color:var(--text-muted); padding:40px">집계 대기 중...</p>'; 
+    $('live-body').innerHTML = html + '<p class="text-center text-slate-500 py-12">집계 대기 중...</p>'; 
     return; 
   }
   
@@ -804,35 +1032,35 @@ function renderLive() {
     const mc = i < 3 ? MC[i] : BC[i % BC.length];
     const pct = maxT > 0 ? ((g.result.total / maxT) * 100).toFixed(0) : 0;
     html += `
-      <div class="chart-row">
-        <div style="display:flex; align-items:center; gap:8px; width:100px">
-          <span class="mono" style="font-size:18px; font-weight:900; color:${mc}; width:20px">${i+1}</span>
-          <span style="font-size:14px; font-weight:700">${g.name}</span>
+      <div class="flex items-center gap-4 mb-3">
+        <div class="flex items-center gap-2 w-28 shrink-0">
+          <span class="mono text-2xl font-black text-right w-6" style="color:${mc}">${i+1}</span>
+          <span class="text-sm font-bold text-slate-200 truncate">${g.name}</span>
         </div>
-        <div class="chart-container">
-          <div class="chart-bar" style="width:${pct}%; background:linear-gradient(90deg, ${mc}88, ${mc})"></div>
-          <span class="mono" style="position:absolute; right:12px; top:50%; transform:translateY(-50%); font-size:13px; font-weight:800">${g.result.total.toFixed(1)} 점</span>
+        <div class="flex-1 height-10 bg-black/40 border border-white/5 rounded-xl overflow-hidden relative h-9 flex items-center">
+          <div class="chart-bar h-full rounded-r-lg transition-all duration-500" style="width:${pct}%; background:linear-gradient(90deg, ${mc}40, ${mc})"></div>
+          <span class="mono absolute right-4 font-black text-sm text-slate-100">${g.result.total.toFixed(1)} 점</span>
         </div>
       </div>`;
   });
   
   html += `
-    <div class="card" style="margin-top:24px; padding:16px; overflow:hidden">
-      <h3 style="font-size:13px; font-weight:700; margin-bottom:12px; color:#9c97ff">📋 각 세부 평가 항목별 평균 평점 현황</h3>
-      <div style="overflow-x:auto">
+    <div class="glass p-5 rounded-2xl border border-white/5 overflow-hidden mt-6">
+      <h3 class="text-sm font-bold text-indigo-300 mb-4 flex items-center gap-1.5">📊 항목별 심사 상세 대시보드</h3>
+      <div class="overflow-x-auto">
         <table>
           <tr>
-            <th style="text-align:left;">대상 조</th>`;
-  CATS.forEach(c => { html += `<th>${c.emoji}<br>${c.w}%</th>`; });
-  html += `<th style="color:var(--bonus)">⭐ Q&A</th><th style="color:#fff">총 스코어</th></tr>`;
+            <th class="text-left font-bold rounded-l-xl px-4 text-slate-300">대상 팀</th>`;
+  CATS.forEach(c => { html += `<th class="font-semibold text-slate-400 text-xs">${c.emoji}<br>${c.w}%</th>`; });
+  html += `<th class="text-pink-400 font-bold">⭐ Q&A</th><th class="rounded-r-xl font-bold text-slate-100">총합</th></tr>`;
   ranked.forEach((g, i) => {
     const mc = i < 3 ? MC[i] : 'var(--text-main)';
-    html += `<tr><td style="text-align:left; font-weight:700">${g.name}</td>`;
+    html += `<tr class="hover:bg-white/[0.02]"><td class="text-left font-extrabold text-sm px-4">${g.name}</td>`;
     CATS.forEach(c => {
       const v = g.result.avg[c.id] || 0;
-      html += `<td class="mono" style="background:rgba(99,91,255,${((v/10)*0.15).toFixed(2)})">${v.toFixed(1)}</td>`;
+      html += `<td class="mono font-bold" style="background:rgba(99,91,255,${((v/10)*0.15).toFixed(2)})">${v.toFixed(1)}</td>`;
     });
-    html += `<td class="mono" style="color:var(--bonus)">${g.result.bt > 0 ? g.result.bt.toFixed(1) : '-'}</td><td class="mono" style="font-size:14px; font-weight:900; color:${mc}">${g.result.total.toFixed(1)}</td></tr>`;
+    html += `<td class="mono text-pink-400 font-bold">${g.result.bt > 0 ? g.result.bt.toFixed(1) : '-'}</td><td class="mono text-base font-black" style="color:${mc}">${g.result.total.toFixed(1)}</td></tr>`;
   });
   html += `</table></div></div>`;
   $('live-body').innerHTML = html;
@@ -841,58 +1069,94 @@ function renderLive() {
 // 🏆 FINAL DETAILED RESULTS SCREEN
 function renderResults() {
   const ranked = getRanked();
-  $('results-sub').textContent = `세션코드: ${S.sessionId} | ${ranked.length}개 조 최종 산출 완료`;
-  if (!ranked.length) { $('results-body').innerHTML = '<p style="color:var(--text-muted); text-align:center;">출력할 데이터가 없습니다.</p>'; return; }
+  $('results-sub').textContent = `세션코드: ${S.sessionId} | ${ranked.length}개 조 최종 매트릭스 산출`;
+  if (!ranked.length) { $('results-body').innerHTML = '<p class="text-slate-500 text-center py-10">데이터가 부재합니다.</p>'; return; }
   
   let html = '';
   if (ranked.length >= 1) {
-    html += '<div style="display:flex; justify-content:center; align-items:flex-end; gap:10px; margin:20px auto 36px; max-width:500px; min-height:160px">';
+    html += '<div class="flex items-end justify-center gap-3 my-8 max-w-xl mx-auto min-h-[180px] px-2">';
     const podiumOrder = [1, 0, 2];
     podiumOrder.forEach(pi => {
       const g = ranked[pi]; if (!g) return;
       const isFirst = pi === 0;
       html += `
-        <div style="background:var(--bg-card); border:1px solid ${MC[pi]}44; border-radius:14px; padding:16px 10px; text-align:center; flex:1; ${isFirst ? 'transform:scale(1.08); border-color:var(--warning); box-shadow:0 10px 30px rgba(251,191,36,0.08)':''}">
-          <div style="font-size:${isFirst?36:28}px; margin-bottom:4px">${['🥇','🥈','🥉'][pi]}</div>
-          <div style="font-weight:700; font-size:14px; color:#fff">${g.name}</div>
-          <div class="mono" style="font-size:${isFirst?22:18}px; font-weight:900; color:${MC[pi]}; margin-top:6px">${g.result.total.toFixed(1)}</div>
+        <div class="glass p-4 rounded-3xl text-center flex-1 border transition duration-300 ${isFirst ? 'scale-105 border-amber-500/30 bg-gradient-to-t from-amber-500/5 to-transparent glow-indigo' : 'border-white/5 opacity-80'}" style="${isFirst ? 'transform: translateY(-8px);':''}">
+          <div class="text-4xl mb-2">${['🥇','🥈','🥉'][pi]}</div>
+          <div class="font-extrabold text-sm text-slate-200 truncate">${g.name}</div>
+          <div class="text-[10px] text-slate-500 mt-1 truncate">${g.members.join(', ')}</div>
+          <div class="mono text-2xl font-black mt-3" style="color:${MC[pi]}">${g.result.total.toFixed(1)}</div>
         </div>`;
     });
     html += '</div>';
   }
   
-  html += `<div class="card"><h3 style="font-size:14px; font-weight:700; margin-bottom:16px">📊 최종 누적 스코어 레이더</h3>`;
+  html += `
+    <div class="glass p-6 rounded-3xl border border-white/5">
+      <h3 class="text-sm font-bold text-indigo-300 mb-4 uppercase tracking-wider">📊 리더보드 스코어 레이더</h3>`;
   const mx = ranked[0]?.result?.total || 100;
   ranked.forEach((g, i) => {
     const mc = i < 3 ? MC[i] : BC[i % BC.length];
     html += `
-      <div class="chart-row">
-        <span style="font-size:13px; font-weight:700; width:50px">${g.name}</span>
-        <div class="chart-container" style="height:24px;">
-          <div class="chart-bar" style="width:${mx > 0 ? ((g.result.total / mx) * 100).toFixed(0) : 0}%; background:${mc}"></div>
-          <span class="mono" style="position:absolute; right:12px; top:50%; transform:translateY(-50%); font-size:12px; font-weight:700">${g.result.total.toFixed(1)}</span>
+      <div class="flex items-center gap-3 mb-2.5">
+        <span class="text-xs font-bold w-12 text-slate-300 shrink-0">${g.name}</span>
+        <div class="flex-1 bg-black/40 border border-white/5 rounded-xl h-6 relative overflow-hidden flex items-center">
+          <div class="h-full transition-all duration-500" style="width:${mx > 0 ? ((g.result.total / mx) * 100).toFixed(0) : 0}%; background:${mc}"></div>
+          <span class="mono absolute right-3 text-[11px] font-black text-slate-100">${g.result.total.toFixed(1)}</span>
         </div>
       </div>`;
   });
   html += `</div>`;
   
-  html += `<div class="card" style="padding:16px"><h3 style="font-size:14px; font-weight:700; margin-bottom:16px">🎯 최종 디테일 매트릭스 점수표</h3><div style="overflow-x:auto"><table><tr><th style="text-align:left">순위 / 조 명칭</th>`;
-  CATS.forEach(c => { html += `<th>${c.emoji}<br>${c.w}%</th>`; });
-  html += `<th style="color:var(--bonus)">⭐ Q&A</th><th style="color:var(--primary)">최종합계</th></tr>`;
+  html += `
+    <div class="glass p-6 rounded-3xl border border-white/5 overflow-hidden">
+      <h3 class="text-sm font-bold text-indigo-300 mb-4 uppercase tracking-wider">🎯 최종 점수 종합 집계표</h3>
+      <div class="overflow-x-auto">
+        <table>
+          <tr>
+            <th class="text-left font-bold rounded-l-xl px-4 text-slate-300">순위 / 조 명칭</th>`;
+  CATS.forEach(c => { html += `<th class="font-semibold text-slate-400 text-xs">${c.emoji}<br>${c.w}%</th>`; });
+  html += `<th class="text-pink-400 font-bold">⭐ Q&A</th><th class="rounded-r-xl font-bold text-slate-100">최종 스코어</th></tr>`;
   ranked.forEach((g, i) => {
     const mc = i < 3 ? MC[i] : 'var(--text-main)';
-    html += `<tr><td style="text-align:left; font-weight:700"><span style="color:${mc}; margin-right:6px">#${i+1}</span>${g.name}</td>`;
+    html += `<tr><td class="text-left font-extrabold text-sm px-4"><span class="mono mr-1.5" style="color:${mc}">#${i+1}</span>${g.name}</td>`;
     CATS.forEach(c => {
-      html += `<td class="mono">${(g.result.avg[c.id] || 0).toFixed(1)}</td>`;
+      html += `<td class="mono font-bold text-slate-300">${(g.result.avg[c.id] || 0).toFixed(1)}</td>`;
     });
-    html += `<td class="mono" style="color:var(--bonus)">${g.result.bt > 0 ? g.result.bt.toFixed(1) : '-'}</td><td class="mono" style="font-size:14px; font-weight:900; color:${mc}">${g.result.total.toFixed(1)}</td></tr>`;
+    html += `<td class="mono text-pink-400 font-bold">${g.result.bt > 0 ? g.result.bt.toFixed(1) : '-'}</td><td class="mono text-base font-black" style="color:${mc}">${g.result.total.toFixed(1)}</td></tr>`;
   });
   html += `</table></div></div>`;
   
   $('results-body').innerHTML = html;
 }
 </script>
+
+<style>
+  /* 공통 글로벌 버튼 및 인풋 미세 재조정 */
+  .btn {
+    @apply rounded-xl font-bold text-sm transition duration-150 inline-flex items-center justify-center gap-2 cursor-pointer;
+  }
+  .btn-primary {
+    background: #635bff;
+    color: white;
+    @apply shadow-lg shadow-indigo-600/10 hover:bg-indigo-500;
+  }
+  .btn-outline {
+    background: transparent;
+    @apply border border-white/10 text-slate-300 hover:bg-white/5;
+  }
+  .btn-success {
+    background: rgba(16, 185, 129, 0.1);
+    color: #10b981;
+    @apply border border-emerald-500/20 hover:bg-emerald-500/20;
+  }
+  .btn-bonus {
+    background: rgba(236, 72, 153, 0.1);
+    color: #ec4899;
+    @apply border border-pink-500/20 hover:bg-pink-500/20;
+  }
+  .input {
+    @apply w-full bg-black/40 border border-white/5 rounded-xl py-3 px-4 text-slate-100 text-sm transition duration-150 focus:border-indigo-500/50 focus:bg-black/60;
+  }
+</style>
 </body>
 </html>
-
-```

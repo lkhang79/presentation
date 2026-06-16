@@ -3,74 +3,62 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>발표 채점 시스템</title>
+<title>발표 채점</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Noto Sans KR',-apple-system,sans-serif;background:#07070d;color:#e4e4ee;min-height:100dvh;overflow-x:hidden}
 input,button,select,textarea{font-family:inherit}
-input::placeholder{color:#999999}
+input::placeholder{color:#999}
 input:focus{outline:none;border-color:#635bff !important;box-shadow:0 0 0 3px rgba(99,91,255,0.15)}
 button{cursor:pointer;border:none;background:none}
 button:disabled{cursor:not-allowed;opacity:0.45}
-::-webkit-scrollbar{width:6px}::-webkit-scrollbar-thumb{background:#2a2a40;border-radius:3px}
 @keyframes fadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
 @keyframes scaleIn{from{opacity:0;transform:scale(0.92)}to{opacity:1;transform:scale(1)}}
 @keyframes slideLeft{from{opacity:0;transform:translateX(40px)}to{opacity:1;transform:translateX(0)}}
 @keyframes slideUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
 @keyframes livePulse{0%,100%{box-shadow:0 0 0 0 rgba(239,68,68,0.4)}50%{box-shadow:0 0 0 6px rgba(239,68,68,0)}}
-@keyframes growBar{from{transform:scaleX(0)}to{transform:scaleX(1)}}
-@keyframes countUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
 .fade-in{animation:fadeIn .4s ease-out both}.scale-in{animation:scaleIn .3s ease-out both}.slide-up{animation:slideUp .5s ease-out both}.slide-left{animation:slideLeft .35s ease-out both}
-.container{max-width:640px;margin:0 auto;padding:16px 20px 40px}.container-wide{max-width:900px;margin:0 auto;padding:16px 20px 40px}
+.container{max-width:640px;margin:0 auto;padding:16px 20px 40px}
 .card{background:#0f0f18;border:1px solid #1e1e30;border-radius:16px;padding:20px;margin-bottom:12px}
 .badge{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600}
 .badge-live{background:rgba(239,68,68,0.15);color:#ef4444;animation:livePulse 2s ease-in-out infinite}
-.badge-success{background:rgba(16,185,129,0.12);color:#10b981}.badge-primary{background:rgba(99,91,255,0.12);color:#8b85ff}
+.badge-success{background:rgba(16,185,129,0.12);color:#10b981}
+.badge-primary{background:rgba(99,91,255,0.12);color:#8b85ff}
 .badge-weight{background:rgba(245,158,11,0.12);color:#f59e0b;font-family:'JetBrains Mono',monospace}
 .badge-staff{background:rgba(168,85,247,0.15);color:#a855f7}
 .btn{padding:11px 22px;border-radius:10px;font-weight:600;font-size:14px;transition:all .2s;border:1px solid transparent}
-.btn-primary{background:#635bff;border-color:#4840cc;color:#fff}.btn-outline{background:transparent;border-color:#2a2a40;color:#e4e4ee}
-.btn-danger{background:rgba(239,68,68,0.12);border-color:rgba(239,68,68,0.3);color:#ef4444}
-.btn-success{background:rgba(16,185,129,0.12);border-color:rgba(16,185,129,0.3);color:#10b981}
-.btn-ghost{background:transparent;border-color:transparent;color:#9898b4}
-.btn-lg{padding:15px 30px;font-size:16px;border-radius:12px}.btn-sm{padding:7px 14px;font-size:13px;border-radius:8px}.btn-block{width:100%}
+.btn-primary{background:#635bff;border-color:#4840cc;color:#fff}
+.btn-outline{background:transparent;border-color:#2a2a40;color:#e4e4ee}
+.btn-ghost{background:transparent;color:#9898b4}
+.btn-lg{padding:15px 30px;font-size:16px;border-radius:12px}
+.btn-block{width:100%}
 .mono{font-family:'JetBrains Mono',monospace}
-.input{width:100%;background:#ffffff;border:1px solid #ccccdd;border-radius:8px;padding:10px 14px;color:#111111;font-size:15px}
+.input{width:100%;background:#fff;border:1px solid #ccd;border-radius:8px;padding:10px 14px;color:#111;font-size:15px}
 .screen{display:none}.screen.active{display:block}
-.fullscreen-center{min-height:100dvh;display:flex;align-items:center;justify-content:center;padding:20px}
-.bg-grad{background:radial-gradient(ellipse at 50% 0%,#111128 0%,#07070d 60%)}
+.fc{min-height:100dvh;display:flex;align-items:center;justify-content:center;padding:20px}
+.bg{background:radial-gradient(ellipse at 50% 0%,#111128 0%,#07070d 60%)}
 .name-btn{width:100%;background:#12121c;border:1px solid #1e1e30;border-radius:10px;padding:11px 14px;color:#e4e4ee;font-size:14px;text-align:left;transition:all .15s;cursor:pointer;display:block;margin-bottom:6px}
 .name-btn.selected{background:rgba(99,91,255,0.12)!important;border-color:#635bff!important;color:#8b85ff!important;font-weight:600!important}
-.dots{display:flex;gap:6px;justify-content:center;margin:16px 0}.dot{width:8px;height:8px;border-radius:50%;background:#1e1e30;transition:all .3s;cursor:pointer}.dot.active{background:#635bff;width:24px;border-radius:4px}.dot.done{background:#10b981}
-.chart-bar{transform-origin:left;animation:growBar 0.8s ease-out both;border-radius:0 6px 6px 0;height:100%}
-.chart-row{display:flex;align-items:center;gap:10px;margin-bottom:8px;animation:countUp 0.5s ease-out both}
-.live-dot{width:8px;height:8px;border-radius:50%;background:#ef4444;display:inline-block;animation:pulse 1.5s ease infinite}
-.status-chip{padding:4px 8px;border-radius:6px;font-size:11px;text-align:center;font-weight:500}
+.dots{display:flex;gap:6px;justify-content:center;margin:16px 0}
+.dot{width:8px;height:8px;border-radius:50%;background:#1e1e30;transition:all .3s;cursor:pointer}
+.dot.active{background:#635bff;width:24px;border-radius:4px}.dot.done{background:#10b981}
 </style>
 </head>
 <body>
 
-<!-- HOME (채점자 기본 화면) --><div id="screen-home" class="screen fullscreen-center bg-grad"><div style="text-align:center;max-width:400px;width:100%"><div class="scale-in" style="width:80px;height:80px;border-radius:24px;background:rgba(99,91,255,0.12);border:1px solid rgba(99,91,255,0.2);display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:36px">🎯</div><h1 class="fade-in" style="font-size:28px;font-weight:900;margin-bottom:8px">발표 채점</h1><p class="fade-in" style="color:#8888a0;font-size:14px;margin-bottom:32px">세션 코드를 입력하세요</p><div class="card slide-up" style="padding:24px"><input class="input mono" id="home-code" placeholder="세션 코드 입력" maxlength="10" style="font-size:18px;letter-spacing:2px;text-transform:uppercase;text-align:center;margin-bottom:16px"><button class="btn btn-primary btn-lg btn-block" onclick="homeJoin()">입장하기 →</button></div></div></div>
-<!-- ADMIN HOME (#admin) --><div id="screen-adminhome" class="screen fullscreen-center bg-grad"><div style="text-align:center;max-width:420px;width:100%"><div class="scale-in" style="width:80px;height:80px;border-radius:24px;background:rgba(99,91,255,0.12);border:1px solid rgba(99,91,255,0.2);display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:36px">👑</div><h1 class="fade-in" style="font-size:28px;font-weight:900;margin-bottom:8px">관리자 모드</h1><p class="fade-in" style="color:#8888a0;font-size:14px;margin-bottom:32px">세션 생성 및 관리</p><div style="display:flex;flex-direction:column;gap:14px"><button onclick="goSetup()" class="slide-up" style="background:linear-gradient(135deg,#635bff,#4840cc);border:none;border-radius:16px;padding:22px 24px;color:#fff;font-size:17px;font-weight:700;text-align:left;display:flex;align-items:center;gap:16px;box-shadow:0 8px 32px rgba(99,91,255,0.3)"><span style="width:48px;height:48px;border-radius:14px;background:rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;font-size:22px">🚀</span><div><div>세션 생성</div><div style="font-size:12px;font-weight:400;opacity:.75;margin-top:3px">조 구성 · 발표 진행 · 결과</div></div></button><button onclick="openLivePrompt()" class="slide-up" style="background:#0f0f18;border:1px solid rgba(239,68,68,0.2);border-radius:16px;padding:18px 24px;color:#e4e4ee;font-size:15px;font-weight:700;text-align:left;display:flex;align-items:center;gap:16px"><span style="width:48px;height:48px;border-radius:14px;background:rgba(239,68,68,0.08);display:flex;align-items:center;justify-content:center;font-size:22px">📺</span><div><div>실시간 스코어보드</div><div style="font-size:12px;font-weight:400;color:#8888a0;margin-top:3px">프로젝터용 점수 화면</div></div></button></div></div></div>
-<!-- SETUP --><div id="screen-setup" class="screen"><div class="container"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px"><button class="btn btn-ghost btn-sm" onclick="setupBack()">← 이전</button><span id="setup-title" style="font-size:16px;font-weight:700"></span><span id="setup-step-label" class="mono" style="font-size:12px;color:#5c5c7a"></span></div><div id="setup-dots" class="dots"></div><div id="setup-content"></div></div></div>
-<!-- ADMIN --><div id="screen-admin" class="screen"><div class="container"><div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px"><div><h1 style="font-size:22px;font-weight:800">👑 관리자 패널</h1><p id="admin-session-id" style="color:#5c5c7a;font-size:13px;margin-top:4px"></p></div><div style="display:flex;gap:6px"><button class="btn btn-outline btn-sm" id="btn-toggle" onclick="toggleAdminView()">📊 결과</button><button class="btn btn-danger btn-sm" onclick="resetSession()">삭제</button></div></div><div id="share-bar" style="background:rgba(99,91,255,0.12);border:1px solid rgba(99,91,255,0.15);border-radius:12px;padding:12px 16px;margin-bottom:16px"><div style="display:flex;justify-content:space-between;align-items:center;gap:10px"><div style="flex:1;min-width:0"><div style="color:#9898b4;font-size:11px;margin-bottom:4px">아래 링크 + 세션 코드를 참가자에게 공유하세요</div><div id="share-url" class="mono" style="color:#8b85ff;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis"></div></div><button class="btn btn-primary btn-sm" onclick="copyLink()" id="btn-copy">복사</button></div><div style="margin-top:8px;padding:8px 12px;background:#0f0f18;border-radius:8px;display:flex;align-items:center;gap:8px"><span>📱</span><span style="color:#9898b4;font-size:12px">세션 코드: <strong id="admin-code" class="mono" style="color:#e4e4ee;letter-spacing:2px"></strong></span></div></div><div id="admin-body"></div><div id="admin-buttons" style="margin-top:12px;display:flex;flex-direction:column;gap:8px"></div></div></div>
-<!-- DETAIL (개별 점수 상세) --><div id="screen-detail" class="screen"><div class="container"><div style="display:flex;align-items:center;gap:8px;margin-bottom:20px"><button class="btn btn-ghost btn-sm" onclick="closeDetail()">← 돌아가기</button><h2 id="detail-title" style="font-size:18px;font-weight:800"></h2></div><div id="detail-body"></div></div></div>
-<!-- JOIN --><div id="screen-join" class="screen fullscreen-center bg-grad"><div style="max-width:400px;width:100%"><div class="scale-in" style="text-align:center;margin-bottom:28px"><div style="font-size:40px;margin-bottom:8px">🎯</div><h1 style="font-size:22px;font-weight:800;margin-bottom:4px">발표 채점</h1><span class="badge badge-primary" id="join-badge" style="font-size:12px"></span></div><div id="join-body"></div></div></div>
-<!-- VOTE --><div id="screen-vote" class="screen"><div class="container"><div id="vote-banner"></div><div id="vote-body"></div><div style="text-align:center;margin-top:20px"><span id="vote-footer" style="color:#3a3a52;font-size:12px"></span></div></div></div>
-<!-- LIVE --><div id="screen-live" class="screen"><div class="container-wide" style="padding-top:30px"><div id="live-header" style="text-align:center;margin-bottom:24px"></div><div id="live-body"></div></div></div>
-<!-- RESULTS --><div id="screen-results" class="screen"><div class="container-wide" style="padding-top:40px;padding-bottom:60px"><div class="scale-in" style="text-align:center;margin-bottom:40px"><div style="font-size:56px;margin-bottom:12px">🏆</div><h1 style="font-size:36px;font-weight:900;margin-bottom:8px">최종 결과</h1><p id="results-sub" style="color:#5c5c7a;font-size:15px"></p></div><div id="results-body"></div><div style="text-align:center;margin-top:32px"><button class="btn btn-ghost" onclick="goHome()">홈으로</button></div></div></div>
+<!-- 코드 입력 --><div id="s-home" class="screen active fc bg"><div style="text-align:center;max-width:400px;width:100%"><div class="scale-in" style="width:80px;height:80px;border-radius:24px;background:rgba(99,91,255,0.12);border:1px solid rgba(99,91,255,0.2);display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:36px">🎯</div><h1 class="fade-in" style="font-size:28px;font-weight:900;margin-bottom:8px">발표 채점</h1><p class="fade-in" style="color:#888;font-size:14px;margin-bottom:32px">세션 코드를 입력하세요</p><div class="card slide-up" style="padding:24px"><input class="input mono" id="inp-code" placeholder="세션 코드 입력" maxlength="10" style="font-size:18px;letter-spacing:2px;text-transform:uppercase;text-align:center;margin-bottom:16px"><button class="btn btn-primary btn-lg btn-block" onclick="goJoin()">입장하기 →</button></div></div></div>
+
+<!-- 조/이름 선택 --><div id="s-join" class="screen fc bg"><div style="max-width:400px;width:100%"><div class="scale-in" style="text-align:center;margin-bottom:28px"><div style="font-size:40px;margin-bottom:8px">🎯</div><h1 style="font-size:22px;font-weight:800;margin-bottom:4px">발표 채점</h1><span class="badge badge-primary" id="join-badge"></span></div><div id="join-body"></div></div></div>
+
+<!-- 채점 --><div id="s-vote" class="screen"><div class="container"><div id="vote-banner"></div><div id="vote-body"></div><div style="text-align:center;margin-top:20px"><span id="vote-footer" style="color:#3a3a52;font-size:12px"></span></div></div></div>
 
 <script type="module">
 import{initializeApp}from'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js'
-import{getDatabase,ref,set,get,onValue,remove}from'https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js'
-
+import{getDatabase,ref,set,get,onValue}from'https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js'
 const firebaseConfig={apiKey:"AIzaSyCTOXhHZLGRbzdUnMc1grQi711uaXSLA6k",authDomain:"presentation-score-65753.firebaseapp.com",databaseURL:"https://presentation-score-65753-default-rtdb.asia-southeast1.firebasedatabase.app",projectId:"presentation-score-65753",storageBucket:"presentation-score-65753.firebasestorage.app",messagingSenderId:"904312501135",appId:"1:904312501135:web:db03173baa400af63f91fa"}
-let db=null,FB={};try{const app=initializeApp(firebaseConfig);db=getDatabase(app);FB={ref,set,get,onValue,remove}}catch(e){console.warn(e)}
-function checkFB(){if(!db){alert('⚠️ Firebase 연결 실패');return false}return true}
+let db=null,FB={};try{const a=initializeApp(firebaseConfig);db=getDatabase(a);FB={ref,set,get,onValue}}catch(e){}
 
-// ═══ 심사 항목 (총 100점) ═══
 const CATS=[
   {id:'c1',label:'교육효과',emoji:'🎓',w:30,desc:'프로젝트 주제가 해당 컨소시엄 분야와 관련성이 높은가'},
   {id:'c2',label:'분야 적합성',emoji:'🎯',w:20,desc:'문제해결을 위해 논리적으로 기획 구성하였는가'},
@@ -78,191 +66,73 @@ const CATS=[
   {id:'c4',label:'접근의 다양성',emoji:'🔍',w:20,desc:'제안한 프로젝트 결과물이 현실적으로 구현 가능하며, 실행계획이 구체적인가'},
   {id:'c5',label:'실현가능성',emoji:'⚙️',w:10,desc:'첨단분야 직무에 대한 이해와 경험이 증진 되었으며, 성찰 과정이 포함되는가'},
 ]
-const MC=['#fbbf24','#94a3b8','#d97706'],BC=['#635bff','#8b5cf6','#3b82f6','#10b981','#f59e0b','#ef4444','#ec4899','#14b8a6','#f97316','#6366f1']
 function $(id){return document.getElementById(id)}
-function genCode(){const c='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';let r='';for(let i=0;i<6;i++)r+=c[Math.floor(Math.random()*c.length)];return r}
+function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));$(id).classList.add('active')}
+function findGroup(cfg,name){for(const g of cfg.groups)if(g.members?.includes(name))return g;return null}
 
-let S={};function resetState(){if(S.unsub)S.unsub();if(S.unsub2)S.unsub2();S={sessionId:null,config:null,scores:{},online:{},role:null,scorerName:'',scorerGroup:null,groupCount:2,groups:[],staffMembers:['',''],myScores:{},submitted:false,prevGroup:-1,showRes:false,unsub:null,unsub2:null,joinUrl:'',setupStep:0,voteStep:0,joinStep:0,joinGI:-1}}
-resetState()
-function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));$(id).classList.add('active')}
+let S={sid:null,cfg:null,scores:{},name:'',group:null,myScores:{},submitted:false,prev:-1,step:0,joinStep:0,joinGI:-1,unsub:null}
 
-function calcResult(scores,gid){const gs=scores?.[gid];if(!gs||typeof gs!=='object')return null;const scorers=Object.keys(gs);if(!scorers.length)return null;const avg={};CATS.forEach(c=>{const v=[];scorers.forEach(s=>{const o=gs[s];if(o&&typeof o[c.id]==='number')v.push(o[c.id])});avg[c.id]=v.length?v.reduce((a,b)=>a+b,0)/v.length:0});const total=CATS.reduce((s,c)=>s+(avg[c.id]/10)*c.w,0);return{avg,total,count:scorers.length}}
-function getRanked(){if(!S.config)return[];return S.config.groups.filter(g=>!g.isStaff).map(g=>({...g,result:calcResult(S.scores,g.id)})).filter(g=>g.result).sort((a,b)=>b.result.total-a.result.total)}
-function findGroup(name){if(!S.config)return null;for(const g of S.config.groups)if(g.members?.includes(name))return g;return null}
+// ═══ 코드 입력 → 조 선택 ═══
+window.goJoin=function(){const code=$('inp-code')?.value?.trim()?.toUpperCase();if(!code){alert('세션 코드를 입력하세요');return};S.sid=code;loadJoin()}
 
-// ═══ ROUTING ═══
-// 기본 = 채점자 코드 입력 화면
-// #admin = 관리자 모드
-// #join=CODE = 채점자 바로 입장
-// #live=CODE = 실시간 스코어보드
-function getParam(key){const h=window.location.hash.replace('#','');if(h.startsWith(key+'='))return h.split('=')[1];const p=new URLSearchParams(window.location.search);return p.get(key)}
-const HASH=window.location.hash.replace('#','')
-const JOIN_CODE=getParam('join'),LIVE_CODE=getParam('live')
-const IS_JOIN=!!JOIN_CODE,IS_LIVE=!!LIVE_CODE,IS_ADMIN=(HASH==='admin')
-
-function handleRoute(){
-  if(IS_JOIN){resetState();S.sessionId=JOIN_CODE.toUpperCase();showScreen('screen-join');$('join-badge').textContent=`세션: ${S.sessionId}`;$('join-body').innerHTML='<div style="text-align:center;padding:40px"><p style="color:#9898b4">연결 중...</p></div>';loadJoinScreen();return}
-  if(IS_LIVE){resetState();S.sessionId=LIVE_CODE.toUpperCase();loadLive();return}
-  if(IS_ADMIN){showScreen('screen-adminhome');return}
-  // 기본: 채점자 코드 입력 화면
-  showScreen('screen-home')
-}
-handleRoute()
-
-// ═══ HOME (채점자 코드 입력) ═══
-window.homeJoin=function(){const code=$('home-code')?.value?.trim()?.toUpperCase();if(!code){alert('세션 코드를 입력하세요');return};resetState();S.sessionId=code;loadJoinScreen()}
-window.goHome=function(){if(IS_JOIN){location.reload();return};if(IS_ADMIN){showScreen('screen-adminhome');return};resetState();showScreen('screen-home')}
-window.goSetup=function(){resetState();S.setupStep=0;showScreen('screen-setup');renderSetup()}
-window.openLivePrompt=function(){const c=prompt('세션 코드:');if(c?.trim()){const b=location.href.split('?')[0].split('#')[0];window.open(`${b}#live=${c.trim().toUpperCase()}`,'_blank')}}
-window.openLiveFromAdmin=function(){const b=location.href.split('?')[0].split('#')[0];window.open(`${b}#live=${S.sessionId}`,'_blank')}
-
-// ═══ SETUP ═══
-function getTotalSteps(){return S.groupCount+3}
-function renderSetup(){const step=S.setupStep,total=getTotalSteps();$('setup-step-label').textContent=`${step+1}/${total}`;let dots='';for(let i=0;i<total;i++)dots+=`<div class="dot ${i===step?'active':i<step?'done':''}"></div>`;$('setup-dots').innerHTML=dots;const box=$('setup-content')
-  if(step===0){$('setup-title').textContent='⚙️ 세션 설정';box.innerHTML=`<div class="card slide-left"><h2 style="font-size:16px;font-weight:700;margin-bottom:12px">세션 코드</h2><p style="color:#8888a0;font-size:12px;margin-bottom:10px">비워두면 자동 생성</p><input class="input mono" id="inp-code" placeholder="예: NANO2026" maxlength="10" value="${S.customCode||''}" style="letter-spacing:2px;text-transform:uppercase;text-align:center;margin-bottom:20px"><h2 style="font-size:16px;font-weight:700;margin-bottom:16px">조 수</h2><div id="gc-grid" style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:24px"></div><button class="btn btn-primary btn-lg btn-block" onclick="setupNext()">다음 →</button></div>`;const g=$('gc-grid');for(let n=2;n<=10;n++){const b=document.createElement('button');b.textContent=n;b.style.cssText=`aspect-ratio:1;border-radius:12px;font-size:20px;font-weight:800;font-family:'JetBrains Mono',monospace;border:2px solid ${n===S.groupCount?'#635bff':'#1e1e30'};background:${n===S.groupCount?'rgba(99,91,255,0.12)':'#12121c'};color:${n===S.groupCount?'#8b85ff':'#9898b4'}`;b.onclick=()=>{S.groupCount=n;renderSetup()};g.appendChild(b)};return}
-  const gi=step-1
-  if(gi>=0&&gi<S.groupCount){while(S.groups.length<S.groupCount)S.groups.push({id:'g'+(S.groups.length+1),name:(S.groups.length+1)+'조',members:['','']});const g=S.groups[gi];$('setup-title').textContent=`${g.name} 조원`;let h=`<div class="card slide-left"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px"><h2 style="font-size:18px;font-weight:800">${g.name} <span class="mono" style="color:#5c5c7a;font-size:13px">${g.members.filter(m=>m.trim()).length}명</span></h2><button class="btn btn-ghost btn-sm" onclick="wizAdd(${gi})">+ 추가</button></div><div style="display:flex;flex-direction:column;gap:8px">`;g.members.forEach((m,mi)=>{h+=`<div style="display:flex;gap:6px"><input class="input" value="${m}" oninput="wizUpd(${gi},${mi},this.value)" placeholder="조원 ${mi+1}">${g.members.length>1?`<button style="color:#5c5c7a;font-size:20px;padding:0 8px" onclick="wizRm(${gi},${mi})">×</button>`:''}</div>`});h+=`</div><div style="display:flex;gap:8px;margin-top:20px"><button class="btn btn-outline" onclick="setupBack()" style="flex:1">←</button><button class="btn btn-primary" onclick="setupNext()" style="flex:2">다음 →</button></div></div>`;box.innerHTML=h;return}
-  if(gi===S.groupCount){$('setup-title').textContent='👥 Staff';let h=`<div class="card slide-left" style="border-color:rgba(168,85,247,0.3)"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><h2 style="font-size:18px;font-weight:800"><span class="badge badge-staff">STAFF</span> ${S.staffMembers.filter(m=>m.trim()).length}명</h2><button class="btn btn-ghost btn-sm" onclick="wizAddS()">+ 추가</button></div><p style="color:#8888a0;font-size:12px;margin-bottom:14px">모든 조 채점 가능, 순위 제외. 없으면 비워두세요.</p><div style="display:flex;flex-direction:column;gap:8px">`;S.staffMembers.forEach((m,i)=>{h+=`<div style="display:flex;gap:6px"><input class="input" value="${m}" oninput="wizUpdS(${i},this.value)" placeholder="스태프 ${i+1}" style="border-color:rgba(168,85,247,0.2)">${S.staffMembers.length>1?`<button style="color:#5c5c7a;font-size:20px;padding:0 8px" onclick="wizRmS(${i})">×</button>`:''}</div>`});h+=`</div><div style="display:flex;gap:8px;margin-top:20px"><button class="btn btn-outline" onclick="setupBack()" style="flex:1">←</button><button class="btn btn-primary" onclick="setupNext()" style="flex:2">다음 →</button></div></div>`;box.innerHTML=h;return}
-  $('setup-title').textContent='✅ 확인';const tm=S.groups.reduce((a,g)=>a+g.members.filter(m=>m.trim()).length,0);const sc=S.staffMembers.filter(m=>m.trim()).length;let h=`<div class="card slide-left">`;S.groups.slice(0,S.groupCount).forEach(g=>{const m=g.members.filter(x=>x.trim());h+=`<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;padding:10px 14px;background:#12121c;border-radius:10px"><span style="font-weight:700;width:40px">${g.name}</span><span style="color:#9898b4;font-size:13px;flex:1">${m.join(', ')||'(비어있음)'}</span><span class="mono" style="font-size:12px;color:#5c5c7a">${m.length}명</span></div>`});if(sc>0)h+=`<div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:rgba(168,85,247,0.08);border:1px solid rgba(168,85,247,0.15);border-radius:10px;margin-bottom:8px"><span class="badge badge-staff">STAFF</span><span style="color:#9898b4;font-size:13px">${S.staffMembers.filter(m=>m.trim()).join(', ')}</span></div>`;h+=`<div style="background:rgba(99,91,255,0.08);border-radius:10px;padding:12px;text-align:center;margin:12px 0"><span style="color:#8b85ff;font-weight:600">${S.groupCount}개 조 · ${tm}명${sc?' + Staff '+sc+'명':''}</span></div><div style="display:flex;gap:8px"><button class="btn btn-outline" onclick="setupBack()" style="flex:1">←</button><button class="btn btn-primary btn-lg" onclick="createSession()" id="btn-create" style="flex:2">🚀 생성</button></div></div>`;box.innerHTML=h}
-window.setupNext=function(){if(S.setupStep===0){S.customCode=$('inp-code')?.value?.trim()?.toUpperCase()?.replace(/[^A-Z0-9]/g,'')||'';while(S.groups.length<S.groupCount)S.groups.push({id:'g'+(S.groups.length+1),name:(S.groups.length+1)+'조',members:['','']});if(S.groups.length>S.groupCount)S.groups.length=S.groupCount};S.setupStep++;renderSetup()}
-window.setupBack=function(){if(S.setupStep<=0){showScreen('screen-adminhome');return};S.setupStep--;renderSetup()}
-window.wizAdd=function(gi){S.groups[gi].members.push('');renderSetup()};window.wizRm=function(gi,mi){if(S.groups[gi].members.length<=1)return;S.groups[gi].members.splice(mi,1);renderSetup()};window.wizUpd=function(gi,mi,v){S.groups[gi].members[mi]=v}
-window.wizAddS=function(){S.staffMembers.push('');renderSetup()};window.wizRmS=function(i){if(S.staffMembers.length<=1)return;S.staffMembers.splice(i,1);renderSetup()};window.wizUpdS=function(i,v){S.staffMembers[i]=v}
-window.createSession=async function(){if(!checkFB())return;const btn=$('btn-create');btn.disabled=true;btn.textContent='생성 중...';try{let sid=S.customCode;if(sid&&sid.length<4){alert('4자 이상');btn.disabled=false;btn.textContent='🚀 생성';return};if(!sid)sid=genCode();const ex=await FB.get(FB.ref(db,`sessions/${sid}`));if(ex.val()){alert(`"${sid}" 사용 중`);btn.disabled=false;btn.textContent='🚀 생성';return};const cl=S.groups.slice(0,S.groupCount).map(g=>({...g,members:g.members.filter(m=>m.trim()),isStaff:false}));const st=S.staffMembers.filter(m=>m.trim());if(st.length>0)cl.push({id:'staff',name:'Staff',members:st,isStaff:true});await FB.set(FB.ref(db,`sessions/${sid}`),{config:{groups:cl,currentGroup:-1,finished:false},scores:{},online:{}});S.sessionId=sid;S.role='admin';loadAdmin()}catch(err){alert('실패: '+err.message);btn.disabled=false;btn.textContent='🚀 생성'}}
-
-// ═══ ADMIN ═══
-function loadAdmin(){showScreen('screen-admin');$('admin-session-id').textContent=`세션: ${S.sessionId}`;$('admin-code').textContent=S.sessionId;const b=location.href.split('?')[0].split('#')[0];S.joinUrl=b;$('share-url').textContent=`${b}  →  코드: ${S.sessionId}`;if(S.unsub)S.unsub();S.unsub=FB.onValue(FB.ref(db,`sessions/${S.sessionId}`),(snap)=>{const d=snap.val();if(!d){goHome();return};S.config=d.config;S.scores=d.scores||{};S.online=d.online||{};renderAdmin()})}
-
-function renderAdmin(){
-  if(S.showRes){renderAdminRes();return}
-  let html='';const on=Object.keys(S.online)
-  html+=`<div style="background:rgba(16,185,129,0.06);border:1px solid rgba(16,185,129,0.15);border-radius:14px;padding:12px 16px;margin-bottom:12px"><div style="display:flex;align-items:center;gap:8px"><span>👥</span><span style="font-size:13px;font-weight:700;color:#10b981">접속</span><span class="mono badge badge-success" style="font-weight:800">${on.length}명</span></div>${on.length?'<div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:8px">'+on.map(n=>`<span style="background:${S.online[n]?.isStaff?'rgba(168,85,247,0.12)':'#12121c'};border:1px solid ${S.online[n]?.isStaff?'rgba(168,85,247,0.25)':'#1e1e30'};border-radius:6px;padding:3px 8px;font-size:11px;color:${S.online[n]?.isStaff?'#a855f7':'#e4e4ee'}">${n}</span>`).join('')+'</div>':''}</div>`
-  S.config.groups.filter(g=>!g.isStaff).forEach(group=>{const ri=S.config.groups.indexOf(group);const isCur=S.config.currentGroup===ri;const gs=S.scores[group.id]||{};const scored=Object.keys(gs);const res=calcResult(S.scores,group.id);const eligible=on.filter(n=>{const g2=findGroup(n);if(!g2)return true;if(g2.isStaff)return true;return g2.id!==group.id});const done=eligible.filter(n=>scored.includes(n));const pending=eligible.filter(n=>!scored.includes(n))
-    html+=`<div class="card" style="position:relative;overflow:hidden;${isCur?'background:linear-gradient(135deg,rgba(99,91,255,0.08),#0f0f18);border-color:rgba(99,91,255,0.35)':''}">${isCur?'<div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#635bff,#8b85ff)"></div>':''}<div style="display:flex;justify-content:space-between;align-items:center"><div><div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-size:16px;font-weight:700;color:${isCur?'#8b85ff':'#e4e4ee'}">${group.name}</span>${isCur?'<span class="badge badge-live">● LIVE</span>':''}${scored.length>0?`<span class="badge badge-success">${scored.length}명</span>`:''}</div><div style="color:#8888a0;font-size:12px;margin-top:4px">${group.members.join(' · ')}</div>${res?`<div class="mono" style="color:#8b85ff;font-size:14px;font-weight:700;margin-top:6px">${res.total.toFixed(1)}점 / 100</div>`:''}</div><div style="display:flex;gap:6px">${scored.length?`<button class="btn btn-outline btn-sm" onclick="showDetail('${group.id}','${group.name}')">상세</button>`:''} ${!isCur?`<button class="btn btn-primary btn-sm" onclick="startGroup(${ri})">${res?'재시작':'시작'}</button>`:''}</div></div>${isCur&&eligible.length?`<div style="margin-top:10px;padding-top:10px;border-top:1px solid #1e1e30"><div style="font-size:11px;color:#8888a0;margin-bottom:6px">채점 (${done.length}/${eligible.length})</div><div style="display:flex;flex-wrap:wrap;gap:4px">${done.map(n=>`<span class="status-chip" style="background:rgba(16,185,129,0.15);color:#10b981">✓ ${n}</span>`).join('')}${pending.map(n=>`<span class="status-chip" style="background:rgba(245,158,11,0.1);color:#f59e0b">… ${n}</span>`).join('')}</div></div>`:''}</div>`})
-  const ranked=getRanked();if(ranked.length){html+='<div style="margin-top:12px;padding:14px 16px;background:rgba(99,91,255,0.06);border:1px solid rgba(99,91,255,0.12);border-radius:14px"><div style="font-size:13px;font-weight:700;color:#8b85ff;margin-bottom:10px">📊 현재 순위</div>';ranked.forEach((g,i)=>{const mc=i<3?MC[i]:'#5c5c7a';const bw=((g.result.total/(ranked[0]?.result?.total||100))*100).toFixed(0);html+=`<div style="display:flex;align-items:center;gap:10px;margin-bottom:6px"><span class="mono" style="font-size:12px;font-weight:700;color:${mc};width:16px">${i+1}</span><span style="font-size:13px;font-weight:600;width:40px">${g.name}</span><div style="flex:1;height:8px;background:#12121c;border-radius:4px;overflow:hidden"><div style="height:100%;width:${bw}%;background:${BC[i%BC.length]};border-radius:4px;transition:width .5s"></div></div><span class="mono" style="font-size:12px;font-weight:700;color:${mc};width:45px;text-align:right">${g.result.total.toFixed(1)}</span></div>`});html+='</div>'}
-  $('admin-body').innerHTML=html
-  $('admin-buttons').innerHTML=`<button class="btn btn-success btn-lg btn-block" onclick="finishAll()">🏆 전체 종료</button><button class="btn btn-primary btn-block" onclick="exportCSV()">💾 점수 저장 (CSV 다운로드)</button><button class="btn btn-outline btn-block" onclick="openFullResults()">📊 전체 결과</button><button class="btn btn-outline btn-block" onclick="openLiveFromAdmin()" style="border-color:rgba(239,68,68,0.2);color:#ef4444">📺 스코어보드 (새 탭)</button>`
-}
-function renderAdminRes(){const ranked=getRanked();let html='<h2 style="font-size:18px;font-weight:800;margin-bottom:16px">🏆 최종</h2>';if(!ranked.length)html+='<p style="color:#9898b4;text-align:center;padding:32px">데이터 없음</p>';else ranked.forEach((g,r)=>{const mc=r<3?MC[r]:'#5c5c7a';html+=`<div class="card" style="${r<3?`border-color:${mc}33`:''}"><div style="display:flex;align-items:center;gap:14px"><div class="mono" style="width:40px;height:40px;border-radius:50%;background:${mc}15;border:2px solid ${mc};display:flex;align-items:center;justify-content:center;font-weight:900;font-size:16px;color:${mc}">${r+1}</div><div style="flex:1"><div style="font-weight:700;font-size:16px">${g.name}</div><div style="color:#8888a0;font-size:12px">${g.members.join(' · ')}</div></div><div><div class="mono" style="font-size:24px;font-weight:900;color:${mc}">${g.result.total.toFixed(1)}</div><button class="btn btn-ghost btn-sm" onclick="showDetail('${g.id}','${g.name}')" style="font-size:11px;margin-top:4px">상세보기</button></div></div></div>`});html+=`<button class="btn btn-outline btn-block" onclick="openFullResults()" style="margin-top:8px">📊 전체 화면</button>`;$('admin-body').innerHTML=html;$('admin-buttons').innerHTML=''}
-
-// ═══ 개별 점수 상세 보기 (관리자 전용) ═══
-window.showDetail=function(gid,gname){
-  showScreen('screen-detail');$('detail-title').textContent=`📋 ${gname} 개별 채점 내역`
-  const gs=S.scores[gid]||{};const scorers=Object.keys(gs)
-  if(!scorers.length){$('detail-body').innerHTML='<div class="card" style="text-align:center;padding:24px"><p style="color:#8888a0">채점 데이터가 없습니다</p></div>';return}
-  let html=`<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;min-width:480px"><tr style="background:#12121c"><th style="padding:10px 8px;text-align:left;font-size:12px;color:#8888a0;border-bottom:1px solid #1e1e30">채점자</th>`
-  CATS.forEach(c=>{html+=`<th style="padding:10px 6px;text-align:center;font-size:11px;color:#8888a0;border-bottom:1px solid #1e1e30">${c.emoji}<br>${c.label}<br><span style="color:#f59e0b">${c.w}점</span></th>`})
-  html+=`<th style="padding:10px 8px;text-align:center;font-size:12px;color:#8b85ff;font-weight:700;border-bottom:1px solid #1e1e30">환산</th></tr>`
-  scorers.forEach(name=>{const sc=gs[name];if(!sc||typeof sc!=='object')return
-    const total=CATS.reduce((s,c)=>s+(typeof sc[c.id]==='number'?(sc[c.id]/10)*c.w:0),0)
-    const isStaff=findGroup(name)?.isStaff
-    html+=`<tr style="border-bottom:1px solid #1e1e30"><td style="padding:8px;font-weight:600;font-size:13px;color:${isStaff?'#a855f7':'#e4e4ee'}">${name}${isStaff?' ✦':''}</td>`
-    CATS.forEach(c=>{const v=sc[c.id];const valid=typeof v==='number';html+=`<td class="mono" style="padding:8px;text-align:center;font-size:14px;font-weight:700;color:${valid?'#e4e4ee':'#3a3a52'};background:${valid?`rgba(99,91,255,${((v/10)*0.25).toFixed(2)})`:'transparent'}">${valid?v:'-'}</td>`})
-    html+=`<td class="mono" style="padding:8px;text-align:center;font-size:15px;font-weight:900;color:#8b85ff">${total.toFixed(1)}</td></tr>`
-  })
-  // 평균 행
-  const avgRow=calcResult(S.scores,gid)
-  if(avgRow){html+=`<tr style="background:#12121c"><td style="padding:10px 8px;font-weight:800;color:#8b85ff">평균</td>`;CATS.forEach(c=>{html+=`<td class="mono" style="padding:10px 6px;text-align:center;font-weight:800;color:#8b85ff">${avgRow.avg[c.id].toFixed(1)}</td>`});html+=`<td class="mono" style="padding:10px 8px;text-align:center;font-size:16px;font-weight:900;color:#fbbf24">${avgRow.total.toFixed(1)}</td></tr>`}
-  html+='</table></div>'
-  $('detail-body').innerHTML=html
-}
-window.closeDetail=function(){showScreen('screen-admin')}
-
-// ═══ CSV 점수 저장 ═══
-window.exportCSV=function(){
-  if(!S.config||!S.scores){alert('저장할 데이터가 없습니다');return}
-  const BOM='\uFEFF' // Excel 한글 깨짐 방지
-  let csv=BOM
-  const groups=S.config.groups.filter(g=>!g.isStaff)
-  const catHeaders=CATS.map(c=>`${c.label}(${c.w}점)`)
-
-  // ═ 1. 종합 순위 ═
-  csv+='[ 종합 순위 ]\r\n'
-  csv+='순위,조,조원,'+catHeaders.join(',')+',총점(100점),채점인원\r\n'
-  const ranked=getRanked()
-  ranked.forEach((g,i)=>{
-    csv+=`${i+1},${g.name},"${g.members.join(', ')}",`
-    CATS.forEach(c=>{csv+=`${g.result.avg[c.id].toFixed(1)},`})
-    csv+=`${g.result.total.toFixed(1)},${g.result.count}\r\n`
-  })
-
-  // ═ 2. 조별 개별 채점 내역 ═
-  groups.forEach(group=>{
-    csv+=`\r\n[ ${group.name} 개별 채점 내역 ]\r\n`
-    csv+='채점자,'+catHeaders.join(',')+',환산점수\r\n'
-    const gs=S.scores[group.id]||{}
-    const scorers=Object.keys(gs)
-    scorers.forEach(name=>{
-      const sc=gs[name];if(!sc||typeof sc!=='object')return
-      csv+=`${name},`
-      CATS.forEach(c=>{const v=sc[c.id];csv+=`${typeof v==='number'?v:'-'},`})
-      const total=CATS.reduce((s,c)=>s+(typeof sc[c.id]==='number'?(sc[c.id]/10)*c.w:0),0)
-      csv+=`${total.toFixed(1)}\r\n`
-    })
-    // 평균
-    const res=calcResult(S.scores,group.id)
-    if(res){
-      csv+=`평균,`
-      CATS.forEach(c=>{csv+=`${res.avg[c.id].toFixed(1)},`})
-      csv+=`${res.total.toFixed(1)}\r\n`
-    }
-  })
-
-  // 다운로드
-  const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'})
-  const url=URL.createObjectURL(blob)
-  const a=document.createElement('a')
-  a.href=url
-  a.download=`채점결과_${S.sessionId}_${new Date().toISOString().slice(0,10)}.csv`
-  a.click()
-  URL.revokeObjectURL(url)
+async function loadJoin(){
+  show('s-join');$('join-badge').textContent=`세션: ${S.sid}`;S.name='';S.joinStep=0
+  if(!db){$('join-body').innerHTML='<div class="card" style="text-align:center;padding:24px"><p style="color:#ef4444;font-weight:600">서버 연결 실패</p><button class="btn btn-primary btn-block" onclick="location.reload()" style="margin-top:16px">새로고침</button></div>';return}
+  try{const snap=await FB.get(FB.ref(db,`sessions/${S.sid}`));const d=snap.val()
+    if(!d){$('join-body').innerHTML='<div class="card" style="text-align:center;padding:24px"><p style="color:#ef4444;font-weight:600">세션을 찾을 수 없습니다</p><p style="color:#888;font-size:13px;margin-top:8px">코드: <strong class="mono">${S.sid}</strong></p><button class="btn btn-outline btn-block" onclick="show(\'s-home\')" style="margin-top:16px">← 다시 입력</button></div>';return}
+    S.cfg=d.config;renderJoin()
+  }catch(e){$('join-body').innerHTML='<div class="card" style="text-align:center;padding:24px"><p style="color:#ef4444">연결 실패</p><button class="btn btn-primary btn-block" onclick="location.reload()" style="margin-top:16px">재시도</button></div>'}
 }
 
-window.startGroup=async function(i){if(!checkFB())return;await FB.set(FB.ref(db,`sessions/${S.sessionId}/config`),{...S.config,currentGroup:i,finished:false})}
-window.finishAll=async function(){if(!checkFB())return;await FB.set(FB.ref(db,`sessions/${S.sessionId}/config`),{...S.config,finished:true,currentGroup:-1})}
-window.toggleAdminView=function(){S.showRes=!S.showRes;$('btn-toggle').textContent=S.showRes?'조 목록':'📊 결과';renderAdmin()}
-window.resetSession=async function(){if(!confirm('삭제?'))return;if(!checkFB())return;await FB.remove(FB.ref(db,`sessions/${S.sessionId}`));goHome()}
-window.copyLink=function(){const b=location.href.split('?')[0].split('#')[0];const msg=`발표 채점 링크: ${b}\n세션 코드: ${S.sessionId}`;navigator.clipboard.writeText(msg).then(()=>{$('btn-copy').textContent='✓ 복사됨';setTimeout(()=>$('btn-copy').textContent='복사',2000)}).catch(()=>{prompt('아래 내용을 복사하세요:',msg)})}
-window.openFullResults=function(){showScreen('screen-results');renderResults()}
+function renderJoin(){
+  const body=$('join-body')
+  if(S.joinStep===0){
+    let h=`<div class="card slide-left" style="padding:24px"><h2 style="font-size:17px;font-weight:700;margin-bottom:18px">소속 조 선택</h2><div style="display:flex;flex-direction:column;gap:8px">`
+    S.cfg.groups.forEach((g,i)=>{h+=`<button onclick="selG(${i})" style="width:100%;background:${g.isStaff?'rgba(168,85,247,0.06)':'#12121c'};border:1px solid ${g.isStaff?'rgba(168,85,247,0.2)':'#1e1e30'};border-radius:12px;padding:14px;text-align:left;cursor:pointer"><div style="display:flex;align-items:center;gap:10px"><div style="width:40px;height:40px;border-radius:10px;background:${g.isStaff?'rgba(168,85,247,0.12)':'rgba(99,91,255,0.08)'};display:flex;align-items:center;justify-content:center;font-size:16px">${g.isStaff?'👑':'👥'}</div><div style="flex:1"><div style="font-weight:700;font-size:14px">${g.name}${g.isStaff?' <span class="badge badge-staff">STAFF</span>':''}</div><div style="color:#888;font-size:11px;margin-top:2px">${g.members.slice(0,3).join(', ')}</div></div><span style="color:#555">→</span></div></button>`})
+    h+='</div></div>';body.innerHTML=h;return
+  }
+  const g=S.cfg.groups[S.joinGI]
+  let h=`<div class="card slide-left" style="padding:24px"><div style="display:flex;align-items:center;gap:8px;margin-bottom:16px"><button onclick="S.joinStep=0;S.name='';renderJoin()" style="color:#9898b4;font-size:20px;padding:4px 8px">←</button><h2 style="font-size:17px;font-weight:700;margin:0">${g.name}</h2></div><div style="display:flex;flex-direction:column;gap:6px">`
+  g.members.forEach(m=>{h+=`<button class="name-btn${S.name===m?' selected':''}" onclick="selN('${m.replace(/'/g,"\\'")}')">${m}</button>`})
+  h+=`</div><div style="display:flex;align-items:center;gap:10px;margin:14px 0"><div style="flex:1;height:1px;background:#1e1e30"></div><span style="color:#555;font-size:11px">직접 입력</span><div style="flex:1;height:1px;background:#1e1e30"></div></div><input class="input" id="jc" placeholder="이름 입력" value="${S.name&&!g.members.includes(S.name)?S.name:''}" oninput="jcIn(this.value)" style="margin-bottom:14px"><button class="btn btn-primary btn-lg btn-block" onclick="doJoin()" ${S.name?'':'disabled'}>입장 →</button></div>`
+  body.innerHTML=h
+}
 
-// ═══ JOIN ═══
-async function loadJoinScreen(){showScreen('screen-join');$('join-badge').textContent=`세션: ${S.sessionId}`;S.scorerName='';S.joinStep=0;if(!db){$('join-body').innerHTML='<div class="card" style="text-align:center;padding:24px"><p style="color:#ef4444;font-weight:600">서버 연결 실패</p><button class="btn btn-primary btn-block" onclick="location.reload()" style="margin-top:16px">새로고침</button></div>';return};try{const snap=await FB.get(FB.ref(db,`sessions/${S.sessionId}`));const d=snap.val();if(!d){$('join-body').innerHTML='<div class="card" style="text-align:center;padding:24px"><p style="color:#ef4444;font-weight:600">세션 없음</p><p style="color:#8888a0;font-size:13px;margin-top:8px">코드: <strong class="mono">${S.sessionId}</strong></p></div>';return};S.config=d.config;renderJoin()}catch(e){$('join-body').innerHTML='<div class="card" style="text-align:center;padding:24px"><p style="color:#ef4444">연결 실패</p><button class="btn btn-primary btn-block" onclick="location.reload()" style="margin-top:16px">재시도</button></div>'}}
-function renderJoin(){const body=$('join-body');if(S.joinStep===0){let h=`<div class="card slide-left" style="padding:24px"><h2 style="font-size:17px;font-weight:700;margin-bottom:18px">소속 조 선택</h2><div style="display:flex;flex-direction:column;gap:8px">`;S.config.groups.forEach((g,i)=>{h+=`<button onclick="selJoinG(${i})" style="width:100%;background:${g.isStaff?'rgba(168,85,247,0.06)':'#12121c'};border:1px solid ${g.isStaff?'rgba(168,85,247,0.2)':'#1e1e30'};border-radius:12px;padding:14px;text-align:left;cursor:pointer"><div style="display:flex;align-items:center;gap:10px"><div style="width:40px;height:40px;border-radius:10px;background:${g.isStaff?'rgba(168,85,247,0.12)':'rgba(99,91,255,0.08)'};display:flex;align-items:center;justify-content:center;font-size:16px">${g.isStaff?'👑':'👥'}</div><div style="flex:1"><div style="font-weight:700;font-size:14px;color:#e4e4ee">${g.name}${g.isStaff?' <span class="badge badge-staff">STAFF</span>':''}</div><div style="color:#8888a0;font-size:11px;margin-top:2px">${g.members.slice(0,3).join(', ')}</div></div><span style="color:#5c5c7a">→</span></div></button>`});h+='</div></div>';body.innerHTML=h;return}
-  const g=S.config.groups[S.joinGI];let h=`<div class="card slide-left" style="padding:24px"><div style="display:flex;align-items:center;gap:8px;margin-bottom:16px"><button onclick="joinBack()" style="color:#9898b4;font-size:20px;padding:4px 8px">←</button><h2 style="font-size:17px;font-weight:700;margin:0">${g.name}</h2></div><div style="display:flex;flex-direction:column;gap:6px">`;g.members.forEach(m=>{h+=`<button class="name-btn${S.scorerName===m?' selected':''}" onclick="selJoinN('${m.replace(/'/g,"\\'")}')">${m}</button>`});h+=`</div><div style="display:flex;align-items:center;gap:10px;margin:14px 0"><div style="flex:1;height:1px;background:#1e1e30"></div><span style="color:#5c5c7a;font-size:11px">직접 입력</span><div style="flex:1;height:1px;background:#1e1e30"></div></div><input class="input" id="jc" placeholder="이름 입력" value="${S.scorerName&&!g.members.includes(S.scorerName)?S.scorerName:''}" oninput="jcInput(this.value)" style="margin-bottom:14px"><button class="btn btn-primary btn-lg btn-block" onclick="doJoin()" ${S.scorerName?'':'disabled'}>입장 →</button></div>`;body.innerHTML=h}
-window.selJoinG=function(i){S.joinGI=i;S.joinStep=1;S.scorerName='';renderJoin()};window.joinBack=function(){S.joinStep=0;S.scorerName='';renderJoin()};window.selJoinN=function(n){S.scorerName=n;renderJoin()};window.jcInput=function(v){S.scorerName=v.trim();const b=document.querySelector('#join-body .btn-primary');if(b)b.disabled=!S.scorerName;document.querySelectorAll('#join-body .name-btn').forEach(b=>b.classList.remove('selected'))}
-window.doJoin=async function(){if(!S.scorerName.trim())return;S.scorerGroup=findGroup(S.scorerName);try{await FB.set(FB.ref(db,`sessions/${S.sessionId}/online/${S.scorerName}`),{t:Date.now(),isStaff:S.scorerGroup?.isStaff||false})}catch(e){};S.role='scorer';loadVote()}
+window.selG=function(i){S.joinGI=i;S.joinStep=1;S.name='';renderJoin()}
+window.selN=function(n){S.name=n;renderJoin()}
+window.jcIn=function(v){S.name=v.trim();const b=document.querySelector('#join-body .btn-primary');if(b)b.disabled=!S.name;document.querySelectorAll('#join-body .name-btn').forEach(b=>b.classList.remove('selected'))}
+window.doJoin=async function(){if(!S.name.trim())return;S.group=findGroup(S.cfg,S.name);try{await FB.set(FB.ref(db,`sessions/${S.sid}/online/${S.name}`),{t:Date.now(),isStaff:S.group?.isStaff||false})}catch(e){};loadVote()}
 
-// ═══ VOTE ═══
-function loadVote(){if(!checkFB())return;showScreen('screen-vote');S.myScores={};S.submitted=false;S.prevGroup=-99;if(S.unsub)S.unsub();S.unsub=FB.onValue(FB.ref(db,`sessions/${S.sessionId}`),(snap)=>{const d=snap.val();if(!d)return;S.config=d.config;S.scores=d.scores||{};S.scorerGroup=findGroup(S.scorerName);renderVote()})}
-function renderVote(){const{config:c,scores,scorerName:sn}=S;$('vote-footer').textContent=`${sn}${S.scorerGroup?.isStaff?' (Staff)':''} · ${S.sessionId}`
-  if(c.currentGroup!==S.prevGroup){S.prevGroup=c.currentGroup;S.myScores={};S.submitted=false;S.voteStep=0;if(c.currentGroup>=0){const gid=c.groups[c.currentGroup]?.id;const ex=scores?.[gid]?.[sn];if(ex){CATS.forEach(ct=>{if(typeof ex[ct.id]==='number')S.myScores[ct.id]=ex[ct.id]});S.submitted=true}}}
-  if(c.currentGroup===-1&&!c.finished){$('vote-banner').innerHTML='';$('vote-body').innerHTML=`<div style="text-align:center;padding:60px 20px"><div style="font-size:48px;margin-bottom:16px">⏳</div><h2 style="font-size:18px;font-weight:700">발표 대기 중</h2><p style="color:#8888a0;font-size:14px;margin-top:6px">관리자가 시작하면 자동 전환</p></div>`;return}
-  if(c.finished){$('vote-banner').innerHTML='';$('vote-body').innerHTML=`<div style="text-align:center;padding:60px 20px"><div style="font-size:48px;margin-bottom:16px">🏆</div><h2 style="font-size:18px;font-weight:700">모든 발표 종료</h2><p style="color:#8888a0;font-size:14px;margin-top:6px">수고하셨습니다!</p></div>`;return}
+// ═══ 채점 ═══
+function loadVote(){show('s-vote');S.myScores={};S.submitted=false;S.prev=-99;if(S.unsub)S.unsub();S.unsub=FB.onValue(FB.ref(db,`sessions/${S.sid}`),(snap)=>{const d=snap.val();if(!d)return;S.cfg=d.config;S.scores=d.scores||{};S.group=findGroup(S.cfg,S.name);renderVote()})}
+
+function renderVote(){
+  const c=S.cfg,sn=S.name;$('vote-footer').textContent=`${sn}${S.group?.isStaff?' (Staff)':''} · ${S.sid}`
+  if(c.currentGroup!==S.prev){S.prev=c.currentGroup;S.myScores={};S.submitted=false;S.step=0;if(c.currentGroup>=0){const gid=c.groups[c.currentGroup]?.id;const ex=S.scores?.[gid]?.[sn];if(ex){CATS.forEach(ct=>{if(typeof ex[ct.id]==='number')S.myScores[ct.id]=ex[ct.id]});S.submitted=true}}}
+  if(c.currentGroup===-1&&!c.finished){$('vote-banner').innerHTML='';$('vote-body').innerHTML=`<div style="text-align:center;padding:60px 20px"><div style="font-size:48px;margin-bottom:16px">⏳</div><h2 style="font-size:18px;font-weight:700">발표 대기 중</h2><p style="color:#888;font-size:14px;margin-top:6px">관리자가 시작하면 자동 전환됩니다</p></div>`;return}
+  if(c.finished){$('vote-banner').innerHTML='';$('vote-body').innerHTML=`<div style="text-align:center;padding:60px 20px"><div style="font-size:48px;margin-bottom:16px">🏆</div><h2 style="font-size:18px;font-weight:700">모든 발표 종료</h2><p style="color:#888;font-size:14px;margin-top:6px">수고하셨습니다!</p></div>`;return}
   const cg=c.groups[c.currentGroup]
-  $('vote-banner').innerHTML=`<div class="scale-in" style="background:linear-gradient(135deg,rgba(99,91,255,0.1),#0f0f18);border:1px solid rgba(99,91,255,0.2);border-radius:18px;padding:20px;margin-bottom:16px;text-align:center"><span class="badge badge-live">● LIVE</span><div style="font-size:28px;font-weight:900;color:#8b85ff;margin-top:8px">${cg?.name}</div><div style="color:#8888a0;font-size:12px;margin-top:6px">${cg?.members?.join(' · ')}</div></div>`
-  if(S.scorerGroup&&!S.scorerGroup.isStaff&&S.scorerGroup.id===cg?.id){$('vote-body').innerHTML=`<div style="background:rgba(245,158,11,0.12);border:1px solid rgba(245,158,11,0.25);border-radius:16px;padding:32px;text-align:center"><div style="font-size:48px;margin-bottom:12px">🎤</div><h3 style="font-size:17px;font-weight:700">우리 조 발표 중!</h3><p style="color:#8888a0">본인 조 채점 불가</p></div>`;return}
-  if(S.submitted){$('vote-body').innerHTML=`<div style="background:rgba(16,185,129,0.12);border:1px solid rgba(16,185,129,0.25);border-radius:16px;padding:32px;text-align:center"><div style="font-size:48px;margin-bottom:12px">✅</div><h3 style="font-size:17px;font-weight:700">채점 완료!</h3><p style="color:#8888a0">다음 발표 대기</p></div>`;return}
-  renderVoteCard()
+  $('vote-banner').innerHTML=`<div class="scale-in" style="background:linear-gradient(135deg,rgba(99,91,255,0.1),#0f0f18);border:1px solid rgba(99,91,255,0.2);border-radius:18px;padding:20px;margin-bottom:16px;text-align:center"><span class="badge badge-live">● LIVE</span><div style="font-size:28px;font-weight:900;color:#8b85ff;margin-top:8px">${cg?.name}</div><div style="color:#888;font-size:12px;margin-top:6px">${cg?.members?.join(' · ')}</div></div>`
+  if(S.group&&!S.group.isStaff&&S.group.id===cg?.id){$('vote-body').innerHTML=`<div style="background:rgba(245,158,11,0.12);border:1px solid rgba(245,158,11,0.25);border-radius:16px;padding:32px;text-align:center"><div style="font-size:48px;margin-bottom:12px">🎤</div><h3 style="font-size:17px;font-weight:700">우리 조 발표 중!</h3><p style="color:#888">본인 조 채점 불가</p></div>`;return}
+  if(S.submitted){$('vote-body').innerHTML=`<div style="background:rgba(16,185,129,0.12);border:1px solid rgba(16,185,129,0.25);border-radius:16px;padding:32px;text-align:center"><div style="font-size:48px;margin-bottom:12px">✅</div><h3 style="font-size:17px;font-weight:700">채점 완료!</h3><p style="color:#888">다음 발표 대기</p></div>`;return}
+  renderCard()
 }
-function renderVoteCard(){const cat=CATS[S.voteStep];const v=S.myScores[cat.id]||0;const isL=S.voteStep===CATS.length-1;const isF=S.voteStep===0;const allOk=CATS.every(c=>S.myScores[c.id]>0)
-  let dots='<div class="dots" style="margin-bottom:10px">';CATS.forEach((c,i)=>{dots+=`<div class="dot ${i===S.voteStep?'active':S.myScores[c.id]?'done':''}" onclick="goVS(${i})"></div>`});dots+='</div>'
-  let strip='<div style="display:flex;gap:3px;margin-bottom:12px">';CATS.forEach((c,i)=>{const sv=S.myScores[c.id]||0;const cur=i===S.voteStep;strip+=`<div onclick="goVS(${i})" style="flex:1;cursor:pointer;background:${cur?'rgba(99,91,255,0.15)':sv?'rgba(16,185,129,0.1)':'#12121c'};border:1px solid ${cur?'#635bff':sv?'rgba(16,185,129,0.2)':'#1e1e30'};border-radius:8px;padding:4px 2px;text-align:center"><div style="font-size:14px">${c.emoji}</div><div class="mono" style="font-size:11px;font-weight:700;color:${sv?'#8b85ff':'#5c5c7a'}">${sv||'-'}</div></div>`});strip+='</div>'
-  let card=`<div id="vc-wrap" style="touch-action:pan-y"><div id="vc" class="card slide-left" style="border-color:${v?'rgba(99,91,255,0.25)':'#1e1e30'};padding:24px 20px;min-height:240px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px"><div style="display:flex;align-items:center;gap:10px"><span style="font-size:28px">${cat.emoji}</span><div><div style="font-weight:700;font-size:16px;color:#ffffff">${cat.label}</div><span class="badge badge-weight" style="margin-top:4px">${cat.w}점</span></div></div>${v?`<div class="mono" style="font-size:32px;font-weight:900;color:#8b85ff">${v}</div>`:''}</div><div style="color:#b0b0c8;font-size:13px;margin-bottom:18px;line-height:1.5">${cat.desc}</div><div style="display:flex;gap:4px;justify-content:center">`
-  for(let s=1;s<=10;s++){const on=s<=v;card+=`<button onclick="setS('${cat.id}',${s})" style="width:34px;height:44px;border-radius:9px;border:2px solid ${on?'#fbbf24':'#2a2a40'};background:${on?'rgba(251,191,36,0.15)':'#12121c'};color:${on?'#fbbf24':'#5c5c7a'};font-size:15px;font-weight:800;font-family:'JetBrains Mono',monospace;transition:all .15s">${s}</button>`}
+
+function renderCard(){
+  const cat=CATS[S.step],v=S.myScores[cat.id]||0,isL=S.step===CATS.length-1,isF=S.step===0,allOk=CATS.every(c=>S.myScores[c.id]>0)
+  let dots='<div class="dots" style="margin-bottom:10px">';CATS.forEach((c,i)=>{dots+=`<div class="dot ${i===S.step?'active':S.myScores[c.id]?'done':''}" onclick="goS(${i})"></div>`});dots+='</div>'
+  let strip='<div style="display:flex;gap:3px;margin-bottom:12px">';CATS.forEach((c,i)=>{const sv=S.myScores[c.id]||0,cur=i===S.step;strip+=`<div onclick="goS(${i})" style="flex:1;cursor:pointer;background:${cur?'rgba(99,91,255,0.15)':sv?'rgba(16,185,129,0.1)':'#12121c'};border:1px solid ${cur?'#635bff':sv?'rgba(16,185,129,0.2)':'#1e1e30'};border-radius:8px;padding:4px 2px;text-align:center"><div style="font-size:14px">${c.emoji}</div><div class="mono" style="font-size:11px;font-weight:700;color:${sv?'#8b85ff':'#555'}">${sv||'-'}</div></div>`});strip+='</div>'
+  let card=`<div id="vc-wrap" style="touch-action:pan-y"><div id="vc" class="card slide-left" style="border-color:${v?'rgba(99,91,255,0.25)':'#1e1e30'};padding:24px 20px;min-height:240px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px"><div style="display:flex;align-items:center;gap:10px"><span style="font-size:28px">${cat.emoji}</span><div><div style="font-weight:700;font-size:16px;color:#fff">${cat.label}</div><span class="badge badge-weight" style="margin-top:4px">${cat.w}점</span></div></div>${v?`<div class="mono" style="font-size:32px;font-weight:900;color:#8b85ff">${v}</div>`:''}</div><div style="color:#b0b0c8;font-size:13px;margin-bottom:18px;line-height:1.5">${cat.desc}</div><div style="display:flex;gap:4px;justify-content:center">`
+  for(let s=1;s<=10;s++){const on=s<=v;card+=`<button onclick="setV('${cat.id}',${s})" style="width:34px;height:44px;border-radius:9px;border:2px solid ${on?'#fbbf24':'#2a2a40'};background:${on?'rgba(251,191,36,0.15)':'#12121c'};color:${on?'#fbbf24':'#666'};font-size:15px;font-weight:800;font-family:'JetBrains Mono',monospace;transition:all .15s">${s}</button>`}
   card+='</div></div></div>'
-  let nav='<div style="display:flex;gap:8px;margin-top:12px">';if(!isF)nav+=`<button class="btn btn-outline" onclick="vsPrev()" style="flex:1">← ${CATS[S.voteStep-1].emoji}</button>`;if(!isL)nav+=`<button class="btn btn-primary" onclick="vsNext()" style="flex:${isF?3:2}" ${!v?'disabled':''}>다음 →</button>`;if(isL)nav+=`<button class="btn btn-primary btn-lg" onclick="submitMain()" style="flex:2" ${!allOk?'disabled':''}>${allOk?'✨ 제출':`${CATS.filter(c=>!S.myScores[c.id]).length}개 남음`}</button>`;nav+='</div>'
+  let nav='<div style="display:flex;gap:8px;margin-top:12px">';if(!isF)nav+=`<button class="btn btn-outline" onclick="sP()" style="flex:1">← ${CATS[S.step-1].emoji}</button>`;if(!isL)nav+=`<button class="btn btn-primary" onclick="sN()" style="flex:${isF?3:2}" ${!v?'disabled':''}>다음 →</button>`;if(isL)nav+=`<button class="btn btn-primary btn-lg" onclick="submit()" style="flex:2" ${!allOk?'disabled':''}>${allOk?'✨ 제출':`${CATS.filter(c=>!S.myScores[c.id]).length}개 남음`}</button>`;nav+='</div>'
   $('vote-body').innerHTML=dots+strip+card+nav
-  const wrap=$('vc-wrap');let sx=0,dx=0,sw=false;wrap.ontouchstart=e=>{sx=e.touches[0].clientX;sw=true};wrap.ontouchmove=e=>{if(!sw)return;dx=e.touches[0].clientX-sx;const vc=$('vc');if(vc)vc.style.transform=`translateX(${dx*0.3}px)`;if(Math.abs(dx)>10)e.preventDefault()};wrap.ontouchend=()=>{const vc=$('vc');if(vc)vc.style.transform='';if(dx<-50&&S.voteStep<CATS.length-1){S.voteStep++;renderVoteCard()}else if(dx>50&&S.voteStep>0){S.voteStep--;renderVoteCard()};dx=0;sw=false}}
-window.goVS=function(i){S.voteStep=i;renderVoteCard()};window.vsNext=function(){if(S.voteStep<CATS.length-1){S.voteStep++;renderVoteCard()}};window.vsPrev=function(){if(S.voteStep>0){S.voteStep--;renderVoteCard()}}
-window.setS=function(id,v){S.myScores[id]=v;renderVoteCard()}
-window.submitMain=async function(){if(!checkFB())return;const gid=S.config.groups[S.config.currentGroup]?.id;if(!gid)return;try{await FB.set(FB.ref(db,`sessions/${S.sessionId}/scores/${gid}/${S.scorerName}`),{...S.myScores,submittedAt:Date.now()});S.submitted=true;renderVote()}catch(e){alert('실패')}}
+  const wrap=$('vc-wrap');let sx=0,dx=0,sw=false;wrap.ontouchstart=e=>{sx=e.touches[0].clientX;sw=true};wrap.ontouchmove=e=>{if(!sw)return;dx=e.touches[0].clientX-sx;const vc=$('vc');if(vc)vc.style.transform=`translateX(${dx*0.3}px)`;if(Math.abs(dx)>10)e.preventDefault()};wrap.ontouchend=()=>{const vc=$('vc');if(vc)vc.style.transform='';if(dx<-50&&S.step<CATS.length-1){S.step++;renderCard()}else if(dx>50&&S.step>0){S.step--;renderCard()};dx=0;sw=false}
+}
 
-// ═══ LIVE ═══
-function loadLive(){if(!checkFB())return;showScreen('screen-live');if(S.unsub2)S.unsub2();S.unsub2=FB.onValue(FB.ref(db,`sessions/${S.sessionId}`),(snap)=>{const d=snap.val();if(!d){$('live-body').innerHTML='<p style="text-align:center;color:#8888a0;padding:40px">세션 없음</p>';return};S.config=d.config;S.scores=d.scores||{};S.online=d.online||{};renderLive()})}
-function renderLive(){const ranked=getRanked();const on=Object.keys(S.online).length;const cg=S.config.currentGroup>=0?S.config.groups[S.config.currentGroup]:null;$('live-header').innerHTML=`<div style="display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:8px"><span class="live-dot"></span><span style="font-size:14px;font-weight:700;color:#ef4444">LIVE</span><span style="color:#8888a0">${S.sessionId}</span><span class="badge badge-success">${on}명</span></div>${cg?`<div style="font-size:24px;font-weight:900;color:#8b85ff">발표: ${cg.name}</div>`:S.config.finished?'<div style="font-size:20px;font-weight:700;color:#10b981">🏆 종료</div>':'<div style="color:#8888a0">대기 중</div>'}`;if(!ranked.length){$('live-body').innerHTML='<p style="text-align:center;color:#8888a0;padding:40px">채점 대기...</p>';return};let html='';const maxT=ranked[0]?.result?.total||100;ranked.forEach((g,i)=>{const mc=i<3?MC[i]:BC[i%BC.length];const pct=((g.result.total/maxT)*100).toFixed(0);html+=`<div class="chart-row" style="animation-delay:${i*0.1}s;margin-bottom:12px"><div style="display:flex;align-items:center;gap:10px;width:80px"><span class="mono" style="font-size:20px;font-weight:900;color:${mc}">${i+1}</span><span style="font-size:15px;font-weight:700">${g.name}</span></div><div style="flex:1;height:36px;background:#12121c;border-radius:8px;overflow:hidden;position:relative"><div class="chart-bar" style="width:${pct}%;background:linear-gradient(90deg,${mc}cc,${mc});animation-delay:${i*0.15}s"></div><span class="mono" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);font-size:14px;font-weight:800;color:#ffffff">${g.result.total.toFixed(1)}</span></div></div>`});html+=`<div class="card" style="margin-top:20px;padding:20px"><h3 style="font-size:15px;font-weight:700;margin-bottom:12px">📋 항목별</h3><div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;min-width:420px"><tr style="background:#12121c"><th style="padding:8px;text-align:left;font-size:11px;color:#8888a0;border-bottom:1px solid #1e1e30">조</th>`;CATS.forEach(c=>{html+=`<th style="padding:8px;text-align:center;font-size:10px;color:#8888a0;border-bottom:1px solid #1e1e30">${c.emoji}${c.w}</th>`});html+=`<th style="padding:8px;text-align:center;color:#8b85ff;font-weight:700;border-bottom:1px solid #1e1e30">총점</th></tr>`;ranked.forEach((g,i)=>{const mc=i<3?MC[i]:'#e4e4ee';html+=`<tr style="border-bottom:1px solid #1e1e30"><td style="padding:8px;font-weight:600">${g.name}</td>`;CATS.forEach(c=>{const v=g.result.avg[c.id];html+=`<td class="mono" style="padding:8px;text-align:center;font-weight:700;background:rgba(99,91,255,${((v/10)*0.3).toFixed(2)})">${v.toFixed(1)}</td>`});html+=`<td class="mono" style="padding:8px;text-align:center;font-size:15px;font-weight:900;color:${mc}">${g.result.total.toFixed(1)}</td></tr>`});html+='</table></div></div>';$('live-body').innerHTML=html}
-
-// ═══ RESULTS ═══
-function renderResults(){const ranked=getRanked();$('results-sub').textContent=`${S.sessionId} · ${ranked.length}개 조 · 100점 만점`;if(!ranked.length){$('results-body').innerHTML='<p style="color:#8888a0;text-align:center;padding:40px">데이터 없음</p>';return};let html='';if(ranked.length>=3){html+='<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;max-width:640px;margin:0 auto 40px">';[1,0,2].forEach(ri=>{const g=ranked[ri];if(!g)return;const isF=ri===0;html+=`<div style="background:#0f0f18;border:1px solid ${MC[ri]}33;border-radius:18px;padding:24px 16px;text-align:center;${isF?'transform:scale(1.05);box-shadow:0 8px 32px rgba(251,191,36,0.1)':''};order:${ri===1?0:ri===0?1:2}"><div style="font-size:${isF?48:36}px;margin-bottom:8px">${['🥇','🥈','🥉'][ri]}</div><div style="font-size:${isF?20:17}px;font-weight:800;margin-bottom:4px">${g.name}</div><div style="color:#8888a0;font-size:11px;margin-bottom:12px">${g.members.join(' · ')}</div><div class="mono" style="font-size:${isF?32:26}px;font-weight:900;color:${MC[ri]}">${g.result.total.toFixed(1)}</div></div>`});html+='</div>'};html+=`<div class="card slide-up" style="padding:24px;margin-bottom:16px"><h3 style="font-size:16px;font-weight:700;margin-bottom:20px">📊 종합 점수</h3>`;const mx=ranked[0]?.result?.total||100;ranked.forEach((g,i)=>{const mc=i<3?MC[i]:BC[i%BC.length];html+=`<div class="chart-row" style="animation-delay:${i*0.12}s"><span style="font-size:13px;font-weight:700;width:50px;color:${mc}">${g.name}</span><div style="flex:1;height:28px;background:#12121c;border-radius:6px;overflow:hidden;position:relative"><div class="chart-bar" style="width:${((g.result.total/mx)*100).toFixed(0)}%;background:linear-gradient(90deg,${mc}cc,${mc});animation-delay:${i*0.15}s"></div><span class="mono" style="position:absolute;right:8px;top:50%;transform:translateY(-50%);font-size:12px;font-weight:700;color:#ffffff">${g.result.total.toFixed(1)}</span></div></div>`});html+='</div>';html+=`<div class="card slide-up" style="padding:24px;margin-bottom:16px"><h3 style="font-size:16px;font-weight:700;margin-bottom:20px">📋 항목별 비교</h3>`;CATS.forEach(cat=>{html+=`<div style="margin-bottom:20px"><div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><span style="font-size:16px">${cat.emoji}</span><span style="font-size:13px;font-weight:600;color:#e4e4ee">${cat.label}</span><span class="badge badge-weight">${cat.w}점</span></div><div style="display:flex;gap:6px;align-items:flex-end;height:100px;padding-bottom:20px;position:relative"><div style="position:absolute;bottom:16px;left:0;right:0;height:1px;background:#1e1e30"></div>`;ranked.forEach((g,i)=>{const v=g.result.avg[cat.id];const mc=BC[i%BC.length];html+=`<div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:3px"><span class="mono" style="font-size:10px;font-weight:700;color:${mc}">${v.toFixed(1)}</span><div style="width:100%;max-width:36px;height:${Math.max((v/10)*80,4)}px;background:linear-gradient(180deg,${mc},${mc}88);border-radius:4px 4px 0 0"></div><span style="font-size:9px;color:#8888a0">${g.name}</span></div>`});html+='</div></div>'});html+='</div>';html+=`<div class="card slide-up" style="padding:24px"><h3 style="font-size:16px;font-weight:700;margin-bottom:16px">🎯 점수표</h3><div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;min-width:420px"><tr style="background:#12121c"><th style="padding:8px;text-align:left;font-size:11px;color:#8888a0;border-bottom:1px solid #1e1e30">#</th><th style="padding:8px;text-align:left;font-size:11px;color:#8888a0;border-bottom:1px solid #1e1e30">조</th>`;CATS.forEach(c=>{html+=`<th style="padding:8px;text-align:center;font-size:10px;color:#8888a0;border-bottom:1px solid #1e1e30">${c.emoji}${c.w}</th>`});html+=`<th style="padding:8px;text-align:center;color:#8b85ff;font-weight:700;border-bottom:1px solid #1e1e30">총점</th></tr>`;ranked.forEach((g,i)=>{const mc=i<3?MC[i]:'#e4e4ee';html+=`<tr style="border-bottom:1px solid #1e1e30"><td class="mono" style="padding:8px;text-align:center;font-weight:900;color:${mc}">${i+1}</td><td style="padding:8px;font-weight:600">${g.name}</td>`;CATS.forEach(c=>{const v=g.result.avg[c.id];html+=`<td class="mono" style="padding:8px;text-align:center;font-weight:700;background:rgba(99,91,255,${((v/10)*0.3).toFixed(2)})">${v.toFixed(1)}</td>`});html+=`<td class="mono" style="padding:8px;text-align:center;font-size:16px;font-weight:900;color:${mc}">${g.result.total.toFixed(1)}</td></tr>`});html+='</table></div></div>';html+=`<div style="background:rgba(99,91,255,0.06);border:1px solid rgba(99,91,255,0.12);border-radius:12px;padding:16px;margin-top:8px"><div style="font-size:12px;color:#8888a0;line-height:1.6"><strong style="color:#8b85ff">점수 산정:</strong> 각 항목 1~10점 평균 → (평균/10)×배점 합산 = 100점 만점</div></div><button class="btn btn-primary btn-block" onclick="exportCSV()" style="margin-top:12px">💾 점수 저장 (CSV 다운로드)</button>`;$('results-body').innerHTML=html}
+window.goS=function(i){S.step=i;renderCard()};window.sN=function(){if(S.step<CATS.length-1){S.step++;renderCard()}};window.sP=function(){if(S.step>0){S.step--;renderCard()}}
+window.setV=function(id,v){S.myScores[id]=v;renderCard()}
+window.submit=async function(){if(!db)return;const gid=S.cfg.groups[S.cfg.currentGroup]?.id;if(!gid)return;try{await FB.set(FB.ref(db,`sessions/${S.sid}/scores/${gid}/${S.name}`),{...S.myScores,submittedAt:Date.now()});S.submitted=true;renderVote()}catch(e){alert('제출 실패')}}
 </script>
 </body>
 </html>

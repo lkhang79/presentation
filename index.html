@@ -6,133 +6,83 @@
 <title>발표 채점</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
 <style>
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Noto Sans KR',-apple-system,sans-serif;background:#07070d;color:#e4e4ee;min-height:100dvh;overflow-x:hidden}
-input,button,select,textarea{font-family:inherit}
-input::placeholder{color:#999}
-input:focus{outline:none;border-color:#635bff !important;box-shadow:0 0 0 3px rgba(99,91,255,0.15)}
-button{cursor:pointer;border:none;background:none}
-button:disabled{cursor:not-allowed;opacity:0.45}
-@keyframes fadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
-@keyframes scaleIn{from{opacity:0;transform:scale(0.92)}to{opacity:1;transform:scale(1)}}
-@keyframes slideLeft{from{opacity:0;transform:translateX(40px)}to{opacity:1;transform:translateX(0)}}
-@keyframes slideUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
-@keyframes livePulse{0%,100%{box-shadow:0 0 0 0 rgba(239,68,68,0.4)}50%{box-shadow:0 0 0 6px rgba(239,68,68,0)}}
-.fade-in{animation:fadeIn .4s ease-out both}.scale-in{animation:scaleIn .3s ease-out both}.slide-up{animation:slideUp .5s ease-out both}.slide-left{animation:slideLeft .35s ease-out both}
-.container{max-width:640px;margin:0 auto;padding:16px 20px 40px}
-.card{background:#0f0f18;border:1px solid #1e1e30;border-radius:16px;padding:20px;margin-bottom:12px}
-.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600}
-.badge-live{background:rgba(239,68,68,0.15);color:#ef4444;animation:livePulse 2s ease-in-out infinite}
-.badge-success{background:rgba(16,185,129,0.12);color:#10b981}
-.badge-primary{background:rgba(99,91,255,0.12);color:#8b85ff}
-.badge-weight{background:rgba(245,158,11,0.12);color:#f59e0b;font-family:'JetBrains Mono',monospace}
-.badge-staff{background:rgba(168,85,247,0.15);color:#a855f7}
-.btn{padding:11px 22px;border-radius:10px;font-weight:600;font-size:14px;transition:all .2s;border:1px solid transparent}
-.btn-primary{background:#635bff;border-color:#4840cc;color:#fff}
-.btn-outline{background:transparent;border-color:#2a2a40;color:#e4e4ee}
-.btn-ghost{background:transparent;color:#9898b4}
-.btn-lg{padding:15px 30px;font-size:16px;border-radius:12px}
-.btn-block{width:100%}
-.mono{font-family:'JetBrains Mono',monospace}
-.input{width:100%;background:#fff;border:1px solid #ccd;border-radius:8px;padding:10px 14px;color:#111;font-size:15px}
-.screen{display:none}.screen.active{display:block}
-.fc{min-height:100dvh;display:flex;align-items:center;justify-content:center;padding:20px}
-.bg{background:radial-gradient(ellipse at 50% 0%,#111128 0%,#07070d 60%)}
-.name-btn{width:100%;background:#12121c;border:1px solid #1e1e30;border-radius:10px;padding:11px 14px;color:#e4e4ee;font-size:14px;text-align:left;transition:all .15s;cursor:pointer;display:block;margin-bottom:6px}
-.name-btn.selected{background:rgba(99,91,255,0.12)!important;border-color:#635bff!important;color:#8b85ff!important;font-weight:600!important}
-.dots{display:flex;gap:6px;justify-content:center;margin:16px 0}
-.dot{width:8px;height:8px;border-radius:50%;background:#1e1e30;transition:all .3s;cursor:pointer}
-.dot.active{background:#635bff;width:24px;border-radius:4px}.dot.done{background:#10b981}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}body{font-family:'Noto Sans KR',-apple-system,sans-serif;background:#07070d;color:#e4e4ee;min-height:100dvh;overflow-x:hidden}input,button,select,textarea{font-family:inherit}input::placeholder{color:#999}input:focus{outline:none;border-color:#635bff!important;box-shadow:0 0 0 3px rgba(99,91,255,0.15)}button{cursor:pointer;border:none;background:none}button:disabled{cursor:not-allowed;opacity:0.45}
+@keyframes fadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}@keyframes scaleIn{from{opacity:0;transform:scale(0.92)}to{opacity:1;transform:scale(1)}}@keyframes slideLeft{from{opacity:0;transform:translateX(40px)}to{opacity:1;transform:translateX(0)}}@keyframes slideUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}@keyframes livePulse{0%,100%{box-shadow:0 0 0 0 rgba(239,68,68,0.4)}50%{box-shadow:0 0 0 6px rgba(239,68,68,0)}}.fade-in{animation:fadeIn .4s ease-out both}.scale-in{animation:scaleIn .3s ease-out both}.slide-up{animation:slideUp .5s ease-out both}.slide-left{animation:slideLeft .35s ease-out both}
+.container{max-width:640px;margin:0 auto;padding:16px 20px 40px}.card{background:#0f0f18;border:1px solid #1e1e30;border-radius:16px;padding:20px;margin-bottom:12px}.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600}.badge-live{background:rgba(239,68,68,0.15);color:#ef4444;animation:livePulse 2s ease-in-out infinite}.badge-success{background:rgba(16,185,129,0.12);color:#10b981}.badge-primary{background:rgba(99,91,255,0.12);color:#8b85ff}.badge-weight{background:rgba(245,158,11,0.12);color:#f59e0b;font-family:'JetBrains Mono',monospace}.badge-staff{background:rgba(168,85,247,0.15);color:#a855f7}
+.btn{padding:11px 22px;border-radius:10px;font-weight:600;font-size:14px;transition:all .2s;border:1px solid transparent}.btn-primary{background:#635bff;border-color:#4840cc;color:#fff}.btn-outline{background:transparent;border-color:#2a2a40;color:#e4e4ee}.btn-ghost{background:transparent;color:#9898b4}.btn-lg{padding:15px 30px;font-size:16px;border-radius:12px}.btn-block{width:100%}
+.mono{font-family:'JetBrains Mono',monospace}.input{width:100%;background:#fff;border:1px solid #ccd;border-radius:8px;padding:10px 14px;color:#111;font-size:15px}.screen{display:none}.screen.active{display:block}.fc{min-height:100dvh;display:flex;align-items:center;justify-content:center;padding:20px}.bg{background:radial-gradient(ellipse at 50% 0%,#111128 0%,#07070d 60%)}
+.name-btn{width:100%;background:#12121c;border:1px solid #1e1e30;border-radius:10px;padding:11px 14px;color:#e4e4ee;font-size:14px;text-align:left;transition:all .15s;cursor:pointer;display:block;margin-bottom:6px}.name-btn.selected{background:rgba(99,91,255,0.12)!important;border-color:#635bff!important;color:#8b85ff!important;font-weight:600!important}
+.dots{display:flex;gap:6px;justify-content:center;margin:16px 0}.dot{width:8px;height:8px;border-radius:50%;background:#1e1e30;transition:all .3s;cursor:pointer}.dot.active{background:#635bff;width:24px;border-radius:4px}.dot.done{background:#10b981}
 </style>
 </head>
 <body>
-
-<!-- 코드 입력 --><div id="s-home" class="screen active fc bg"><div style="text-align:center;max-width:400px;width:100%"><div class="scale-in" style="width:80px;height:80px;border-radius:24px;background:rgba(99,91,255,0.12);border:1px solid rgba(99,91,255,0.2);display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:36px">🎯</div><h1 class="fade-in" style="font-size:28px;font-weight:900;margin-bottom:8px">발표 채점</h1><p class="fade-in" style="color:#888;font-size:14px;margin-bottom:32px">세션 코드를 입력하세요</p><div class="card slide-up" style="padding:24px"><input class="input mono" id="inp-code" placeholder="세션 코드 입력" maxlength="10" style="font-size:18px;letter-spacing:2px;text-transform:uppercase;text-align:center;margin-bottom:16px"><button class="btn btn-primary btn-lg btn-block" onclick="goJoin()">입장하기 →</button></div></div></div>
-
-<!-- 조/이름 선택 --><div id="s-join" class="screen fc bg"><div style="max-width:400px;width:100%"><div class="scale-in" style="text-align:center;margin-bottom:28px"><div style="font-size:40px;margin-bottom:8px">🎯</div><h1 style="font-size:22px;font-weight:800;margin-bottom:4px">발표 채점</h1><span class="badge badge-primary" id="join-badge"></span></div><div id="join-body"></div></div></div>
-
-<!-- 채점 --><div id="s-vote" class="screen"><div class="container"><div id="vote-banner"></div><div id="vote-body"></div><div style="text-align:center;margin-top:20px"><span id="vote-footer" style="color:#3a3a52;font-size:12px"></span></div></div></div>
+<div id="s-home" class="screen active fc bg"><div style="text-align:center;max-width:400px;width:100%"><div class="scale-in" style="width:80px;height:80px;border-radius:24px;background:rgba(99,91,255,0.12);border:1px solid rgba(99,91,255,0.2);display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:36px">🎯</div><h1 class="fade-in" style="font-size:28px;font-weight:900;margin-bottom:8px">발표 채점</h1><p class="fade-in" style="color:#888;font-size:14px;margin-bottom:32px">세션 코드를 입력하세요</p><div class="card slide-up" style="padding:24px"><input class="input mono" id="inp-code" placeholder="세션 코드 입력" maxlength="10" style="font-size:18px;letter-spacing:2px;text-transform:uppercase;text-align:center;margin-bottom:16px"><button class="btn btn-primary btn-lg btn-block" onclick="goJoin()">입장하기 →</button></div></div></div>
+<div id="s-join" class="screen fc bg"><div style="max-width:400px;width:100%"><div class="scale-in" style="text-align:center;margin-bottom:28px"><div style="font-size:40px;margin-bottom:8px">🎯</div><h1 style="font-size:22px;font-weight:800;margin-bottom:4px">발표 채점</h1><span class="badge badge-primary" id="join-badge"></span></div><div id="join-body"></div></div></div>
+<div id="s-vote" class="screen"><div class="container"><div id="vb"></div><div id="vv"></div><div style="text-align:center;margin-top:20px"><span id="vf" style="color:#3a3a52;font-size:12px"></span></div></div></div>
 
 <script type="module">
 import{initializeApp}from'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js'
 import{getDatabase,ref,set,get,onValue}from'https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js'
-const firebaseConfig={apiKey:"AIzaSyCTOXhHZLGRbzdUnMc1grQi711uaXSLA6k",authDomain:"presentation-score-65753.firebaseapp.com",databaseURL:"https://presentation-score-65753-default-rtdb.asia-southeast1.firebasedatabase.app",projectId:"presentation-score-65753",storageBucket:"presentation-score-65753.firebasestorage.app",messagingSenderId:"904312501135",appId:"1:904312501135:web:db03173baa400af63f91fa"}
-let db=null,FB={};try{const a=initializeApp(firebaseConfig);db=getDatabase(a);FB={ref,set,get,onValue}}catch(e){}
+const app=initializeApp({apiKey:"AIzaSyCTOXhHZLGRbzdUnMc1grQi711uaXSLA6k",authDomain:"presentation-score-65753.firebaseapp.com",databaseURL:"https://presentation-score-65753-default-rtdb.asia-southeast1.firebasedatabase.app",projectId:"presentation-score-65753",storageBucket:"presentation-score-65753.firebasestorage.app",messagingSenderId:"904312501135",appId:"1:904312501135:web:db03173baa400af63f91fa"})
+const db=getDatabase(app),FB={ref,set,get,onValue}
 
+// 항목: 점수를 배점 그대로 저장 (교육효과 → 3,6,9...30 저장)
 const CATS=[
-  {id:'c1',label:'교육효과',emoji:'🎓',w:30,desc:'프로젝트 주제가 해당 컨소시엄 분야와 관련성이 높은가'},
-  {id:'c2',label:'분야 적합성',emoji:'🎯',w:20,desc:'문제해결을 위해 논리적으로 기획 구성하였는가'},
-  {id:'c3',label:'문제해결 논리성',emoji:'🧩',w:20,desc:'문제해결을 위해 다양한 관점과 방법을 시도했는가'},
-  {id:'c4',label:'접근의 다양성',emoji:'🔍',w:20,desc:'제안한 프로젝트 결과물이 현실적으로 구현 가능하며, 실행계획이 구체적인가'},
-  {id:'c5',label:'실현가능성',emoji:'⚙️',w:10,desc:'첨단분야 직무에 대한 이해와 경험이 증진 되었으며, 성찰 과정이 포함되는가'},
+  {id:'c1',label:'교육효과',emoji:'🎓',max:30,desc:'프로젝트 주제가 해당 컨소시엄 분야와 관련성이 높은가'},
+  {id:'c2',label:'분야 적합성',emoji:'🎯',max:20,desc:'문제해결을 위해 논리적으로 기획 구성하였는가'},
+  {id:'c3',label:'문제해결 논리성',emoji:'🧩',max:20,desc:'문제해결을 위해 다양한 관점과 방법을 시도했는가'},
+  {id:'c4',label:'접근의 다양성',emoji:'🔍',max:20,desc:'제안한 프로젝트 결과물이 현실적으로 구현 가능하며, 실행계획이 구체적인가'},
+  {id:'c5',label:'실현가능성',emoji:'⚙️',max:10,desc:'첨단분야 직무에 대한 이해와 경험이 증진 되었으며, 성찰 과정이 포함되는가'},
 ]
+
 function $(id){return document.getElementById(id)}
 function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));$(id).classList.add('active')}
-function findGroup(cfg,name){for(const g of cfg.groups)if(g.members?.includes(name))return g;return null}
+function findGroup(cfg,n){for(const g of cfg.groups)if(g.members?.includes(n))return g;return null}
+// 각 항목 10단계 점수 배열 생성 (예: 30점 → [3,6,9,...,30])
+function steps(max){const s=max/10;return Array.from({length:10},(_,i)=>Math.round((i+1)*s))}
 
-let S={sid:null,cfg:null,scores:{},name:'',group:null,myScores:{},submitted:false,prev:-1,step:0,joinStep:0,joinGI:-1,unsub:null}
+let S={sid:null,cfg:null,sc:{},nm:'',grp:null,my:{},done:false,prev:-1,step:0,js:0,jg:-1,unsub:null}
 
-// ═══ 코드 입력 → 조 선택 ═══
-window.goJoin=function(){const code=$('inp-code')?.value?.trim()?.toUpperCase();if(!code){alert('세션 코드를 입력하세요');return};S.sid=code;loadJoin()}
-
-async function loadJoin(){
-  show('s-join');$('join-badge').textContent=`세션: ${S.sid}`;S.name='';S.joinStep=0
+window.goJoin=function(){const c=$('inp-code')?.value?.trim()?.toUpperCase();if(!c){alert('세션 코드를 입력하세요');return};S.sid=c;loadJoin()}
+async function loadJoin(){show('s-join');$('join-badge').textContent=`세션: ${S.sid}`;S.nm='';S.js=0
   if(!db){$('join-body').innerHTML='<div class="card" style="text-align:center;padding:24px"><p style="color:#ef4444;font-weight:600">서버 연결 실패</p><button class="btn btn-primary btn-block" onclick="location.reload()" style="margin-top:16px">새로고침</button></div>';return}
   try{const snap=await FB.get(FB.ref(db,`sessions/${S.sid}`));const d=snap.val()
-    if(!d){$('join-body').innerHTML='<div class="card" style="text-align:center;padding:24px"><p style="color:#ef4444;font-weight:600">세션을 찾을 수 없습니다</p><p style="color:#888;font-size:13px;margin-top:8px">코드: <strong class="mono">${S.sid}</strong></p><button class="btn btn-outline btn-block" onclick="show(\'s-home\')" style="margin-top:16px">← 다시 입력</button></div>';return}
+    if(!d){$('join-body').innerHTML=`<div class="card" style="text-align:center;padding:24px"><p style="color:#ef4444;font-weight:600">세션 없음</p><p style="color:#888;margin-top:8px">코드: <strong class="mono">${S.sid}</strong></p><button class="btn btn-outline btn-block" onclick="show('s-home')" style="margin-top:16px">← 다시 입력</button></div>`;return}
     S.cfg=d.config;renderJoin()
-  }catch(e){$('join-body').innerHTML='<div class="card" style="text-align:center;padding:24px"><p style="color:#ef4444">연결 실패</p><button class="btn btn-primary btn-block" onclick="location.reload()" style="margin-top:16px">재시도</button></div>'}
-}
+  }catch(e){$('join-body').innerHTML='<div class="card" style="text-align:center;padding:24px"><p style="color:#ef4444">연결 실패</p><button class="btn btn-primary btn-block" onclick="location.reload()" style="margin-top:16px">재시도</button></div>'}}
+function renderJoin(){const b=$('join-body');if(S.js===0){let h=`<div class="card slide-left" style="padding:24px"><h2 style="font-size:17px;font-weight:700;margin-bottom:18px">소속 조 선택</h2><div style="display:flex;flex-direction:column;gap:8px">`;S.cfg.groups.forEach((g,i)=>{h+=`<button onclick="selG(${i})" style="width:100%;background:${g.isStaff?'rgba(168,85,247,0.06)':'#12121c'};border:1px solid ${g.isStaff?'rgba(168,85,247,0.2)':'#1e1e30'};border-radius:12px;padding:14px;text-align:left;cursor:pointer"><div style="display:flex;align-items:center;gap:10px"><div style="width:40px;height:40px;border-radius:10px;background:${g.isStaff?'rgba(168,85,247,0.12)':'rgba(99,91,255,0.08)'};display:flex;align-items:center;justify-content:center;font-size:16px">${g.isStaff?'👑':'👥'}</div><div style="flex:1"><div style="font-weight:700;font-size:14px">${g.name}${g.isStaff?' <span class="badge badge-staff">STAFF</span>':''}</div><div style="color:#888;font-size:11px;margin-top:2px">${g.members.slice(0,3).join(', ')}</div></div><span style="color:#555">→</span></div></button>`});h+='</div></div>';b.innerHTML=h;return}
+  const g=S.cfg.groups[S.jg];let h=`<div class="card slide-left" style="padding:24px"><div style="display:flex;align-items:center;gap:8px;margin-bottom:16px"><button onclick="S.js=0;S.nm='';renderJoin()" style="color:#9898b4;font-size:20px;padding:4px 8px">←</button><h2 style="font-size:17px;font-weight:700;margin:0">${g.name}</h2></div><div style="display:flex;flex-direction:column;gap:6px">`;g.members.forEach(m=>{h+=`<button class="name-btn${S.nm===m?' selected':''}" onclick="selN('${m.replace(/'/g,"\\'")}')">${m}</button>`});h+=`</div><div style="display:flex;align-items:center;gap:10px;margin:14px 0"><div style="flex:1;height:1px;background:#1e1e30"></div><span style="color:#555;font-size:11px">직접 입력</span><div style="flex:1;height:1px;background:#1e1e30"></div></div><input class="input" id="jc" placeholder="이름 입력" oninput="jcIn(this.value)" style="margin-bottom:14px"><button class="btn btn-primary btn-lg btn-block" onclick="doJoin()" ${S.nm?'':'disabled'}>입장 →</button></div>`;b.innerHTML=h}
+window.selG=function(i){S.jg=i;S.js=1;S.nm='';renderJoin()};window.selN=function(n){S.nm=n;renderJoin()};window.jcIn=function(v){S.nm=v.trim();const b=document.querySelector('#join-body .btn-primary');if(b)b.disabled=!S.nm;document.querySelectorAll('#join-body .name-btn').forEach(x=>x.classList.remove('selected'))}
+window.doJoin=async function(){if(!S.nm.trim())return;S.grp=findGroup(S.cfg,S.nm);try{await FB.set(FB.ref(db,`sessions/${S.sid}/online/${S.nm}`),{t:Date.now(),isStaff:S.grp?.isStaff||false})}catch(e){};loadVote()}
 
-function renderJoin(){
-  const body=$('join-body')
-  if(S.joinStep===0){
-    let h=`<div class="card slide-left" style="padding:24px"><h2 style="font-size:17px;font-weight:700;margin-bottom:18px">소속 조 선택</h2><div style="display:flex;flex-direction:column;gap:8px">`
-    S.cfg.groups.forEach((g,i)=>{h+=`<button onclick="selG(${i})" style="width:100%;background:${g.isStaff?'rgba(168,85,247,0.06)':'#12121c'};border:1px solid ${g.isStaff?'rgba(168,85,247,0.2)':'#1e1e30'};border-radius:12px;padding:14px;text-align:left;cursor:pointer"><div style="display:flex;align-items:center;gap:10px"><div style="width:40px;height:40px;border-radius:10px;background:${g.isStaff?'rgba(168,85,247,0.12)':'rgba(99,91,255,0.08)'};display:flex;align-items:center;justify-content:center;font-size:16px">${g.isStaff?'👑':'👥'}</div><div style="flex:1"><div style="font-weight:700;font-size:14px">${g.name}${g.isStaff?' <span class="badge badge-staff">STAFF</span>':''}</div><div style="color:#888;font-size:11px;margin-top:2px">${g.members.slice(0,3).join(', ')}</div></div><span style="color:#555">→</span></div></button>`})
-    h+='</div></div>';body.innerHTML=h;return
-  }
-  const g=S.cfg.groups[S.joinGI]
-  let h=`<div class="card slide-left" style="padding:24px"><div style="display:flex;align-items:center;gap:8px;margin-bottom:16px"><button onclick="S.joinStep=0;S.name='';renderJoin()" style="color:#9898b4;font-size:20px;padding:4px 8px">←</button><h2 style="font-size:17px;font-weight:700;margin:0">${g.name}</h2></div><div style="display:flex;flex-direction:column;gap:6px">`
-  g.members.forEach(m=>{h+=`<button class="name-btn${S.name===m?' selected':''}" onclick="selN('${m.replace(/'/g,"\\'")}')">${m}</button>`})
-  h+=`</div><div style="display:flex;align-items:center;gap:10px;margin:14px 0"><div style="flex:1;height:1px;background:#1e1e30"></div><span style="color:#555;font-size:11px">직접 입력</span><div style="flex:1;height:1px;background:#1e1e30"></div></div><input class="input" id="jc" placeholder="이름 입력" value="${S.name&&!g.members.includes(S.name)?S.name:''}" oninput="jcIn(this.value)" style="margin-bottom:14px"><button class="btn btn-primary btn-lg btn-block" onclick="doJoin()" ${S.name?'':'disabled'}>입장 →</button></div>`
-  body.innerHTML=h
-}
-
-window.selG=function(i){S.joinGI=i;S.joinStep=1;S.name='';renderJoin()}
-window.selN=function(n){S.name=n;renderJoin()}
-window.jcIn=function(v){S.name=v.trim();const b=document.querySelector('#join-body .btn-primary');if(b)b.disabled=!S.name;document.querySelectorAll('#join-body .name-btn').forEach(b=>b.classList.remove('selected'))}
-window.doJoin=async function(){if(!S.name.trim())return;S.group=findGroup(S.cfg,S.name);try{await FB.set(FB.ref(db,`sessions/${S.sid}/online/${S.name}`),{t:Date.now(),isStaff:S.group?.isStaff||false})}catch(e){};loadVote()}
-
-// ═══ 채점 ═══
-function loadVote(){show('s-vote');S.myScores={};S.submitted=false;S.prev=-99;if(S.unsub)S.unsub();S.unsub=FB.onValue(FB.ref(db,`sessions/${S.sid}`),(snap)=>{const d=snap.val();if(!d)return;S.cfg=d.config;S.scores=d.scores||{};S.group=findGroup(S.cfg,S.name);renderVote()})}
-
+function loadVote(){show('s-vote');S.my={};S.done=false;S.prev=-99;if(S.unsub)S.unsub();S.unsub=FB.onValue(FB.ref(db,`sessions/${S.sid}`),(snap)=>{const d=snap.val();if(!d)return;S.cfg=d.config;S.sc=d.scores||{};S.grp=findGroup(S.cfg,S.nm);renderVote()})}
 function renderVote(){
-  const c=S.cfg,sn=S.name;$('vote-footer').textContent=`${sn}${S.group?.isStaff?' (Staff)':''} · ${S.sid}`
-  if(c.currentGroup!==S.prev){S.prev=c.currentGroup;S.myScores={};S.submitted=false;S.step=0;if(c.currentGroup>=0){const gid=c.groups[c.currentGroup]?.id;const ex=S.scores?.[gid]?.[sn];if(ex){CATS.forEach(ct=>{if(typeof ex[ct.id]==='number')S.myScores[ct.id]=ex[ct.id]});S.submitted=true}}}
-  if(c.currentGroup===-1&&!c.finished){$('vote-banner').innerHTML='';$('vote-body').innerHTML=`<div style="text-align:center;padding:60px 20px"><div style="font-size:48px;margin-bottom:16px">⏳</div><h2 style="font-size:18px;font-weight:700">발표 대기 중</h2><p style="color:#888;font-size:14px;margin-top:6px">관리자가 시작하면 자동 전환됩니다</p></div>`;return}
-  if(c.finished){$('vote-banner').innerHTML='';$('vote-body').innerHTML=`<div style="text-align:center;padding:60px 20px"><div style="font-size:48px;margin-bottom:16px">🏆</div><h2 style="font-size:18px;font-weight:700">모든 발표 종료</h2><p style="color:#888;font-size:14px;margin-top:6px">수고하셨습니다!</p></div>`;return}
+  const c=S.cfg;$('vf').textContent=`${S.nm}${S.grp?.isStaff?' (Staff)':''} · ${S.sid}`
+  if(c.currentGroup!==S.prev){S.prev=c.currentGroup;S.my={};S.done=false;S.step=0;if(c.currentGroup>=0){const gid=c.groups[c.currentGroup]?.id;const ex=S.sc?.[gid]?.[S.nm];if(ex){CATS.forEach(ct=>{if(typeof ex[ct.id]==='number')S.my[ct.id]=ex[ct.id]});S.done=true}}}
+  if(c.currentGroup===-1&&!c.finished){$('vb').innerHTML='';$('vv').innerHTML=`<div style="text-align:center;padding:60px 20px"><div style="font-size:48px;margin-bottom:16px">⏳</div><h2 style="font-size:18px;font-weight:700">발표 대기 중</h2><p style="color:#888;margin-top:6px">관리자가 시작하면 자동 전환</p></div>`;return}
+  if(c.finished){$('vb').innerHTML='';$('vv').innerHTML=`<div style="text-align:center;padding:60px 20px"><div style="font-size:48px;margin-bottom:16px">🏆</div><h2 style="font-size:18px;font-weight:700">모든 발표 종료</h2><p style="color:#888;margin-top:6px">수고하셨습니다!</p></div>`;return}
   const cg=c.groups[c.currentGroup]
-  $('vote-banner').innerHTML=`<div class="scale-in" style="background:linear-gradient(135deg,rgba(99,91,255,0.1),#0f0f18);border:1px solid rgba(99,91,255,0.2);border-radius:18px;padding:20px;margin-bottom:16px;text-align:center"><span class="badge badge-live">● LIVE</span><div style="font-size:28px;font-weight:900;color:#8b85ff;margin-top:8px">${cg?.name}</div><div style="color:#888;font-size:12px;margin-top:6px">${cg?.members?.join(' · ')}</div></div>`
-  if(S.group&&!S.group.isStaff&&S.group.id===cg?.id){$('vote-body').innerHTML=`<div style="background:rgba(245,158,11,0.12);border:1px solid rgba(245,158,11,0.25);border-radius:16px;padding:32px;text-align:center"><div style="font-size:48px;margin-bottom:12px">🎤</div><h3 style="font-size:17px;font-weight:700">우리 조 발표 중!</h3><p style="color:#888">본인 조 채점 불가</p></div>`;return}
-  if(S.submitted){$('vote-body').innerHTML=`<div style="background:rgba(16,185,129,0.12);border:1px solid rgba(16,185,129,0.25);border-radius:16px;padding:32px;text-align:center"><div style="font-size:48px;margin-bottom:12px">✅</div><h3 style="font-size:17px;font-weight:700">채점 완료!</h3><p style="color:#888">다음 발표 대기</p></div>`;return}
+  $('vb').innerHTML=`<div class="scale-in" style="background:linear-gradient(135deg,rgba(99,91,255,0.1),#0f0f18);border:1px solid rgba(99,91,255,0.2);border-radius:18px;padding:20px;margin-bottom:16px;text-align:center"><span class="badge badge-live">● LIVE</span><div style="font-size:28px;font-weight:900;color:#8b85ff;margin-top:8px">${cg?.name}</div><div style="color:#888;font-size:12px;margin-top:6px">${cg?.members?.join(' · ')}</div></div>`
+  if(S.grp&&!S.grp.isStaff&&S.grp.id===cg?.id){$('vv').innerHTML=`<div style="background:rgba(245,158,11,0.12);border:1px solid rgba(245,158,11,0.25);border-radius:16px;padding:32px;text-align:center"><div style="font-size:48px;margin-bottom:12px">🎤</div><h3 style="font-size:17px;font-weight:700">우리 조 발표 중!</h3><p style="color:#888">본인 조 채점 불가</p></div>`;return}
+  if(S.done){$('vv').innerHTML=`<div style="background:rgba(16,185,129,0.12);border:1px solid rgba(16,185,129,0.25);border-radius:16px;padding:32px;text-align:center"><div style="font-size:48px;margin-bottom:12px">✅</div><h3 style="font-size:17px;font-weight:700">채점 완료!</h3><p style="color:#888">다음 발표 대기</p></div>`;return}
   renderCard()
 }
-
 function renderCard(){
-  const cat=CATS[S.step],v=S.myScores[cat.id]||0,isL=S.step===CATS.length-1,isF=S.step===0,allOk=CATS.every(c=>S.myScores[c.id]>0)
-  let dots='<div class="dots" style="margin-bottom:10px">';CATS.forEach((c,i)=>{dots+=`<div class="dot ${i===S.step?'active':S.myScores[c.id]?'done':''}" onclick="goS(${i})"></div>`});dots+='</div>'
-  let strip='<div style="display:flex;gap:3px;margin-bottom:12px">';CATS.forEach((c,i)=>{const sv=S.myScores[c.id]||0,cur=i===S.step;strip+=`<div onclick="goS(${i})" style="flex:1;cursor:pointer;background:${cur?'rgba(99,91,255,0.15)':sv?'rgba(16,185,129,0.1)':'#12121c'};border:1px solid ${cur?'#635bff':sv?'rgba(16,185,129,0.2)':'#1e1e30'};border-radius:8px;padding:4px 2px;text-align:center"><div style="font-size:14px">${c.emoji}</div><div class="mono" style="font-size:11px;font-weight:700;color:${sv?'#8b85ff':'#555'}">${sv||'-'}</div></div>`});strip+='</div>'
-  let card=`<div id="vc-wrap" style="touch-action:pan-y"><div id="vc" class="card slide-left" style="border-color:${v?'rgba(99,91,255,0.25)':'#1e1e30'};padding:24px 20px;min-height:240px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px"><div style="display:flex;align-items:center;gap:10px"><span style="font-size:28px">${cat.emoji}</span><div><div style="font-weight:700;font-size:16px;color:#fff">${cat.label}</div><span class="badge badge-weight" style="margin-top:4px">${cat.w}점</span></div></div>${v?`<div class="mono" style="font-size:32px;font-weight:900;color:#8b85ff">${v}</div>`:''}</div><div style="color:#b0b0c8;font-size:13px;margin-bottom:18px;line-height:1.5">${cat.desc}</div><div style="display:flex;gap:4px;justify-content:center">`
-  for(let s=1;s<=10;s++){const on=s<=v;card+=`<button onclick="setV('${cat.id}',${s})" style="width:34px;height:44px;border-radius:9px;border:2px solid ${on?'#fbbf24':'#2a2a40'};background:${on?'rgba(251,191,36,0.15)':'#12121c'};color:${on?'#fbbf24':'#666'};font-size:15px;font-weight:800;font-family:'JetBrains Mono',monospace;transition:all .15s">${s}</button>`}
+  const cat=CATS[S.step],v=S.my[cat.id]||0,isL=S.step===CATS.length-1,isF=S.step===0,allOk=CATS.every(c=>S.my[c.id]>0)
+  const pts=steps(cat.max) // [3,6,9,...,30] 등
+  let dots='<div class="dots" style="margin-bottom:10px">';CATS.forEach((c,i)=>{dots+=`<div class="dot ${i===S.step?'active':S.my[c.id]?'done':''}" onclick="goS(${i})"></div>`});dots+='</div>'
+  let strip='<div style="display:flex;gap:3px;margin-bottom:12px">';CATS.forEach((c,i)=>{const sv=S.my[c.id]||0;const cur=i===S.step;strip+=`<div onclick="goS(${i})" style="flex:1;cursor:pointer;background:${cur?'rgba(99,91,255,0.15)':sv?'rgba(16,185,129,0.1)':'#12121c'};border:1px solid ${cur?'#635bff':sv?'rgba(16,185,129,0.2)':'#1e1e30'};border-radius:8px;padding:4px 2px;text-align:center"><div style="font-size:14px">${c.emoji}</div><div class="mono" style="font-size:11px;font-weight:700;color:${sv?'#8b85ff':'#555'}">${sv||'-'}</div></div>`});strip+='</div>'
+  let card=`<div id="vw" style="touch-action:pan-y"><div id="vc" class="card slide-left" style="border-color:${v?'rgba(99,91,255,0.25)':'#1e1e30'};padding:24px 20px;min-height:240px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px"><div style="display:flex;align-items:center;gap:10px"><span style="font-size:28px">${cat.emoji}</span><div><div style="font-weight:700;font-size:16px;color:#fff">${cat.label}</div><span class="badge badge-weight" style="margin-top:4px">${cat.max}점 만점</span></div></div>${v?`<div class="mono" style="font-size:32px;font-weight:900;color:#8b85ff">${v}<span style="font-size:16px;color:#555">/${cat.max}</span></div>`:''}</div><div style="color:#b0b0c8;font-size:13px;margin-bottom:18px;line-height:1.5">${cat.desc}</div><div style="display:flex;gap:4px;justify-content:center;flex-wrap:wrap">`
+  pts.forEach(p=>{const on=v>=p;card+=`<button onclick="setV('${cat.id}',${p})" style="min-width:32px;height:44px;padding:0 4px;border-radius:9px;border:2px solid ${on?'#fbbf24':'#2a2a40'};background:${on?'rgba(251,191,36,0.15)':'#12121c'};color:${on?'#fbbf24':'#666'};font-size:${p>=10?'13':'14'}px;font-weight:800;font-family:'JetBrains Mono',monospace;transition:all .15s">${p}</button>`})
   card+='</div></div></div>'
-  let nav='<div style="display:flex;gap:8px;margin-top:12px">';if(!isF)nav+=`<button class="btn btn-outline" onclick="sP()" style="flex:1">← ${CATS[S.step-1].emoji}</button>`;if(!isL)nav+=`<button class="btn btn-primary" onclick="sN()" style="flex:${isF?3:2}" ${!v?'disabled':''}>다음 →</button>`;if(isL)nav+=`<button class="btn btn-primary btn-lg" onclick="submit()" style="flex:2" ${!allOk?'disabled':''}>${allOk?'✨ 제출':`${CATS.filter(c=>!S.myScores[c.id]).length}개 남음`}</button>`;nav+='</div>'
-  $('vote-body').innerHTML=dots+strip+card+nav
-  const wrap=$('vc-wrap');let sx=0,dx=0,sw=false;wrap.ontouchstart=e=>{sx=e.touches[0].clientX;sw=true};wrap.ontouchmove=e=>{if(!sw)return;dx=e.touches[0].clientX-sx;const vc=$('vc');if(vc)vc.style.transform=`translateX(${dx*0.3}px)`;if(Math.abs(dx)>10)e.preventDefault()};wrap.ontouchend=()=>{const vc=$('vc');if(vc)vc.style.transform='';if(dx<-50&&S.step<CATS.length-1){S.step++;renderCard()}else if(dx>50&&S.step>0){S.step--;renderCard()};dx=0;sw=false}
+  const total=CATS.reduce((s,c)=>s+(S.my[c.id]||0),0)
+  let nav='<div style="display:flex;gap:8px;margin-top:12px">';if(!isF)nav+=`<button class="btn btn-outline" onclick="sP()" style="flex:1">← ${CATS[S.step-1].emoji}</button>`;if(!isL)nav+=`<button class="btn btn-primary" onclick="sN()" style="flex:${isF?3:2}" ${!v?'disabled':''}>다음 →</button>`;if(isL)nav+=`<button class="btn btn-primary btn-lg" onclick="submit()" style="flex:2" ${!allOk?'disabled':''}>${allOk?`✨ 제출 (${total}점)`:`${CATS.filter(c=>!S.my[c.id]).length}개 남음`}</button>`;nav+='</div>'
+  $('vv').innerHTML=dots+strip+card+nav
+  const wrap=$('vw');let sx=0,dx=0,sw=false;wrap.ontouchstart=e=>{sx=e.touches[0].clientX;sw=true};wrap.ontouchmove=e=>{if(!sw)return;dx=e.touches[0].clientX-sx;const vc=$('vc');if(vc)vc.style.transform=`translateX(${dx*0.3}px)`;if(Math.abs(dx)>10)e.preventDefault()};wrap.ontouchend=()=>{const vc=$('vc');if(vc)vc.style.transform='';if(dx<-50&&S.step<CATS.length-1){S.step++;renderCard()}else if(dx>50&&S.step>0){S.step--;renderCard()};dx=0;sw=false}
 }
-
 window.goS=function(i){S.step=i;renderCard()};window.sN=function(){if(S.step<CATS.length-1){S.step++;renderCard()}};window.sP=function(){if(S.step>0){S.step--;renderCard()}}
-window.setV=function(id,v){S.myScores[id]=v;renderCard()}
-window.submit=async function(){if(!db)return;const gid=S.cfg.groups[S.cfg.currentGroup]?.id;if(!gid)return;try{await FB.set(FB.ref(db,`sessions/${S.sid}/scores/${gid}/${S.name}`),{...S.myScores,submittedAt:Date.now()});S.submitted=true;renderVote()}catch(e){alert('제출 실패')}}
+window.setV=function(id,p){S.my[id]=p;renderCard()}
+window.submit=async function(){const gid=S.cfg.groups[S.cfg.currentGroup]?.id;if(!gid)return;try{await FB.set(FB.ref(db,`sessions/${S.sid}/scores/${gid}/${S.nm}`),{...S.my,t:Date.now()});S.done=true;renderVote()}catch(e){alert('제출 실패')}}
 </script>
 </body>
 </html>
